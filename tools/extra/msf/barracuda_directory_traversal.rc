@@ -1,0 +1,7 @@
+use auxiliary/scanner/http/barracuda_directory_traversal
+set RHOSTS file:/root/DATA/NMAP/8000.txt
+spool /root/DATA/TEE/MSF_barracuda_directory_traversal.tee
+set threads 10
+run
+spool off
+exit

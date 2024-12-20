@@ -1,0 +1,7 @@
+use auxiliary/scanner/x11/open_x11
+set RHOSTS file:/root/DATA/NMAP/6000.txt
+spool /root/DATA/TEE/MSF_open_x11.tee
+set threads 10
+run
+spool off
+exit

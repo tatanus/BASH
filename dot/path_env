@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# NAME        : path_env
+# DESCRIPTION : 
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2024-12-08 19:57:22
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# =============================================================================
+
+# Guard to prevent multiple sourcing
+if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
+    declare -g PATH_ENV_LOADED=true
+
+    export DATA_DIR='/root/DATA'
+    export ADCS_DIR="${DATA_DIR}/ADCS"
+    export BACKUP_DIR="${DATA_DIR}/BACKUP"
+    export CISCO_DIR="${DATA_DIR}/CISCO"
+    export CREDS_DIR="${DATA_DIR}/CREDS"
+    export JAVA_DIR="${DATA_DIR}/JAVA"
+    export LDAP_DIR="${DATA_DIR}/LDAP"
+    export LOGS_DIR="${DATA_DIR}/LOGS"
+    export MITM_DIR="${DATA_DIR}/MITM"
+    export MSF_DIR="${DATA_DIR}/MSF"
+    export NMAP_DIR="${DATA_DIR}/NMAP"
+    export RECON_DIR="${DATA_DIR}/RECON"
+    export SHARES_DIR="${DATA_DIR}/SHARES"
+    export SMB_DIR="${DATA_DIR}/SMB"
+    export TEE_DIR="${DATA_DIR}/TEE"
+    export TOOLS_DIR="${DATA_DIR}/TOOLS"
+    export WEB_DIR="${DATA_DIR}/WEB"
+fi

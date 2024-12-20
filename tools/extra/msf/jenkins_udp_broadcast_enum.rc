@@ -1,0 +1,6 @@
+use auxiliary/scanner/jenkins/jenkins_udp_broadcast_enum
+spool /root/DATA/TEE/MSF_jenkins_udp_broadcast_enum.tee
+set threads 10
+run
+spool off
+exit

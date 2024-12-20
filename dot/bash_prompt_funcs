@@ -1,0 +1,203 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# NAME        : bash_prompt_funcs
+# DESCRIPTION : 
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2024-12-08 19:57:22
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# =============================================================================
+
+# Guard to prevent multiple sourcing
+if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
+    declare -g BASH_PROMPT_FUNCS_LOADED=true
+
+    # Function to determine the operating system
+    function get_os_type() {
+        uname_output=$(uname -s)
+
+        case "$uname_output" in
+            Linux*)
+                echo "Linux"
+                ;;
+            Darwin*)
+                echo "macOS"
+                ;;
+            CYGWIN*|MINGW32*|MSYS*|MINGW*)
+                echo "Windows"
+                ;;
+            *)
+                echo "Unknown"
+                ;;
+        esac
+    }
+
+    function check_kerb_ccache() {
+        if [ -n "$KRB5CCNAME" ]; then
+            echo "${white}[${light_red}KRB5CCNAME = ${light_red}$KRB5CCNAME${white}]"
+            echo -e "${white}┣━"
+        fi
+    }
+
+    # Function to check session
+    function check_session() {
+        SESSION_STATUS="${white}┏━"
+
+        # Check if we are in either a TMUX or SCREEN session
+        if [ -n "$TMUX" ] || [ -n "$STY" ]; then
+            # Check if we are in a tmux session
+            if [ -n "$TMUX" ]; then
+                TMUX_SESSION=$(tmux display-message -p '#S')
+                SESSION_STATUS+="[${yellow}TMUX = ${TMUX_SESSION}${white}]"
+            fi
+
+            # Check if we are in a screen session
+            if [ -n "$STY" ]; then
+                SCREEN_SESSION=$(echo "$STY" | awk -F '.' '{print $2}')
+                SESSION_STATUS+="[${yellow}SCREEN = ${SCREEN_SESSION}${white}]"
+            fi
+
+            SESSION_STATUS+="\n${white}┣━"
+        fi
+
+        echo -e "$SESSION_STATUS"
+    }
+
+    # Function to check if IP should be refreshed
+    function should_refresh_ip() {
+        local current_time=$(date +%s)
+        local time_diff=$((current_time - LAST_IP_CHECK))
+
+        if [ "$time_diff" -ge 900 ] || [ -z "$PROMPT_LOCAL_IP" ] || [ -z "$PROMPT_EXTERNAL_IP" ]; then
+            return 0  # True, should refresh
+        else
+            return 1  # False, no need to refresh
+        fi
+    }
+
+    function is_dhcp_static() {
+        local interface=$1
+        local os_type=$(get_os_type)
+
+        if [ "$os_type" = "Linux" ]; then
+            # Check if nmcli is available and NetworkManager is running
+            if command -v nmcli > /dev/null 2>&1 && systemctl is-active NetworkManager > /dev/null 2>&1; then
+                local connection_profile=$(nmcli -g GENERAL.CONNECTION device show "$interface")
+
+                if [ "$connection_profile" = "--" ]; then
+                    echo "No active connection"
+                else
+                    local ip_method=$(nmcli -g ipv4.method connection show "$connection_profile")
+
+                    if [ "$ip_method" = "auto" ]; then
+                        echo "DHCP"
+                    elif [ "$ip_method" = "manual" ]; then
+                        echo "Static"
+                    else
+                        echo "Unknown"
+                    fi
+                fi
+
+            # Check if systemd-networkd is active and use netplan configuration
+            elif systemctl is-active systemd-networkd > /dev/null 2>&1; then
+                local config_file=$(find /etc/netplan/ -name "*.yaml" -print -quit)
+
+                if [ -z "$config_file" ]; then
+                    echo "No netplan configuration file found."
+                    return 1
+                fi
+
+                local config=$(grep -A3 "$interface:" "$config_file")
+
+                if echo "$config" | grep -q "dhcp4: true"; then
+                    echo "DHCP"
+                elif echo "$config" | grep -q "addresses:"; then
+                    echo "Static"
+                else
+                    echo "Unknown"
+                fi
+
+            # Fall back to checking /etc/network/interfaces if it exists
+            elif [ -f /etc/network/interfaces ]; then
+                local config=$(grep -A3 "iface $interface" /etc/network/interfaces)
+
+                if echo "$config" | grep -q "dhcp"; then
+                    echo "DHCP"
+                elif echo "$config" | grep -q "static"; then
+                    echo "Static"
+                else
+                    echo "Unknown"
+                fi
+
+            else
+                echo "Network configuration method unknown."
+            fi
+        elif [ "$os_type" = "macOS" ]; then
+            local service=$(networksetup -listallhardwareports | awk -v interface="$interface" '
+            /Hardware Port: / { port = $3; next }
+            /Device: / { dev = $2; if (dev == interface) { print port } }')
+
+            if [ -z "$service" ]; then
+                echo "No active connection"
+            else
+                local config=$(networksetup -getinfo "$service")
+
+                # Check if the output contains "DHCP Configuration"
+                if echo "$config" | grep -q "DHCP Configuration"; then
+                    echo "DHCP"
+                else
+                    echo "Static"
+                fi
+            fi
+
+        else
+            echo "Unsupported OS: $os_type"
+        fi
+    }
+
+    # Function to get local IP with caching, excluding certain interfaces
+    function get_local_ip() {
+        if should_refresh_ip; then
+            if command -v ip &> /dev/null; then
+                interfaces=$(ip -o addr show | awk '$3 == "inet" && $4 != "127.0.0.1/8" {print $2,$4}')
+            elif command -v ifconfig &> /dev/null; then
+                interfaces=$(ifconfig | awk '/^[a-zA-Z0-9]+:/ { iface=$1; next } /inet / && $2 != "127.0.0.1" { print iface,$2 }' | sed 's/://')
+            else
+                echo "Neither 'ip' nor 'ifconfig' command found."
+                exit 1
+            fi
+
+            excluded_interfaces=()
+            result=""
+            while read -r line; do
+                iface=$(echo "$line" | awk '{print $1}')
+                ip=$(echo "$line" | awk '{print $2}' | cut -d'/' -f1)
+
+                # Check if interface should be excluded
+                if [[ ! " ${excluded_interfaces[@]} " =~ " ${iface} " ]]; then
+                    dhcp=$(is_dhcp_static "$iface")
+                    result="${light_blue}$result$iface${yellow}($dhcp)${white}:${blue}$ip${white},"
+                fi
+            done <<< "$interfaces"
+
+            PROMPT_LOCAL_IP="${result%,*}"
+            LAST_IP_CHECK=$(date +%s)
+        fi
+
+        echo "$PROMPT_LOCAL_IP"
+    }
+
+    # Function to get external IP with caching
+    function get_external_ip() {
+        if should_refresh_ip; then
+            PROMPT_EXTERNAL_IP=$($(PROXY) curl -s ifconfig.me/ip)
+            LAST_IP_CHECK=$(date +%s)
+        fi
+
+        echo "$PROMPT_EXTERNAL_IP"
+    }
+fi

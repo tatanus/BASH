@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# NAME        : bash_aliases
+# DESCRIPTION : 
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2024-12-08 19:57:22
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# =============================================================================
+
+# Guard to prevent multiple sourcing
+if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
+    declare -g BASH_ALIAS_LOADED=true
+
+    #alias python3="python3.12"
+    alias bat="batcat"
+    alias nc="ncat"
+
+    # Alias to shorten proxychains4
+    alias PROXY="proxychains4 -q "
+    alias pc4='PROXY'
+
+    # Alias to get the public IP address using proxychains4 and ifconfig.me
+    alias myip='PROXY -q curl ifconfig.me/ip'
+
+    # Alias to run the 'screen' command with the '-T screen-256color' option
+    alias screen='screen -T screen-256color'
+
+    # Alias to run 'grep' with the '--color=auto' option for colored output
+    alias grep='grep --color=auto'
+
+    # Alias to run 'curl' with a specific user agent string
+    alias curl='curl -A "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36" -k'
+
+    # Alias to run 'dig' with the '+short' option to display only the IP address
+    alias dig='dig +short'
+
+    # Alias to run 'wget' with the '-c' option to resume interrupted downloads
+    alias wget='wget -c'
+
+    function pause() {
+        echo
+        echo "-----------------------------------"
+        echo
+        read -n 1 -s -r -p "Press any key to continue..."
+    }
+
+    # Function to display the current session name (TMUX or SCREEN)
+    function get_session_name() {
+       local session_names=()
+
+        # Check if we are in a TMUX session
+        if [ -n "$TMUX" ]; then
+            local tmux_session=$(tmux display-message -p '#S')
+            session_names+=("TMUX:${tmux_session}")
+        fi
+
+        # Check if we are in a SCREEN session
+        if [ -n "$STY" ]; then
+            local screen_session=$(echo "$STY" | awk -F '.' '{print $2}')
+            session_names+=("SCREEN:${screen_session}")
+        fi
+
+        # Return session names, comma-separated if multiple
+        if [ ${#session_names[@]} -gt 0 ]; then
+            echo "${session_names[*]}" | sed 's/ /, /g'  # Replace spaces with commas
+        fi
+    }
+
+    # Function to sort Responder style hashes in a file
+    function sort_first() {
+         cat $@ | sort -u -V | sort -t: -k1,3 -u;
+    }
+
+    # Function to strip ANSI escape sequences, control characters, and non-printable characters
+    function strip_color() {
+        # Check if an argument was provided
+        if [[ -z "$1" ]]; then
+            echo "Error: No input provided. Please pass a string or file."
+            return 1
+        fi
+
+        # Corrected pattern to match ANSI escape codes and control characters
+        local ansi_pattern=$'\x1B\\[[0-9;]*[mK]'     # ANSI color codes
+        local control_pattern=$'[[:cntrl:]]'          # Control characters, including carriage return, etc.
+        local nonprintable_pattern=$'[\x80-\xFF]'     # Non-printable multibyte characters (like �)
+
+        # Check if the input is a file
+        if [[ -f "$1" ]]; then
+            # Read file and clean non-printable characters and escape sequences
+            LANG=C sed -E -e "s/${ansi_pattern}//g" \
+                          -e "s/${control_pattern}//g" \
+                          -e "s/${nonprintable_pattern}//g" "$1"
+        else
+            # Treat input as a string and clean non-printable characters and escape sequences
+            echo -e "$1" | LANG=C sed -E -e "s/${ansi_pattern}//g" \
+                                         -e "s/${control_pattern}//g" \
+                                         -e "s/${nonprintable_pattern}//g"
+        fi
+    }
+fi

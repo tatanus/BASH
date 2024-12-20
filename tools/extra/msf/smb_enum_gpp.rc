@@ -1,0 +1,7 @@
+use auxiliary/scanner/smb/smb_enum_gpp
+set RHOSTS file:/root/DATA/NMAP/445.txt
+spool /root/DATA/TEE/MSF_smb_enum_gpp.tee
+set threads 10
+run
+spool off
+exit

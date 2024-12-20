@@ -1,0 +1,7 @@
+use auxiliary/scanner/http/dell_idrac
+set RHOSTS file:/root/DATA/NMAP/443.txt
+spool /root/DATA/TEE/MSF_dell_idrac.tee
+set threads 10
+run
+spool off
+exit

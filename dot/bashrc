@@ -1,0 +1,52 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# If not running interactively, don't do anything
+if [[ -z "$PS1" ]]; then
+    return
+fi
+
+# Set VIMRUNTIME and TERM variables
+export TERM=xterm-256color
+
+# Silence bash deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Check window size after each command and update LINES and COLUMNS if necessary
+shopt -s checkwinsize
+
+# Make less more friendly for non-text input files
+if [[ -x /usr/bin/lesspipe ]]; then
+    eval "$(SHELL=/bin/sh lesspipe)"
+fi
+
+# Set variable identifying the chroot you work in (used in the prompt below)
+if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# History settings
+HISTCONTROL=
+HISTIGNORE=
+HISTSIZE=100000
+HISTFILESIZE=100000
+HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
+shopt -s histappend
+
+# Array of configuration files to source
+config_files=(
+    ~/.bash_env
+    ~/.bash_path
+    ~/.bash_prompt
+    ~/.bash_aliases
+    ~/.path_env
+    ~/.pentest_env
+    ~/.pentest_aliases
+    ~/.tgt_aliases
+    ~/.screen_aliases
+    ~/.tmux_aliases
+    ~/.logging.sh
+)
+
+# Source additional configurations
+for file in "${config_files[@]}"; do
+    [[ -f "$file" ]] && source "$file"
+done

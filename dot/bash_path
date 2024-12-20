@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# NAME        : bash_path
+# DESCRIPTION : 
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2024-12-08 19:57:22
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# =============================================================================
+
+# Guard to prevent multiple sourcing
+if [[ -z "${BASH_PATH_LOADED:-}" ]]; then
+    declare -g BASH_PATH_LOADED=true
+
+    export GOPATH=$HOME/go
+    export PATH=$HOME/go/bin:/usr/local/go/bin:$PATH:/root/.local/bin
+fi
