@@ -1,4 +1,4 @@
-# BASH Environment
+# BASH - "Bash Automation for Simple Hacking"
 
 This repository contains a modular and extensible configuration for setting up and managing a robust Bash environment, particularly useful for developers, system administrators, and penetration testers. It includes utility scripts, environment configurations, and tools to enhance productivity and streamline workflows.
 
