@@ -612,20 +612,49 @@ function _Process_Tool_Install_Menu() {
 
     # Check if the choice matches a predefined menu item
     if [[ " ${INSTALL_TOOLS_MENU_ITEMS[@]} " =~ " ${choice} " ]]; then
-        _Exec_Function "$choice"
+        info "Executing predefined installation function: $choice"
+        if ! _Exec_Function "$choice"; then
+            fail "Failed to execute predefined installation function: $choice"
+            return $_FAIL
+        fi
     else
-        MODULES_DIR="$SCRIPT_DIR/tools/modules"
-        local script_file="$MODULES_DIR/${choice}.sh"
+        # Define modules directory
+        local MODULES_DIR="${SCRIPT_DIR}/tools/modules"
+        local script_file="${MODULES_DIR}/${choice}.sh"
 
-        # Check if the script file exists before attempting to execute it
+        # Check if the script file exists
         if [[ -f "$script_file" ]]; then
-            info "Executing script: $script_file"
-            source "$script_file" || warn "Failed to source $script_file."
-            "install_$tool_name"
+            info "Found script for custom tool: $script_file"
+
+            # Source the script and execute the install function
+            source "$script_file" || {
+                fail "Failed to source script: $script_file"
+                return $_FAIL
+            }
+
+            local tool_name="${choice}" # Assuming the tool name matches the choice
+            local install_function="install_${tool_name}"
+
+            # Check if the install function exists
+            if declare -f "$install_function" >/dev/null; then
+                info "Executing installation function: $install_function"
+                if ! "$install_function"; then
+                    fail "Installation function failed: $install_function"
+                    return $_FAIL
+                fi
+            else
+                fail "Installation function not found in script: $install_function"
+                return $_FAIL
+            fi
         else
             fail "Script file not found: $script_file"
+            return $_FAIL
         fi
     fi
+
+    # Success message if no errors occurred
+    success "Tool installation for '$choice' completed successfully."
+    return $_PASS
 }
 
 # Function to process start menu choices

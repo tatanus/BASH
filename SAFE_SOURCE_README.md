@@ -28,16 +28,6 @@ This Bash utility provides a robust mechanism to temporarily source other script
 
 ---
 
-## Installation
-
-1. Copy the script into a Bash file (e.g., `safe_source.sh`).
-2. Source the file in your Bash session or another script:
-   ```bash
-   source safe_source.sh
-   ```
-
----
-
 ## Usage
 
 ### 1. `_SAFE_SOURCE_SCRIPT`

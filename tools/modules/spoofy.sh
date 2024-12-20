@@ -12,17 +12,6 @@
 # 2024-12-19 10:38:56  | Adam Compton | Initial creation.
 # =============================================================================
 
-# Test function
-function test_spoofy() {
-    local TOOL_NAME="Spoofy"
-    local TOOL_COMMAND="spoofy.py --help"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
-    local status=$?
-
-    # Return the status from AppTest
-    return $status
-}
-
 function install_spoofy() {
     # Define the arguments
     TOOL_NAME="Spoofy"
