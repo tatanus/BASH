@@ -1,4 +1,7 @@
 import xml.etree.ElementTree as ET
+import argparse
+import os
+import sys
 
 def parse_xml_file(filename):
     """
@@ -18,6 +21,7 @@ def parse_xml_file(filename):
         return None, f"Error parsing XML content: {e}"
     except IOError as e:
         return None, f"Unable to open file: {e}"
+
 
 def extract_information_from_xml(root):
     """
@@ -85,17 +89,35 @@ def extract_information_from_xml(root):
 
     return info
 
-# Example usage
-xml_file = "/root/DATA/CREDS/default_creds.xml"
-root, err = parse_xml_file(xml_file)
+def main():
+    """
+    Main function to parse XML file, extract information, and display it.
+    """
+    parser = argparse.ArgumentParser(description="Extract default credentials from an XML file.")
+    parser.add_argument("file", help="Path to the XML file.")
+    args = parser.parse_args()
 
-if root is not None:
-    extracted_info = extract_information_from_xml(root)
-    if extracted_info:
-        for key, details in extracted_info.items():
-            for cred in details["credentials"]:
-                print(f"{details['ip']}:{details['port']}{details['path']},{details['service']},{cred['username']}:{cred['password']}")
+    # Validate file path
+    if not os.path.isfile(args.file):
+        print(f"Error: File '{args.file}' does not exist.")
+        sys.exit(1)
+
+    # Parse the XML file
+    root, err = parse_xml_file(args.file)
+
+    if root is not None:
+        extracted_info = extract_information_from_xml(root)
+        if extracted_info:
+            for key, details in extracted_info.items():
+                for cred in details["credentials"]:
+                    print(f"{details['ip']}:{details['port']}{details['path']},"
+                          f"{details['service']},{cred['username']}:{cred['password']}")
+        else:
+            print("No information extracted from XML.")
     else:
-        print("No information extracted from XML.")
-else:
-    print("Error:", err)
+        print("Error:", err)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
