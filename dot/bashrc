@@ -44,6 +44,8 @@ config_files=(
     ~/.screen_aliases
     ~/.tmux_aliases
     ~/.logging.sh
+    ~/.screenshot.sh
+    ~/.capture_traffic.sh
 )
 
 # Source additional configurations

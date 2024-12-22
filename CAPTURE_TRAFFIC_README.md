@@ -108,7 +108,3 @@ This script is open-source. Feel free to use and modify it as needed.
 
 **Adam Compton**  
 Date Created: December 8, 2024
-
----
-
-Happy Capturing! 🎉

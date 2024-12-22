@@ -44,8 +44,8 @@ screenshot_text '<text>' [output_file]
 | Parameter      | Description                                  | Default           |
 |-----------------|----------------------------------------------|-------------------|
 | `<command>`     | The shell command to execute and capture.    | N/A               |
-| `<text>`        | The plain text to process.                  | N/A               |
-| `[output_file]` | Name of the output PNG file.                | `output.png`      |
+| `<text>`        | The plain text to process.                   | N/A               |
+| `[output_file]` | Name of the output PNG file.                 | `output.png`      |
 
 ### Examples
 

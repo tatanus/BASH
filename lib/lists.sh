@@ -91,6 +91,8 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "bash_prompt_funcs"
         "bash-preexec.sh"
         "logging.sh"
+        "screenshot.sh"
+        "capture_traffic.sh"
     )
 
     ## DOT FILES
