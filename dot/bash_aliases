@@ -27,9 +27,6 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
     # Alias to get the public IP address using proxychains4 and ifconfig.me
     alias myip='PROXY -q curl ifconfig.me/ip'
 
-    # Alias to run the 'screen' command with the '-T screen-256color' option
-    alias screen='screen -T screen-256color'
-
     # Alias to run 'grep' with the '--color=auto' option for colored output
     alias grep='grep --color=auto'
 

@@ -29,38 +29,48 @@ if [[ -z "${SCREEN_ALIAS_LOADED:-}" ]]; then
     #####
     # ------------------------------------------- #
 
-    function screenS() {
-        # This function creates a new screen session with logging enabled.
-        # It takes one argument:
-        # - session_name: The name of the screen session to create.
-        # If the session already exists, it attaches to the existing session.
-        # If the session does not exist, it creates a new session with logging enabled.
-        # The log file is saved in "/root/DATA/LOGS/$session_name.screen".
-        # Usage: screenS <session_name>
-        local session_name="$1"
-        if does_screen_session_exist "$session_name"; then
-            screen -x "$session_name"
-        else
+    function screen() {
+        # Initialize variables
+        local session_name=""
+        local args=()
+
+        # Parse arguments to find "-S <session_name>"
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                -S)
+                    if [[ -n "$2" ]]; then
+                        session_name="$2"
+                        shift 2
+                    else
+                        echo "Error: -S flag requires a session name" >&2
+                        return 1
+                    fi
+                    ;;
+                *)
+                    args+=("$1")
+                    shift
+                    ;;
+            esac
+        done
+
+        # If -S <session_name> was found, start a logged screen session
+        if [[ -n "$session_name" ]]; then
+            local timestamp
+            timestamp=$(date +"%Y%m%d_%H%M%S")
+
+            local logfile_path
+            logfile_path="$HOME/DATA/LOGS/${session_name}.${timestamp}.screen"
+
+            mkdir -p "$HOME/DATA/LOGS"
+
             echo "  -- Starting session [$session_name]"
-            #local logfile_path=$(get_logfile_path "$session_name.screen")
-            #screen -L -Logfile "$logfile_path" -S "$session_name"
-            screen -S "$session_name"
+            command screen -L -Logfile "$logfile_path" -S "$session_name" "${args[@]}"
+        else
+            # Default behavior if -S <session_name> is not found
+            command screen "${args[@]}"
         fi
     }
 
-    function screendmS() {
-        # This function creates a new screen session with logging enabled in detached mode.
-        # It takes one argument:
-        # - session_name: The name of the screen session to create.
-        # It creates a new session with logging enabled in detached mode.
-        # The log file is saved in "/root/DATA/LOGS/$session_name".
-        # Usage: screendmS <session_name>
-        local session_name="$1"
-        echo "  -- Starting session [$session_name]"
-        #local logfile_path=$(get_logfile_path "$session_name")
-        #screen -L -Logfile "$logfile_path" -dmS "$session_name.screen"
-        screen -dmS "$session_name.screen"
-    }
 
     function get_screen_session_list() {
         # This function returns a list of all active screen sessions.
@@ -211,7 +221,7 @@ if [[ -z "${SCREEN_ALIAS_LOADED:-}" ]]; then
         if [[ -n "$selected_session" ]]; then
             # Extract the session name (before the dot) and attach to it
             local selected_session_name=$(echo "$selected_session" | cut -d '.' -f 1)
-            screen -r "$selected_session_name"
+             screen -r "$selected_session_name"
         else
             echo "No session selected. Exiting."
         fi

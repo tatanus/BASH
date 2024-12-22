@@ -36,6 +36,13 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
         esac
     }
 
+    function check_venv() {
+        if [ -n "$VIRTUAL_ENV" ]; then
+            echo "${white}[${light_blue}Python VENV = ${light_blue}$VIRTUAL_ENV${white}]"
+            echo -e "${white}┣━"
+        fi
+    }
+
     function check_kerb_ccache() {
         if [ -n "$KRB5CCNAME" ]; then
             echo "${white}[${light_red}KRB5CCNAME = ${light_red}$KRB5CCNAME${white}]"

@@ -68,6 +68,9 @@ if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
         # KERBEROS CREDENTIAL CACHE
         PS1+="$(check_kerb_ccache)"
 
+        # PYTHON VENV
+        PS1+="$(check_venv)"
+
         # DATE TIME
         PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
 

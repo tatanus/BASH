@@ -22,6 +22,63 @@ if [[ -z "${TMUX_ALIAS_LOADED:-}" ]]; then
     #####
     # ------------------------------------------- #
 
+    function tmux() {
+        # Debug output to verify arguments
+        echo "DEBUG: \$@=$@"
+
+        # Initialize variables
+        local session_name=""
+        local args=()
+
+        # Parse arguments to find "new -s <session_name>"
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                new)
+                    args+=("$1")
+                    shift
+                    if [[ "$1" == "-s" && -n "$2" ]]; then
+                        session_name="$2"
+                        args+=("$1" "$2")
+                        shift 2
+                    else
+                        echo "Error: 'new' requires '-s <session_name>'" >&2
+                        return 1
+                    fi
+                    ;;
+                *)
+                    args+=("$1")
+                    shift
+                    ;;
+            esac
+        done
+
+        # If -S <session_name> was found, handle tmux session creation or attachment
+        if [[ -n "$session_name" ]]; then
+            if does_tmux_session_exist "$session_name"; then
+                echo "  -- Attaching to session [$session_name]"
+                command tmux attach -t "$session_name" "${args[@]}"
+            else
+                local timestamp
+                timestamp=$(date +"%Y%m%d_%H%M%S")
+
+                local logfile_path
+                log_file="$HOME/DATA/LOGS/${session_name}.${timestamp}.tmux"
+
+                mkdir -p "$HOME/DATA/LOGS"
+
+                echo "  -- Starting session [$session_name]"
+                command tmux new -s "$session_name" -d "${args[@]}"
+                command tmux set-option -t "$session_name" -g monitor-activity on
+                command tmux pipe-pane -t "$session_name" -o "exec cat >> $log_file"
+                command tmux attach -t "$session_name"
+            fi
+        else
+            # Default behavior for other tmux commands
+            command tmux "${args[@]}"
+        fi
+    }
+
+
     # Create a tmux session with logging
     function tmuxS() {
         local session_name="$1"

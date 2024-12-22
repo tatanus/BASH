@@ -35,6 +35,7 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     # Directories
     export BASE_DIR="$MY_HOME/DATA"
     export TOOL_DIR="$BASE_DIR/TOOLS"
+    export LOG_DIR="$BASE_DIR/LOGS"
 
     export PENTEST_DIR="$HOME/.pentest"
 

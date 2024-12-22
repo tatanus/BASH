@@ -20,6 +20,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     REQUIRED_DIRECTORIES=(
         "$BASE_DIR"
         "$TOOL_DIR"
+        "$LOG_DIR"
     )
 
     ENGAGEMENT_DIRECTORIES=(
