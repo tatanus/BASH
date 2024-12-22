@@ -38,7 +38,7 @@ if [[ -z "${UTILS_FZF_SH_LOADED:-}" ]]; then
         answer=${answer:-Y}
         case $answer in
             [Yy]* )
-                _install_fzf
+                _install_package "fzf"
                 ;;
             [Nn]* )
                 warning "fzf will not be installed. Exiting."
@@ -51,46 +51,4 @@ if [[ -z "${UTILS_FZF_SH_LOADED:-}" ]]; then
         esac
     }
 
-    # Function to install fzf based on the detected operating system
-    function _install_fzf() {
-        info "Installing fzf for $OS_NAME..."
-        case "$OS_NAME" in
-            Linux)
-                if [ -n "$UBUNTU_VER" ]; then
-                    sudo apt update
-                    sudo apt install -y fzf
-                    if [ $? -eq 0 ]; then
-                        success "fzf has been installed successfully on Ubuntu."
-                    else
-                        fail "Failed to install fzf on Ubuntu."
-                        exit $_FAIL
-                    fi
-                else
-                    fail "Unsupported Linux distribution. Please install fzf manually."
-                    exit $_FAIL
-                fi
-                ;;
-            Darwin)
-                if command -v brew &>/dev/null; then
-                    brew install fzf
-                    if [ $? -eq 0 ]; then
-                        success "fzf has been installed successfully on macOS."
-                    else
-                        fail "Failed to install fzf on macOS."
-                        exit $_FAIL
-                    fi
-                else
-                    fail "Homebrew is not installed. Please install Homebrew first and try again."
-                    exit $_FAIL
-                fi
-                ;;
-            CYGWIN*|MINGW*|MSYS*|Windows_NT)
-                fail "Automatic installation for Windows is not supported. Please install fzf manually using Chocolatey, Scoop, or download it from https://github.com/junegunn/fzf."
-                ;;
-            *)
-                fail "Unsupported operating system: $OS_NAME. Please install fzf manually."
-                exit $_FAIL
-                ;;
-        esac
-    }
 fi

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+    #!/usr/bin/env bash
 
 # =============================================================================
 # NAME        : utils.sh
@@ -63,34 +63,36 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
                                          -e "s|$path_to_remove||")
     }
 
-    # Check if a proxy is needed for internet access
+    # Check and set proxy if required
     function _Check_Proxy_Needed() {
-        local test_url="http://example.com"  # URL to test for internet access
-        local timeout=5  # Timeout for curl command
+        local test_url=${1:-"http://google.com"}  # Default test URL
+        local timeout=${2:-5}  # Timeout for connectivity tests
 
-        # Try to fetch the URL without a proxy
-        if curl -s --connect-timeout $timeout "$test_url" > /dev/null; then
-            PROXY=""  # No proxy needed
-            success "No proxy needed."
+        info "Testing connectivity to $test_url..."
+
+        # Test direct connectivity
+        if curl -s --connect-timeout "$timeout" "$test_url" >/dev/null; then
+            PROXY=""
+            success "Direct Internet access available. No proxy needed."
             return $_PASS
-        else
-            # Check if proxychains4 is installed and $PROXY is set
-            if ! command -v proxychains4 > /dev/null 2>&1; then
-                fail "proxychains4 is not installed. Exiting."
-                exit $_FAIL
-            fi
+        fi
 
-            # Try to fetch the URL with proxychains4
-            if proxychains4 -q curl -s --connect-timeout $timeout "$test_url" > /dev/null; then
-                PROXY="proxychains4 -q "  # Proxy needed
-                success "Proxy needed."
+        # Test connectivity via proxychains4
+        if command -v proxychains4 >/dev/null 2>&1; then
+            if proxychains4 -q curl -s --connect-timeout "$timeout" "$test_url" >/dev/null; then
+                PROXY="proxychains4 -q "
+                success "Proxy required. Using proxychains4."
                 return $_PASS
             else
-                PROXY=""  # No proxy or other connectivity issues
-                fail "No proxy exists or other connectivity issues. Exiting."
-                exit $_FAIL
+                fail "Proxychains4 is available but cannot connect to $test_url."
             fi
+        else
+            fail "Direct access failed and proxychains4 is not installed."
         fi
+
+        PROXY=""
+        fail "No Internet access available."
+        return $_FAIL
     }
 
     # Function to check if a variable is in a list
@@ -161,16 +163,44 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         echo "$windows_version"
     }
 
-    _Install_Package() {
-        local package="$1"
-        if [[ "$(uname -s)" == "Darwin" ]]; then
-            brew install "$package"
-        else
-            sudo apt-get install -y "$package"
+    # Generalized package installation function
+    function _install_package() {
+        local package_name="$1"
+
+        if [[ -z "$package_name" ]]; then
+            fail "Package name is required for installation."
+            return $_FAIL
         fi
+
+        info "Installing $package_name for $OS_NAME..."
+
+        case "$OS_NAME" in
+            Linux)
+                if [ -n "$UBUNTU_VER" ]; then
+                    _Apt_Install "$package_name"
+                    return $?
+                else
+                    fail "Unsupported Linux distribution. Please install $package_name manually."
+                    return $_FAIL
+                fi
+                ;;
+            Darwin)
+                _brew_install "$package_name"
+                return $?
+                ;;
+            CYGWIN*|MINGW*|MSYS*|Windows_NT)
+                fail "Automatic installation for $package_name on Windows is not supported. Please install it manually."
+                return $_FAIL
+                ;;
+            *)
+                fail "Unsupported operating system: $OS_NAME. Please install $package_name manually."
+                return $_FAIL
+                ;;
+        esac
     }
 
     source "$SCRIPT_DIR/lib/utils_apt.sh"
+    source "$SCRIPT_DIR/lib/utils_brew.sh"
     source "$SCRIPT_DIR/lib/utils_py.sh"
     source "$SCRIPT_DIR/lib/utils_go.sh"
     source "$SCRIPT_DIR/lib/utils_ruby.sh"
