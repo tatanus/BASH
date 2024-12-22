@@ -16,89 +16,80 @@
 if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
     declare -g BASH_PROMPT_LOADED=true
 
-    # Define colors
-    light_green='\[\e[1;32m\]'
-    light_blue='\[\e[1;36m\]'
-    blue='\[\e[34m\]'
-    light_red='\[\e[1;31m\]'
-    yellow='\[\e[1;33m\]'
-    white='\[\e[1;37m\]'
-    reset='\[\e[0m\]'
+    # =============================================================================
+    # Configuration
+    # =============================================================================
 
-    # VARIABLES for IPs
-    PROMPT_LOCAL_IP=""
-    PROMPT_EXTERNAL_IP=""
+    # Define colors using tput for compatibility across systems
+    light_green=$(tput setaf 2)
+    light_blue=$(tput setaf 6)
+    blue=$(tput setaf 4)
+    light_red=$(tput setaf 1)
+    yellow=$(tput setaf 3)
+    orange=$(tput setaf 214 2>/dev/null || tput setaf 3)  # Fallback to yellow if 214 isn't supported
+    white=$(tput setaf 7)
+    reset=$(tput sgr0)
+
+    # Variables for IPs
+    PROMPT_LOCAL_IP="${PROMPT_LOCAL_IP:-Unavailable}"
+    PROMPT_EXTERNAL_IP="${PROMPT_EXTERNAL_IP:-Unavailable}"
     LAST_IP_CHECK=0
 
-    # Function to assist in displaying the prompt
-    source ~/.bash_prompt_funcs
+    # =============================================================================
+    # Functions
+    # =============================================================================
 
-    function gen_prompt(){
-        # Get the active screen session name, if any
-        session_name=$(get_session_name)
-    #
-    #    # If there's an active session, prepend its name to the last command in history
-    #    if [[ -n "$session_name" ]]; then
-    #        last_command=$(history 1 | sed 's/^[[:space:]]*[0-9]\+[[:space:]]\+//')
-    #        # Write the modified command to the history file
-    #        if [[ -n "$last_command" ]]; then
-    #            # Prepend the session name and write to the history file
-    #            echo "<$session_name> $last_command" >> ~/.history_sessions
-    #        fi
-    #        # Append each command to the history file immediately
-    #        history -a; history -n;
-    #    else
-    #        # Append each command to the history file immediately
-    #        {
-    #            flock 200
-    #            history -a
-    #            history -n
-    #            history | sed 's/^[[:space:]]*[0-9]\+[[:space:]]\+//' > ~/.history_temp
-    #            cat ~/.history_temp ~/.history_all | sort -u -V > ~/.history_all
-    #            rm ~/.history_temp
-    #        } 200>~/.history_all.lock
-    #    fi
+    # Ensure referenced functions are available
+    if [ -f ~/.bash_prompt_funcs ]; then
+        source ~/.bash_prompt_funcs
+    else
+        echo "Warning: ~/.bash_prompt_funcs not found. Some prompt features may be unavailable." >&2
+    fi
 
-        # Define prompt format
+    # Generate the dynamic prompt
+    function gen_prompt() {
+        # Get the active session name
+        session_name=$(get_session_name 2>/dev/null)
+
+        # Construct the prompt
         PS1="\n"
-
         # SCREEN SESSION STATUS
-        PS1+="$(check_session)"
-
+        PS1+="$(check_session 2>/dev/null)"
         # KERBEROS CREDENTIAL CACHE
-        PS1+="$(check_kerb_ccache)"
-
+        PS1+="$(check_kerb_ccache 2>/dev/null)"
         # PYTHON VENV
-        PS1+="$(check_venv)"
-
+        PS1+="$(check_venv 2>/dev/null)"
         # DATE TIME
         PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
-
         # INTERNAL IP
-        PS1+="${white}[${light_blue}$(get_local_ip)${white}]━"
-
+        PS1+="${white}[${light_blue}${PROMPT_LOCAL_IP}${white}]━"
         # EXTERNAL IP
-        #PS1+="${white}[ext:$blue}$(get_external_ip)${white}]━"
-
+        PS1+="${white}[ext${blue}${PROMPT_REMOTE_IP}${white}]━"
         # USER@FQDN
         PS1+="${white}[${light_red}\u@\h${white}]\n"
-
         # PATH
         PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
 
-        # Set the prompt
         export PS1="$PS1"
     }
 
-    PROMPT_COMMAND=gen_prompt
+    # Call update_ip_cache if it's been more than 5 minutes
+    if (( $(date +%s) - LAST_IP_CHECK > 300 )); then
+        update_ip_cache
+    fi
 
-    # Make sure the proper date/time is always shown
+    # Append to PROMPT_COMMAND to avoid overwriting
+    PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }gen_prompt"
+
+    # Preexec setup
     if [ -f ~/.bash-preexec.sh ]; then
         source ~/.bash-preexec.sh
+    else
+        echo "Warning: ~/.bash-preexec.sh not found. Preexec functionality may be unavailable." >&2
     fi
 
     preexec() {
-        date_time_stamp=$(date +"[%D %T]")
+        local date_time_stamp=$(date +"[%D %T]")
         echo
         echo "$date_time_stamp # $1"
         echo

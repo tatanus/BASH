@@ -26,7 +26,7 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
     blue=$(tput setaf 4)
     light_red=$(tput setaf 1)
     yellow=$(tput setaf 3)
-    orange=$(tput setaf 214)  # tput only supports basic colors; use a fallback if 214 isn't supported
+    orange=$(tput setaf 214 2>/dev/null || tput setaf 3)  # Fallback to yellow if 214 isn't supported
     white=$(tput setaf 7)
     reset=$(tput sgr0)
 

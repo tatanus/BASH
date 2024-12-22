@@ -74,16 +74,12 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
         echo -e "$SESSION_STATUS"
     }
 
-    # Function to check if IP should be refreshed
-    function should_refresh_ip() {
-        local current_time=$(date +%s)
-        local time_diff=$((current_time - LAST_IP_CHECK))
 
-        if [ "$time_diff" -ge 900 ] || [ -z "$PROMPT_LOCAL_IP" ] || [ -z "$PROMPT_EXTERNAL_IP" ]; then
-            return 0  # True, should refresh
-        else
-            return 1  # False, no need to refresh
-        fi
+    # Refresh cached IPs periodically
+    function update_ip_cache() {
+        PROMPT_LOCAL_IP=$(get_local_ip 2>/dev/null || echo "Unavailable")
+        PROMPT_EXTERNAL_IP=$(get_external_ip 2>/dev/null || echo "Unavailable")
+        LAST_IP_CHECK=$(date +%s)
     }
 
     function is_dhcp_static() {
@@ -168,42 +164,74 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
 
     # Function to get local IP with caching, excluding certain interfaces
     function get_local_ip() {
-        if should_refresh_ip; then
-            if command -v ip &> /dev/null; then
-                interfaces=$(ip -o addr show | awk '$3 == "inet" && $4 != "127.0.0.1/8" {print $2,$4}')
-            elif command -v ifconfig &> /dev/null; then
-                interfaces=$(ifconfig | awk '/^[a-zA-Z0-9]+:/ { iface=$1; next } /inet / && $2 != "127.0.0.1" { print iface,$2 }' | sed 's/://')
-            else
-                echo "Neither 'ip' nor 'ifconfig' command found."
-                exit 1
+        local interfaces=""
+        # Add any interfaces you want to exclude (e.g., "docker0", "lo")
+        local excluded_interfaces=("lo" "docker0" "virbr0" "vnet*" "tun*" "tap*" "br-*" "ip6tnl0" "sit0")
+        local result=""
+        local iface ip dhcp
+
+
+        # Get network interfaces and their IPs
+        if command -v ip &> /dev/null; then
+            interfaces=$(ip -o addr show | awk '$3 == "inet" && $4 != "127.0.0.1/8" {print $2,$4}')
+        elif command -v ifconfig &> /dev/null; then
+            interfaces=$(ifconfig | awk '/^[a-zA-Z0-9]+:/ { iface=$1; next } /inet / && $2 != "127.0.0.1" { print iface,$2 }' | sed 's/://')
+        else
+            echo "Error: Neither 'ip' nor 'ifconfig' command is available." >&2
+            return 1
+        fi
+
+
+        # Parse and filter interfaces
+        while read -r line; do
+            iface=$(echo "$line" | awk '{print $1}')
+            ip=$(echo "$line" | awk '{print $2}' | cut -d'/' -f1)
+
+            # Skip excluded interfaces
+            if [[ " ${excluded_interfaces[@]} " =~ " ${iface} " ]]; then
+                continue
             fi
 
-            excluded_interfaces=()
-            result=""
-            while read -r line; do
-                iface=$(echo "$line" | awk '{print $1}')
-                ip=$(echo "$line" | awk '{print $2}' | cut -d'/' -f1)
+            # Determine if the interface is using DHCP or static
+            if command -v is_dhcp_static &> /dev/null; then
+                dhcp=$(is_dhcp_static "$iface")
+            else
+                dhcp="unknown"  # Fallback if is_dhcp_static is not defined
+            fi
 
-                # Check if interface should be excluded
-                if [[ ! " ${excluded_interfaces[@]} " =~ " ${iface} " ]]; then
-                    dhcp=$(is_dhcp_static "$iface")
-                    result="${light_blue}$result$iface${yellow}($dhcp)${white}:${blue}$ip${white},"
-                fi
-            done <<< "$interfaces"
+            # Format result with colors
+            result+="${light_blue}${iface}${yellow}(${dhcp})${white}:${blue}${ip}${white}, "
+        done <<< "$interfaces"
 
-            PROMPT_LOCAL_IP="${result%,*}"
-            LAST_IP_CHECK=$(date +%s)
-        fi
+
+        # Remove trailing comma and space
+        PROMPT_LOCAL_IP="${result%, }"
 
         echo "$PROMPT_LOCAL_IP"
     }
 
     # Function to get external IP with caching
     function get_external_ip() {
-        if should_refresh_ip; then
-            PROMPT_EXTERNAL_IP=$($(PROXY) curl -s ifconfig.me/ip)
-            LAST_IP_CHECK=$(date +%s)
+        local proxy_command="${PROXY:-}"  # Use PROXY if defined
+        local external_ip=""
+
+        # Use curl to fetch the external IP
+        if command -v curl &> /dev/null; then
+            external_ip=$(${proxy_command} curl -s --max-time 5 https://ifconfig.me/ip)
+        elif command -v wget &> /dev/null; then
+            external_ip=$(${proxy_command} wget -qO- --timeout=5 https://ifconfig.me/ip)
+        else
+            echo "Error: Neither 'curl' nor 'wget' is available to fetch the external IP." >&2
+            return 1
         fi
+
+        # Validate the fetched IP
+        if [[ -z "$external_ip" || ! "$external_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Failed to retrieve a valid external IP address." >&2
+            return 1
+        fi
+
+        PROMPT_EXTERNAL_IP="$external_ip"
 
         echo "$PROMPT_EXTERNAL_IP"
     }
