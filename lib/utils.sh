@@ -199,14 +199,15 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         esac
     }
 
-    source "$SCRIPT_DIR/lib/utils_apt.sh"
-    source "$SCRIPT_DIR/lib/utils_brew.sh"
-    source "$SCRIPT_DIR/lib/utils_py.sh"
-    source "$SCRIPT_DIR/lib/utils_go.sh"
-    source "$SCRIPT_DIR/lib/utils_ruby.sh"
-    source "$SCRIPT_DIR/lib/utils_git.sh"
-    source "$SCRIPT_DIR/lib/utils_curl.sh"
-    source "$SCRIPT_DIR/lib/utils_fzf.sh"
-    source "$SCRIPT_DIR/lib/utils_tools.sh"
+    # Dynamically source all utils_*.sh files from the lib directory
+    for utils_file in "$SCRIPT_DIR/lib/utils_*.sh"; do
+        if [[ -f "$utils_file" ]]; then
+            source "$utils_file"
+            info "Sourced: $utils_file"
+        else
+            fail "No matching files to source in $SCRIPT_DIR/lib/"
+            exit 1
+        fi
+    done
 
 fi
