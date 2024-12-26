@@ -114,7 +114,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
     # Function to install Python 3
     function _Install_Python3() {
-        _Pushd "$TOOL_DIR" || { fail "Failed to change directory to $TOOL_DIR."; return $_FAIL; }
+        _Pushd "$TOOLS_DIR" || { fail "Failed to change directory to $TOOLS_DIR."; return $_FAIL; }
 
         UBUNTU_VER=$(_Get_Ubuntu_Version)
 
@@ -171,7 +171,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             cd "Python-$LATEST_VER" || { fail "Failed to change directory to Python-$LATEST_VER."; _Popd; return $_FAIL; }
             if ! ./configure --enable-optimizations; then
                 fail "Configuration of Python $LATEST_VER failed."
-                cd "$TOOL_DIR" || return $_FAIL
+                cd "$TOOLS_DIR" || return $_FAIL
                 rm -rf "Python-$LATEST_VER" "Python-$LATEST_VER.tgz"
                 _Popd
                 return $_FAIL
@@ -179,7 +179,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
             if ! make -j $(nproc); then
                 fail "Build of Python $LATEST_VER failed."
-                cd "$TOOL_DIR" || return $_FAIL
+                cd "$TOOLS_DIR" || return $_FAIL
                 rm -rf "Python-$LATEST_VER" "Python-$LATEST_VER.tgz"
                 _Popd
                 return $_FAIL
@@ -187,13 +187,13 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
             if ! make altinstall; then
                 fail "Installation of Python $LATEST_VER failed."
-                cd "$TOOL_DIR" || return $_FAIL
+                cd "$TOOLS_DIR" || return $_FAIL
                 rm -rf "Python-$LATEST_VER" "Python-$LATEST_VER.tgz"
                 _Popd
                 return $_FAIL
             fi
 
-            cd "$TOOL_DIR" || return $_FAIL
+            cd "$TOOLS_DIR" || return $_FAIL
             rm -rf "Python-$LATEST_VER" "Python-$LATEST_VER.tgz"
             success "Python $LATEST_VER installed successfully."
         fi

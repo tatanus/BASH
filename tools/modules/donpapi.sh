@@ -14,7 +14,7 @@
 
 function install_donpapi() {
     _Git_Clone https://github.com/login-securite/DonPAPI.git
-    _Pushd $TOOL_DIR/DonPAPI
+    _Pushd $TOOLS_DIR/DonPAPI
     _Pipx_Install .
     _Popd
 }

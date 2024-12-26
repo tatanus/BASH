@@ -1,4 +1,4 @@
-    #!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # =============================================================================
 # NAME        : utils.sh
@@ -200,7 +200,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
     }
 
     # Dynamically source all utils_*.sh files from the lib directory
-    for utils_file in "$SCRIPT_DIR/lib/utils_*.sh"; do
+    for utils_file in "$SCRIPT_DIR"/lib/utils_*.sh; do
         if [[ -f "$utils_file" ]]; then
             source "$utils_file"
             info "Sourced: $utils_file"

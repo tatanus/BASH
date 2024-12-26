@@ -82,7 +82,7 @@ if [[ -z "${TMUX_ALIAS_LOADED:-}" ]]; then
     # Create a tmux session with logging
     function tmuxS() {
         local session_name="$1"
-        local log_file="/root/DATA/LOGS/$session_name.tmux"
+        local log_file="$LOGS_DIR/$session_name.tmux"
 
         if does_tmux_session_exist "$session_name"; then
             tmux attach -t "$session_name"

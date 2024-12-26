@@ -18,61 +18,47 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## DIRECTORIES
     REQUIRED_DIRECTORIES=(
-        "$BASE_DIR"
-        "$TOOL_DIR"
-        "$LOG_DIR"
+        "$DATA_DIR"
+        "$TOOLS_DIR"
+        "$LOGS_DIR"
     )
 
-    ENGAGEMENT_DIRECTORIES=(
-        "$BASE_DIR/ADCS"
-        "$BASE_DIR/BACKUP"
-        "$BASE_DIR/BACKUP/CME"
-        "$BASE_DIR/BACKUP/MSF"
-        "$BASE_DIR/BACKUP/NXC"
-        "$BASE_DIR/CISCO"
-        "$BASE_DIR/CISCO/PHONES"
-        "$BASE_DIR/CISCO/SIET"
-        "$BASE_DIR/COERCION"
-        "$BASE_DIR/CREDS"
-        "$BASE_DIR/CREDS/KERBEROAST"
-        "$BASE_DIR/CREDS/KERBRUTE"
-        "$BASE_DIR/CREDS/PRE2K"
-        "$BASE_DIR/CREDS/TIMEROAST"
-        "$BASE_DIR/JAVA"
-        "$BASE_DIR/LDAP"
-        "$BASE_DIR/LDAP/BLOODHOUND"
-        "$BASE_DIR/LOGS"
-        "$BASE_DIR/MITM"
-        "$BASE_DIR/MITM/BETTERCAP"
-        "$BASE_DIR/MITM/MITM6"
-        "$BASE_DIR/MITM/PCREDS"
-        "$BASE_DIR/MITM/PRETENDER"
-        "$BASE_DIR/MITM/RESPONDER"
-        "$BASE_DIR/MSF"
-        "$BASE_DIR/NMAP"
-        "$BASE_DIR/NMAP/SCANS"
-        "$BASE_DIR/RECON"
-        "$BASE_DIR/SHARES"
-        "$BASE_DIR/SHARES/NFS"
-        "$BASE_DIR/SHARES/NFS/FILES"
-        "$BASE_DIR/SHARES/NFS/mnt"
-        "$BASE_DIR/SHARES/SMB"
-        "$BASE_DIR/SHARES/SMB/FILES"
-        "$BASE_DIR/SHARES/SMB/mnt"
-        "$BASE_DIR/SMB"
-        "$BASE_DIR/SMB/CME"
-        "$BASE_DIR/SMB/E4L"
-        "$BASE_DIR/SMB/KERBEROAST"
-        "$BASE_DIR/SMB/KERBRUTE"
-        "$BASE_DIR/SMB/NXC"
-        "$BASE_DIR/TEE"
-        "$BASE_DIR/TOOLS"
-        "$BASE_DIR/WEB"
+    # List of directories
+    REQUIRED_DIRECTORIES=(
+        "$DATA_DIR/CONFIG"
+        "$DATA_DIR/TOOLS"
+        "$DATA_DIR/TOOLS/SCRIPTS"
+        "$DATA_DIR/LOGS"
+        "$DATA_DIR/BACKUP"
+        "$DATA_DIR/OUTPUT/RAW"
+        "$DATA_DIR/OUTPUT/PROCESSED"
+        "$DATA_DIR/LOOT/CREDENTIALS"
+        "$DATA_DIR/LOOT/CREDENTIALS/CCACHE"
+        "$DATA_DIR/LOOT/SCREENSHOTS"
+        "$DATA_DIR/LOOT/FILES"
+        "$DATA_DIR/TASKS/PCAP"
+        "$DATA_DIR/TASKS/RECON/NMAP"
+        "$DATA_DIR/TASKS/RECON/SPOONMAP"
+        "$DATA_DIR/TASKS/RECON/SHARES"
+        "$DATA_DIR/TASKS/MITM/BETTERCAP"
+        "$DATA_DIR/TASKS/MITM/MITM6"
+        "$DATA_DIR/TASKS/MITM/RESPONDER"
+        "$DATA_DIR/TASKS/ADCS"
+        "$DATA_DIR/TASKS/COERCION"
+        "$DATA_DIR/TASKS/LDAP"
+        "$DATA_DIR/TASKS/WEB"
+        "$DATA_DIR/TASKS/SMB/NXC"
+        "$DATA_DIR/TASKS/SMB/E4L"
+        "$DATA_DIR/TASKS/SMB/KERBEROAST"
+        "$DATA_DIR/TASKS/CISCO/PHONES"
+        "$DATA_DIR/TASKS/CISCO/SIET"
+        "$DATA_DIR/TASKS/BLOODHOUND"
+        "$DATA_DIR/TASKS/VULN_SCAN/MSF"
     )
 
     NECESSARY_ENGAGEMENT_FILES=(
-        "$BASE_DIR/targets.txt"
-        "$BASE_DIR/excludes.txt"
+        "$DATA_DIR/targets.txt"
+        "$DATA_DIR/excludes.txt"
     )
 
     ## DOT FILES
@@ -104,11 +90,11 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Define the list of configuration files to copy
     TOOL_CONFIG_FILES=(
-        "tools/config/msf.config:$MY_HOME/.msf4/config"
-        "tools/config/cme.conf:$MY_HOME/.cme/cme.conf"
-        "tools/config/nxc.conf:$MY_HOME/.nxc/nxc.conf"
-        "tools/config/Responder.conf:$TOOL_DIR/Responder/Responder.conf"
-        "tools/config/spoonmap.config.json:$TOOL_DIR/spoonmap/config.json"
+        "tools/config/msf.config:$HOME/.msf4/config"
+        "tools/config/cme.conf:$HOME/.cme/cme.conf"
+        "tools/config/nxc.conf:$HOME/.nxc/nxc.conf"
+        "tools/config/Responder.conf:$TOOLS_DIR/Responder/Responder.conf"
+        "tools/config/spoonmap.config.json:$TOOLS_DIR/spoonmap/config.json"
     )
 
     ## APT-GET PACKAGES
@@ -317,10 +303,11 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Array for FullSetup tasks
     SETUP_MENU_ITEMS=(
-        "Setup_Environment"
+        "Setup Environment"
         "Edit Config Files"
-        "Install_Tools"
-        "Test_Tool_Installs"
+        "Install Tools"
+        "Test Tool Installs"
+        "Pentest Menu"
     )
 
     CONFIG_MENU_ITEMS=(
@@ -344,4 +331,30 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         # INSTALL RUBY GEMS
         "_Install_Ruby_Gems"
     )
+
+#    PENTEST_MENU_ITEMS=(
+#        "run_recon.sh"
+#        "run_get_dns.sh"
+#        "run_dehashed.sh"
+#        "run_pre2k_unauth.sh"
+#
+#        "run_spoonmap.sh"
+#        "parse_spoonmap.sh"
+#        "find_spoonmap_exploits.sh"
+#
+#        "run_udp_nmap.sh"
+#        "run_nfs_scan.sh"
+#        "run_smb.sh"
+#        "run_defaultcreds.sh"
+#        "run_ciscophones.sh"
+#
+#        "run_aquatone.sh"
+#        "run_gowitness.sh"
+#        "run_httpx.sh"
+#        "run_nuclei.sh"
+#        "run_gobuster.sh"
+#
+#        "run_msf_scripts.sh"
+#        "run_jexboss.sh"
+#    )
 fi

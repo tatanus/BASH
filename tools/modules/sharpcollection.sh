@@ -19,7 +19,7 @@ function install_sharpcollection() {
 # Test function for sharpcollection
 function test_sharpcollection() {
     local TOOL_NAME="sharpcollection"
-    local TOOL_COMMAND="ls $TOOL_DIR/SharpCollection"
+    local TOOL_COMMAND="ls $TOOLS_DIR/SharpCollection"
     AppTest "$TOOL_NAME" "$TOOL_COMMAND"
     local status=$?
 

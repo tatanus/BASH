@@ -14,13 +14,13 @@
 
 function install_responder() {
     _Git_Clone https://github.com/lgandx/Responder.git
-    _Pushd $TOOL_DIR/Responder
+    _Pushd $TOOLS_DIR/Responder
     chmod +x Responder.py
     chmod +x DumpHash.py
     chmod +x Report.py
     _Popd
 
-    _Add_Alias "function Responder { (cd $TOOL_DIR/Responder && $PYTHON $TOOL_DIR/Responder/Responder.py \"\$@\") }"
+    _Add_Alias "function Responder { (cd $TOOLS_DIR/Responder && $PYTHON $TOOLS_DIR/Responder/Responder.py \"\$@\") }"
 }
 
 # Test function for responder

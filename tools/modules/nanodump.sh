@@ -14,7 +14,7 @@
 
 function install_nanodump() {
     _Git_Clone https://github.com/fortra/nanodump.git
-    _Pushd "$TOOL_DIR/nanodump"
+    _Pushd "$TOOLS_DIR/nanodump"
     make -f Makefile.mingw
     _Popd
 }
@@ -22,7 +22,7 @@ function install_nanodump() {
 # Test function for nanodump
 function test_nanodump() {
     local TOOL_NAME="nanodump"
-    local TOOL_COMMAND="ls $TOOL_DIR/nanodump/dist"
+    local TOOL_COMMAND="ls $TOOLS_DIR/nanodump/dist"
     AppTest "$TOOL_NAME" "$TOOL_COMMAND"
     local status=$?
 

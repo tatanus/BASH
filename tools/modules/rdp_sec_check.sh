@@ -17,8 +17,8 @@ function install_rdp_sec_check() {
     export PERL_MM_USE_DEFAULT=1
     $PROXY perl -MCPAN -e 'install Encoding::BER'
 
-    _Add_Alias "alias rdp-sec-check.pl='$TOOL_DIR/rdp-sec-check/rdp-sec-check.pl'"
-    _Add_Alias "alias rdp-sec-check='$TOOL_DIR/rdp-sec-check/rdp-sec-check.pl'"
+    _Add_Alias "alias rdp-sec-check.pl='$TOOLS_DIR/rdp-sec-check/rdp-sec-check.pl'"
+    _Add_Alias "alias rdp-sec-check='$TOOLS_DIR/rdp-sec-check/rdp-sec-check.pl'"
 }
 
 # Test function for rdp_sec_check

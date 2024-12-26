@@ -78,33 +78,48 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
 
         # Write to log file
         echo "$log_entry" >> "$LOG_FILE"
+
+        # Automatically call debug if DEBUG is true, but avoid infinite loop
+        if [[ "${DEBUG:-false}" == true && "$type" != "debug" ]]; then
+            # Capture the caller stack info from log_message
+            local caller_info
+            caller_info=$(caller 1) # Get the caller of log_message
+            debug "$message" "$context" "$caller_info"
+        fi
     }
 
     # Wrapper functions for each log type
     function info()    { log_message "info" "$1" "$2"; }
     function success() { log_message "success" "$1" "$2"; }
-    function pass() { log_message "success" "$1" "$2"; }
+    function pass()    { log_message "success" "$1" "$2"; }
     function warning() { log_message "warning" "$1" "$2"; }
-    function warn() { log_message "warning" "$1" "$2"; }
+    function warn()    { log_message "warning" "$1" "$2"; }
     function fail()    { log_message "fail" "$1" "$2"; }
 
     # Debug function with caller information
     # $1: Debug message
     # $2: Context (optional)
+    # $3: Caller information (optional)
     function debug() {
         local message="$1"
         local context="${2:-General}"
+        local caller_info="${3:-$(caller 0)}"
 
-        # Capture caller information
-        local caller_info
-        caller_info=$(caller 0)
+        # Parse caller information
         local line_number
         local function_name
         local file_name
         read -r line_number function_name file_name <<< "$(echo "$caller_info" | awk '{print $1, $2, $3}')"
 
         # Include detailed debug information
-        local debug_message=" CALLER:$file_name:$line_number ($function_name) - $message"
+        local debug_message="CALLER: $file_name:$line_number ($function_name) - $message"
         log_message "debug" "$debug_message" "$context"
+    }
+
+    function _Pause() { 
+        echo
+        echo "-----------------------------------"
+        read -n 1 -s -r -p "Press any key to continue..."
+        echo  # Move to the next line after key press
     }
 fi

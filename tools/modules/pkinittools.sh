@@ -24,8 +24,8 @@ function install_pkinittools() {
 
     _Del_Alias "gettgtpkinit"
     _Del_Alias "gettgtpkinit.py"
-    _Add_Alias "alias gettgtpkinit='$TOOL_DIR/PKINITtools/venv/bin/$PYTHON $TOOL_DIR/PKINITtools/gettgtpkinit.py'"
-    _Add_Alias "alias gettgtpkinit.py='$TOOL_DIR/PKINITtools/venv/bin/$PYTHON $TOOL_DIR/PKINITtools/gettgtpkinit.py'"
+    _Add_Alias "alias gettgtpkinit='$TOOLS_DIR/PKINITtools/venv/bin/$PYTHON $TOOLS_DIR/PKINITtools/gettgtpkinit.py'"
+    _Add_Alias "alias gettgtpkinit.py='$TOOLS_DIR/PKINITtools/venv/bin/$PYTHON $TOOLS_DIR/PKINITtools/gettgtpkinit.py'"
 }
 
 # Test function for pkinittools

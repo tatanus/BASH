@@ -41,9 +41,9 @@ if $ERROR_FLAG; then
     echo "  - Ensure you are using Bash version 4.0 or higher."
     echo "  - Ensure you are running this script as root."
     echo
-    echo "Press any key to exit..."
-    read -n 1 -s  # Wait for user to press any key
-    echo  # Move to the next line
+    echo "-----------------------------------"
+    read -n 1 -s -r -p "Press any key to continue..."
+    echo  # Move to the next line after key press
     #exit 1  # Exit with a failure status code
 fi
 
@@ -55,27 +55,25 @@ echo "[+ PASS  ] All checks passed. Continuing script execution."
 # -----------------------------------------------------------------------------
 
 # Check if the HOME environment variable is set
-# This determines the home directory of the current user and exports it as MY_HOME.
 if [[ -n "$HOME" ]]; then
     # If HOME is set, use it
-    export MY_HOME="$HOME"
-    echo "[* INFO  ] HOME environment variable is set. Using HOME as MY_HOME: $MY_HOME"
+    echo "[* INFO  ] HOME environment variable is set. Using HOME: $HOME"
 elif command -v getent > /dev/null 2>&1; then
     # If getent is available, use it to retrieve the home directory
-    export MY_HOME=$(getent passwd "$(whoami)" | cut -d: -f6)
-    if [[ -n "$MY_HOME" ]]; then
-        echo "[* INFO  ] Using getent to determine MY_HOME: $MY_HOME"
+    export HOME=$(getent passwd "$(whoami)" | cut -d: -f6)
+    if [[ -n "$HOME" ]]; then
+        echo "[* INFO  ] Using getent to determine HOME: $HOME"
     else
-        echo "[- FAIL  ] Failed to determine MY_HOME using getent."
+        echo "[- FAIL  ] Failed to determine HOME using getent."
         exit 1
     fi
 else
     # Fallback: Use eval to get the home directory
-    export MY_HOME=$(eval echo ~)
-    if [[ -n "$MY_HOME" ]]; then
-        echo "[! WARN  ] HOME and getent are unavailable. Using fallback with eval: MY_HOME=$MY_HOME"
+    export HOME=$(eval echo ~)
+    if [[ -n "$HOME" ]]; then
+        echo "[! WARN  ] HOME and getent are unavailable. Using fallback with eval: HOME=$HOME"
     else
-        fail "[- FAIL  ] Failed to determine MY_HOME. Unable to proceed."
+        fail "[- FAIL  ] Failed to determine HOME. Unable to proceed."
         exit $_FAIL
     fi
 fi
@@ -283,7 +281,7 @@ function Setup_Dot_Files() {
     fi
 
     for file in "${DOT_FILES[@]}"; do
-        local target="${MY_HOME}/.${file}"
+        local target="${HOME}/.${file}"
         local source="dot/${file}"
 
         # Backup existing file if it exists
@@ -305,11 +303,11 @@ function Setup_Dot_Files() {
     done
 
     # Source the new bashrc
-    if source "${MY_HOME}/.bashrc"; then
-        success "Sourced new ${MY_HOME}/.bashrc."
+    if source "${HOME}/.bashrc"; then
+        success "Sourced new ${HOME}/.bashrc."
         return $_PASS
     else
-        fail "Failed to source ${MY_HOME}/.bashrc."
+        fail "Failed to source ${HOME}/.bashrc."
         return $_FAIL
     fi
 }
@@ -325,20 +323,20 @@ function Setup_Cron_Jobs() {
     fi
 
     # Copy the renew.tgt.sh script
-    if cp dot/renew_tgt.sh "${MY_HOME}/.renew_tgt.sh"; then
-        chmod +x "${MY_HOME}/.renew_tgt.sh"
-        success "Copied and set executable permissions for ${MY_HOME}/.renew_tgt.sh."
+    if cp dot/renew_tgt.sh "${HOME}/.renew_tgt.sh"; then
+        chmod +x "${HOME}/.renew_tgt.sh"
+        success "Copied and set executable permissions for ${HOME}/.renew_tgt.sh."
     else
-        fail "Failed to copy ${MY_HOME}/.renew_tgt.sh."
+        fail "Failed to copy ${HOME}/.renew_tgt.sh."
         return $_FAIL
     fi
 
     # Create or update the cron job
-    if (crontab -l 2>/dev/null | grep -v "${MY_HOME}/.renew_tgt.sh"; echo "0 */8 * * * ${MY_HOME}/.renew_tgt.sh >> ${MY_HOME}/renew_tgt.log 2>&1") | crontab -; then
-        success "Cron job for ${MY_HOME}/.renew_tgt.sh created or updated."
+    if (crontab -l 2>/dev/null | grep -v "${HOME}/.renew_tgt.sh"; echo "0 */8 * * * ${HOME}/.renew_tgt.sh >> ${HOME}/renew_tgt.log 2>&1") | crontab -; then
+        success "Cron job for ${HOME}/.renew_tgt.sh created or updated."
         return $_PASS
     else
-        fail "Failed to create or update the Cron job for ${MY_HOME}/.renew_tgt.sh."
+        fail "Failed to create or update the Cron job for ${HOME}/.renew_tgt.sh."
         return $_FAIL
     fi
 }
@@ -374,20 +372,20 @@ function Setup_Msf_Scripts() {
     fi
     
     # Ensure the target directory exists
-    if [[ ! -d "$BASE_DIR/MSF" ]]; then
-        mkdir -p "$BASE_DIR/MSF" || {
-            fail "Failed to create target directory $BASE_DIR/MSF."
+    if [[ ! -d "$DATA_DIR/MSF" ]]; then
+        mkdir -p "$DATA_DIR/MSF" || {
+            fail "Failed to create target directory $DATA_DIR/MSF."
         return $_FAIL
         }
-        success "Created target directory $BASE_DIR/MSF."
+        success "Created target directory $DATA_DIR/MSF."
     fi
 
     # Copy MSF RC files
-    if cp tools/extra/msf/*.rc "$BASE_DIR/MSF/"; then
-        success "Copied MSF RC files to $BASE_DIR/MSF/"
+    if cp tools/extra/msf/*.rc "$DATA_DIR/MSF/"; then
+        success "Copied MSF RC files to $DATA_DIR/MSF/"
         return $_PASS
     else
-        fail "Failed to copy MSF RC files to $BASE_DIR/MSF/"
+        fail "Failed to copy MSF RC files to $DATA_DIR/MSF/"
         return $_FAIL
     fi
 }
@@ -404,11 +402,11 @@ function Setup_Support_Scripts() {
 
     # Ensure the source directory exists
     # Copy support scripts
-    if cp tools/extra/scripts/* "$BASE_DIR/"; then
-        success "Copied support scripts to $BASE_DIR/"
+    if cp tools/extra/scripts/* "$DATA_DIR/TOOLS/SCRIPTS/"; then
+        success "Copied support scripts to $DATA_DIR/TOOLS/SCRIPTS"
         return $_PASS
     else
-        fail "Failed to copy support scripts to $BASE_DIR/"
+        fail "Failed to copy support scripts to $DATA_DIR/TOOLS/SCRIPTS"
         return $_FAIL
     fi
 }
@@ -466,7 +464,7 @@ function Fix_Dns() {
 # Function to install Impacket
 # This function installs Python dependencies for the Impacket tool.
 function Install_Impacket() {
-    _Pushd "$TOOL_DIR/impacket"
+    _Pushd "$TOOLS_DIR/impacket"
 
     if _Pip_Install "." ; then
         success "Installed pip packages for impacket."
@@ -488,10 +486,10 @@ function _Install_Inhouse_Tools() {
 
     # Move autoTGT tool
     if [ -d "$src_dir/autoTGT" ]; then
-        if mv "$src_dir/autoTGT" "$TOOL_DIR/"; then
-            success "Moved autoTGT to $TOOL_DIR/"
+        if mv "$src_dir/autoTGT" "$TOOLS_DIR/"; then
+            success "Moved autoTGT to $TOOLS_DIR/"
         else
-            fail "Failed to move autoTGT to $TOOL_DIR/"
+            fail "Failed to move autoTGT to $TOOLS_DIR/"
         fi
     else
         fail "Source directory [$src_dir/autoTGT] does not exist. Skipping."
@@ -499,11 +497,11 @@ function _Install_Inhouse_Tools() {
 
     # Move and set up Impacket tool
     if [ -d "$src_dir/impacket" ]; then
-        if mv "$src_dir/impacket" "$TOOL_DIR/"; then
-            success "Moved impacket to $TOOL_DIR/"
+        if mv "$src_dir/impacket" "$TOOLS_DIR/"; then
+            success "Moved impacket to $TOOLS_DIR/"
             Install_Impacket
         else
-            fail "Failed to move impacket to $TOOL_DIR/"
+            fail "Failed to move impacket to $TOOLS_DIR/"
         fi
     else
         fail "Source directory [$src_dir/impacket] does not exist. Skipping."
@@ -511,10 +509,10 @@ function _Install_Inhouse_Tools() {
 
     # Move packedcollection tool
     if [ -d "$src_dir/packedcollection" ]; then
-        if mv "$src_dir/packedcollection" "$TOOL_DIR/"; then
-            success "Moved packedcollection to $TOOL_DIR/"
+        if mv "$src_dir/packedcollection" "$TOOLS_DIR/"; then
+            success "Moved packedcollection to $TOOLS_DIR/"
         else
-            fail "Failed to move packedcollection to $TOOL_DIR/"
+            fail "Failed to move packedcollection to $TOOLS_DIR/"
         fi
     else
         fail "Source directory [$src_dir/packedcollection] does not exist. Skipping."
@@ -522,10 +520,10 @@ function _Install_Inhouse_Tools() {
 
     # Move precompiled-offensive-bins tool
     if [ -d "$src_dir/precompiled-offensive-bins" ]; then
-        if mv "$src_dir/precompiled-offensive-bins" "$TOOL_DIR/"; then
-            success "Moved precompiled-offensive-bins to $TOOL_DIR/"
+        if mv "$src_dir/precompiled-offensive-bins" "$TOOLS_DIR/"; then
+            success "Moved precompiled-offensive-bins to $TOOLS_DIR/"
         else
-            fail "Failed to move precompiled-offensive-bins to $TOOL_DIR/"
+            fail "Failed to move precompiled-offensive-bins to $TOOLS_DIR/"
         fi
     else
         fail "Source directory [$src_dir/precompiled-offensive-bins] does not exist. Skipping."
@@ -533,10 +531,10 @@ function _Install_Inhouse_Tools() {
 
     # Move orpheus tool
     if [ -d "$src_dir/orpheus" ]; then
-        if mv "$src_dir/orpheus" "$TOOL_DIR/"; then
-            success "Moved orpheus to $TOOL_DIR/"
+        if mv "$src_dir/orpheus" "$TOOLS_DIR/"; then
+            success "Moved orpheus to $TOOLS_DIR/"
         else
-            fail "Failed to move orpheus to $TOOL_DIR/"
+            fail "Failed to move orpheus to $TOOLS_DIR/"
         fi
     else
         fail "Source directory [$src_dir/orpheus] does not exist. Skipping."
@@ -669,11 +667,11 @@ function _Process_Start_Menu() {
     fi
 
     # Process choices
-    if [ "$choice" == "Setup_Environment" ]; then
+    if [ "$choice" == "Setup Environment" ]; then
         _Display_Menu "ENVIRONMENT SETUP" "_Exec_Function" "${ENVIRONMENT_MENU_ITEMS[@]}"
     elif [ "$choice" == "Edit Config Files" ]; then
         _Display_Menu "Configuration Menu" "_Process_Config_Menu" "${CONFIG_MENU_ITEMS[@]}"
-    elif [ "$choice" == "Install_Tools" ]; then
+    elif [ "$choice" == "Install Tools" ]; then
         TOOL_MENU_ITEMS=("${INSTALL_TOOLS_MENU_ITEMS[@]}")
         MODULES_DIR="tools/modules"
 
@@ -690,8 +688,10 @@ function _Process_Start_Menu() {
         fi
 
         _Display_Menu "TOOL INSTALLATION MENU" "_Process_Tool_Install_Menu" "${TOOL_MENU_ITEMS[@]}"
-    elif [ "$choice" == "Test_Tool_Installs" ]; then
+    elif [ "$choice" == "Test Tool Installs" ]; then
         _Test_Tool_Installs
+    elif [ "$choice" == "Pentest Menu" ]; then
+        _Pentest_Menu
     else
         warn "Invalid option: $choice" # Log warning for invalid start menu option
     fi

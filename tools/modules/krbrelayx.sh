@@ -25,8 +25,8 @@ function install_krbrelayx() {
     # Add additional aliases
     _Del_Alias "dnstool.py"
     _Del_Alias "dnstool"
-    _Add_Alias "alias dnstool.py='$TOOL_DIR/krbrelayx/venv/bin/$PYTHON $TOOL_DIR/krbrelayx/dnstool.py'"
-    _Add_Alias "alias dnstool='$TOOL_DIR/krbrelayx/venv/bin/$PYTHON $TOOL_DIR/krbrelayx/dnstool.py'"
+    _Add_Alias "alias dnstool.py='$TOOLS_DIR/krbrelayx/venv/bin/$PYTHON $TOOLS_DIR/krbrelayx/dnstool.py'"
+    _Add_Alias "alias dnstool='$TOOLS_DIR/krbrelayx/venv/bin/$PYTHON $TOOLS_DIR/krbrelayx/dnstool.py'"
 }
 
 # Test function for krbrelayx

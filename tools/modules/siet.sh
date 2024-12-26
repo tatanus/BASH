@@ -15,7 +15,7 @@
 function install_siet() {
     _Git_Clone https://github.com/Sab0tag3d/SIET.git
 
-    _Add_Alias "function siet { (cd $TOOL_DIR/SIET && python2.7 $TOOL_DIR/SIET/siet.py \"\$@\") }"
+    _Add_Alias "function siet { (cd $TOOLS_DIR/SIET && python2.7 $TOOLS_DIR/SIET/siet.py \"\$@\") }"
 }
 
 # Test function for siet

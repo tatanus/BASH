@@ -14,11 +14,11 @@
 
 function install_pretender() {
     _Git_Clone https://github.com/RedTeamPentesting/pretender.git
-    _Pushd $TOOL_DIR/pretender
+    _Pushd $TOOLS_DIR/pretender
     go build
     _Popd
 
-    _Add_Alias "alias pretender='$TOOL_DIR/pretender/pretender'"
+    _Add_Alias "alias pretender='$TOOLS_DIR/pretender/pretender'"
 }
 
 # Test function for pretender

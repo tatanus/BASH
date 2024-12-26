@@ -14,7 +14,7 @@
 
 function install_webclientservicesscanner() {
     _Git_Clone https://github.com/Hackndo/WebclientServiceScanner.git
-    _Pushd $TOOL_DIR/WebclientServiceScanner
+    _Pushd $TOOLS_DIR/WebclientServiceScanner
     _PipInstall "."
     _Popd
 }

@@ -33,9 +33,9 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     export INTERACTIVE_MENU=false
 
     # Directories
-    export BASE_DIR="$MY_HOME/DATA"
-    export TOOL_DIR="$BASE_DIR/TOOLS"
-    export LOG_DIR="$BASE_DIR/LOGS"
+    export DATA_DIR="$HOME/DATA"
+    export TOOLS_DIR="$DATA_DIR/TOOLS"
+    export LOGS_DIR="$DATA_DIR/LOGS"
 
     export PENTEST_DIR="$HOME/.pentest"
 
@@ -45,8 +45,7 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     export ALIAS_FILE="$PENTEST_DIR/pentest.alias"
     export KEYS_FILE="$PENTEST_DIR/pentest.keys"
 
-    #export LOG_FILE="$PENTEST_DIR/pentest.log"
-    export LOG_FILE="$PENTEST_DIR/install.log"
+    export LOG_FILE="$PENTEST_DIR/log.log"
 
     export MENU_TIMESTAMP_FILE="$PENTEST_DIR/menu_timestamps"
     export MENU_FILE="$SCRIPT_DIR/lib/menu.sh"

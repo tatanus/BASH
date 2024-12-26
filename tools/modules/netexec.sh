@@ -14,7 +14,7 @@
 
 function install_netexec() {
     _Git_Clone https://github.com/Pennyw0rth/NetExec.git
-    _Pushd $TOOL_DIR/NetExec
+    _Pushd $TOOLS_DIR/NetExec
     _Pipx_Install .
     _Popd
 }

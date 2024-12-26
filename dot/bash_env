@@ -29,6 +29,7 @@ if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
     export LS_COLORS="di=34:ln=35:so=32:pi=33:ex=31:bd=34:cd=34:su=0;41:sg=0;46:tw=0;42:ow=33"
 
     # Apply LS_COLORS to the environment
+    alias dircolors="gdircolors"
     eval $(dircolors -b)
 
     # If you want to use LS_COLORS in completion (for example, with GNU Readline):

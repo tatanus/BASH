@@ -39,11 +39,11 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
     # Alias to run 'wget' with the '-c' option to resume interrupted downloads
     alias wget='wget -c'
 
-    function pause() {
+    function _Pause() { 
         echo
         echo "-----------------------------------"
-        echo
         read -n 1 -s -r -p "Press any key to continue..."
+        echo  # Move to the next line after key press
     }
 
     # Function to display the current session name (TMUX or SCREEN)

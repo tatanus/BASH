@@ -24,8 +24,8 @@ function install_ek47() {
 
     _Del_Alias "ek47.py"
     _Del_Alias "ek47"
-    _Add_Alias "function ek47.py { (cd $TOOL_DIR/ek47 && $TOOL_DIR/ek47/venv/bin/$PYTHON $TOOL_DIR/ek47/ek47.py) }"
-    _Add_Alias "function ek47 { (cd $TOOL_DIR/ek47 && $TOOL_DIR/ek47/venv/bin/$PYTHON $TOOL_DIR/ek47/ek47.py) }"
+    _Add_Alias "function ek47.py { (cd $TOOLS_DIR/ek47 && $TOOLS_DIR/ek47/venv/bin/$PYTHON $TOOLS_DIR/ek47/ek47.py) }"
+    _Add_Alias "function ek47 { (cd $TOOLS_DIR/ek47 && $TOOLS_DIR/ek47/venv/bin/$PYTHON $TOOLS_DIR/ek47/ek47.py) }"
 }
 
 # Test function for ek47

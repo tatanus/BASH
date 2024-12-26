@@ -28,22 +28,22 @@ function install_aquatone() {
     rm /tmp/google-chrome-stable_current_amd64.deb
 
     # Create directory for Aquatone
-    mkdir -p "$TOOL_DIR/aquatone"
+    mkdir -p "$TOOLS_DIR/aquatone"
 
     # Download and install Aquatone
-    if _Git_Release "michenriksen/aquatone" "linux_amd64" "$TOOL_DIR/aquatone"; then
-        if ! unzip "$TOOL_DIR/aquatone/aquatone_linux_amd64_*.zip" -d "$TOOL_DIR/aquatone/"; then
+    if _Git_Release "michenriksen/aquatone" "linux_amd64" "$TOOLS_DIR/aquatone"; then
+        if ! unzip "$TOOLS_DIR/aquatone/aquatone_linux_amd64_*.zip" -d "$TOOLS_DIR/aquatone/"; then
             fail "Failed to unzip Aquatone package."
             return $_FAIL
         fi
-        rm "$TOOL_DIR/aquatone/aquatone_linux_amd64_*.zip"
+        rm "$TOOLS_DIR/aquatone/aquatone_linux_amd64_*.zip"
     else
         fail "Failed to download Aquatone release."
         return $_FAIL
     fi
 
     # Add alias for Aquatone
-    _Add_Alias "alias aquatone='$TOOL_DIR/aquatone/aquatone'"
+    _Add_Alias "alias aquatone='$TOOLS_DIR/aquatone/aquatone'"
     success "Aquatone installed and alias added successfully."
 }
 

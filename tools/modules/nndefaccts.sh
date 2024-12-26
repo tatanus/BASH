@@ -19,7 +19,7 @@ function install_nndefaccts() {
 # Test function for nndefaccts
 function test_nndefaccts() {
     local TOOL_NAME="nndefaccts"
-    local TOOL_COMMAND="ls $TOOL_DIR/nndefaccts"
+    local TOOL_COMMAND="ls $TOOLS_DIR/nndefaccts"
     AppTest "$TOOL_NAME" "$TOOL_COMMAND"
     local status=$?
 

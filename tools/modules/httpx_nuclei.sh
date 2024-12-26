@@ -13,18 +13,18 @@
 # =============================================================================
 
 function install_httpx_nuclei() {
-    if _Git_Release "projectdiscovery/httpx" "linux_amd64" "$TOOL_DIR/httpx"; then
-        unzip $TOOL_DIR/httpx/*.zip -d $TOOL_DIR/httpx/
-        rm $TOOL_DIR/httpx/*.zip
+    if _Git_Release "projectdiscovery/httpx" "linux_amd64" "$TOOLS_DIR/httpx"; then
+        unzip $TOOLS_DIR/httpx/*.zip -d $TOOLS_DIR/httpx/
+        rm $TOOLS_DIR/httpx/*.zip
 
-        _Add_Alias "alias httpx='$TOOL_DIR/httpx/httpx'"
+        _Add_Alias "alias httpx='$TOOLS_DIR/httpx/httpx'"
     fi
 
-    if _Git_Release "projectdiscovery/nuclei" "linux_amd64" "$TOOL_DIR/nuclei"; then
-        unzip $TOOL_DIR/nuclei/*.zip -d $TOOL_DIR/nuclei/
-        rm $TOOL_DIR/nuclei/*.zip
+    if _Git_Release "projectdiscovery/nuclei" "linux_amd64" "$TOOLS_DIR/nuclei"; then
+        unzip $TOOLS_DIR/nuclei/*.zip -d $TOOLS_DIR/nuclei/
+        rm $TOOLS_DIR/nuclei/*.zip
 
-        _Add_Alias "alias nuclei='$TOOL_DIR/nuclei/nuclei'"
+        _Add_Alias "alias nuclei='$TOOLS_DIR/nuclei/nuclei'"
     fi
 
     _Git_Clone https://github.com/projectdiscovery/nuclei-templates.git

@@ -24,8 +24,8 @@ function install_pre2k() {
 
     _Del_Alias "pre2k.py"
     _Del_Alias "pre2k"
-    _Add_Alias "function pre2k.py { (cd $TOOL_DIR/pre2k-TS && $TOOL_DIR/pre2k-TS/venv/bin/$PYTHON $TOOL_DIR/pre2k-TS/pre2k.py) }"
-    _Add_Alias "function pre2k { (cd $TOOL_DIR/pre2k-TS && $TOOL_DIR/pre2k-TS/venv/bin/$PYTHON $TOOL_DIR/pre2k-TS/pre2k.py) }"
+    _Add_Alias "function pre2k.py { (cd $TOOLS_DIR/pre2k-TS && $TOOLS_DIR/pre2k-TS/venv/bin/$PYTHON $TOOLS_DIR/pre2k-TS/pre2k.py) }"
+    _Add_Alias "function pre2k { (cd $TOOLS_DIR/pre2k-TS && $TOOLS_DIR/pre2k-TS/venv/bin/$PYTHON $TOOLS_DIR/pre2k-TS/pre2k.py) }"
 }
 
 # Test function for pre2k

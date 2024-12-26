@@ -102,7 +102,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             success "git cloned"
         fi
 
-        _Pushd "$TOOL_DIR/$DIRECTORY_NAME"
+        _Pushd "$TOOLS_DIR/$DIRECTORY_NAME"
 
         # Create a virtual environment and install requirements
         if ! $PYTHON -m venv ./venv; then
@@ -138,8 +138,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Install additional pip packages if provided
         for PACKAGE in "${PIP_INSTALLS[@]}"; do
               if [ "$PACKAGE" == "." ]; then
-                if ! _Pip_Install "$TOOL_DIR/$DIRECTORY_NAME/." ""; then
-                    fail "Failed to install package: $TOOL_DIR/$DIRECTORY_NAME/."
+                if ! _Pip_Install "$TOOLS_DIR/$DIRECTORY_NAME/." ""; then
+                    fail "Failed to install package: $TOOLS_DIR/$DIRECTORY_NAME/."
                     deactivate
                     _Popd
                     fail "Failed to install $DIRECTORY_NAME"
@@ -159,8 +159,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         done
 
         deactivate
-        _Add_Alias "alias $TOOL_NAME.py='$TOOL_DIR/$DIRECTORY_NAME/venv/bin/$PYTHON $TOOL_DIR/$DIRECTORY_NAME/$TOOL_NAME.py'"
-        _Add_Alias "alias $TOOL_NAME='$TOOL_DIR/$DIRECTORY_NAME/venv/bin/$PYTHON $TOOL_DIR/$DIRECTORY_NAME/$TOOL_NAME.py'"
+        _Add_Alias "alias $TOOL_NAME.py='$TOOLS_DIR/$DIRECTORY_NAME/venv/bin/$PYTHON $TOOLS_DIR/$DIRECTORY_NAME/$TOOL_NAME.py'"
+        _Add_Alias "alias $TOOL_NAME='$TOOLS_DIR/$DIRECTORY_NAME/venv/bin/$PYTHON $TOOLS_DIR/$DIRECTORY_NAME/$TOOL_NAME.py'"
 
         _Popd
         success "$DIRECTORY_NAME installed and virtual environment set up successfully."

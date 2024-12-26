@@ -215,14 +215,6 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         return $_PASS  # Return success
     }
 
-    # Function to pause execution and wait for user input
-    function _Pause() {
-        echo "--------------------------------------------------"
-        echo "Press any key to continue..."
-        read -n 1 -s  # Wait for user to press any key
-        echo  # Move to the next line after key press
-    }
-
     function _Exec_Function() {
         local function_name="$1"  # Use a descriptive variable name
 

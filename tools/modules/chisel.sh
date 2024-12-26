@@ -14,8 +14,8 @@
 
 function install_chisel() {
     # Download and install chisel for Linux
-    if _Git_Release "jpillora/chisel" "linux_amd64" "$TOOL_DIR/chisel"; then
-        _Pushd "$TOOL_DIR/chisel"
+    if _Git_Release "jpillora/chisel" "linux_amd64" "$TOOLS_DIR/chisel"; then
+        _Pushd "$TOOLS_DIR/chisel"
         gunzip chisel_*_linux_amd64.gz
         chmod +x chisel_*_linux_amd64
         _Popd
@@ -25,8 +25,8 @@ function install_chisel() {
     fi
 
     # Download and install chisel for Windows
-    if _Git_Release "jpillora/chisel" "windows_amd64" "$TOOL_DIR/chisel"; then
-        _Pushd "$TOOL_DIR/chisel"
+    if _Git_Release "jpillora/chisel" "windows_amd64" "$TOOLS_DIR/chisel"; then
+        _Pushd "$TOOLS_DIR/chisel"
         gunzip chisel_*_windows_amd64.gz
         chmod +x chisel_*_windows_amd64
         _Popd
@@ -36,7 +36,7 @@ function install_chisel() {
     fi
 
     # Add alias for chisel
-    _Add_Alias "alias chisel='$TOOL_DIR/chisel/chisel_*_linux_amd64'"
+    _Add_Alias "alias chisel='$TOOLS_DIR/chisel/chisel_*_linux_amd64'"
     success "chisel installed and alias added successfully."
 }
 

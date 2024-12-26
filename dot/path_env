@@ -16,21 +16,14 @@
 if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
     declare -g PATH_ENV_LOADED=true
 
-    export DATA_DIR='/root/DATA'
-    export ADCS_DIR="${DATA_DIR}/ADCS"
+    export DATA_DIR="${HOME}/DATA"
+
+    export CONFIG_DIR="$DATA_DIR/CONFIG"
+    export TOOLS_DIR="$DATA_DIR/TOOLS"
+    export SCRIPTS_DIR="$DATA_DIR/TOOLS/SCRIPTS"
+    export LOGS_DIR="$DATA_DIR/LOGS"
+    export OUTPUT_DIR="$DATA_DIR/OUTPUT"
+    export LOOT_DIR="$DATA_DIR/LOOT"
     export BACKUP_DIR="${DATA_DIR}/BACKUP"
-    export CISCO_DIR="${DATA_DIR}/CISCO"
-    export CREDS_DIR="${DATA_DIR}/CREDS"
-    export JAVA_DIR="${DATA_DIR}/JAVA"
-    export LDAP_DIR="${DATA_DIR}/LDAP"
-    export LOGS_DIR="${DATA_DIR}/LOGS"
-    export MITM_DIR="${DATA_DIR}/MITM"
-    export MSF_DIR="${DATA_DIR}/MSF"
-    export NMAP_DIR="${DATA_DIR}/NMAP"
-    export RECON_DIR="${DATA_DIR}/RECON"
-    export SHARES_DIR="${DATA_DIR}/SHARES"
-    export SMB_DIR="${DATA_DIR}/SMB"
-    export TEE_DIR="${DATA_DIR}/TEE"
-    export TOOLS_DIR="${DATA_DIR}/TOOLS"
-    export WEB_DIR="${DATA_DIR}/WEB"
+    export TASKS_DIR="$DATA_DIR/TASKS"
 fi

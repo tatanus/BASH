@@ -15,13 +15,13 @@
 function install_spoonmap() {
     _Git_Clone https://github.com/trustedsec/spoonmap.git
 
-    _Add_Alias "function spoonmap { (cd $TOOL_DIR/spoonmap && $PYTHON $TOOL_DIR/spoonmap/spoonmap.py \"\$@\") }"
+    _Add_Alias "function spoonmap { (cd $TOOLS_DIR/spoonmap && $PYTHON $TOOLS_DIR/spoonmap/spoonmap.py \"\$@\") }"
 }
 
 # Test function for spoonmap
 function test_spoonmap() {
     local TOOL_NAME="spoonmap"
-    local TOOL_COMMAND="ls $TOOL_DIR/spoonmap/spoonmap.py"
+    local TOOL_COMMAND="ls $TOOLS_DIR/spoonmap/spoonmap.py"
     AppTest "$TOOL_NAME" "$TOOL_COMMAND"
     local status=$?
 

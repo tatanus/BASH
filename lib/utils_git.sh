@@ -43,14 +43,14 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         fi
 
         # Create the directory if it does not exist
-        mkdir -p "$TOOL_DIR/$dname"
+        mkdir -p "$TOOLS_DIR/$dname"
 
         # Attempt to clone the repository
-        if $PROXY git clone --recurse-submodules -q "$url" "$TOOL_DIR/$dname" >/dev/null 2>&1; then
-            success "Cloned repository $url into $TOOL_DIR/$dname."
+        if $PROXY git clone --recurse-submodules -q "$url" "$TOOLS_DIR/$dname" >/dev/null 2>&1; then
+            success "Cloned repository $url into $TOOLS_DIR/$dname."
             return $_PASS
         else
-            fail "Failed to clone repository $url into $TOOL_DIR/$dname."
+            fail "Failed to clone repository $url into $TOOLS_DIR/$dname."
             return $_FAIL
         fi
     }

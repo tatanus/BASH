@@ -19,7 +19,7 @@ function install_statistically_likely_usernames() {
 # Test function for statistically_likely_usernames
 function test_statistically_likely_usernames() {
     local TOOL_NAME="statistically_likely_usernames"
-    local TOOL_COMMAND="ls $TOOL_DIR/statistically-likely-usernames"
+    local TOOL_COMMAND="ls $TOOLS_DIR/statistically-likely-usernames"
     AppTest "$TOOL_NAME" "$TOOL_COMMAND"
     local status=$?
 
