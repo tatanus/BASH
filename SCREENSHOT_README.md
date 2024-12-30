@@ -41,7 +41,7 @@ screenshot_text '<text>' [output_file]
 
 ### Options
 
-| Parameter      | Description                                  | Default           |
+| Parameter       | Description                                  | Default           |
 |-----------------|----------------------------------------------|-------------------|
 | `<command>`     | The shell command to execute and capture.    | N/A               |
 | `<text>`        | The plain text to process.                   | N/A               |
