@@ -92,12 +92,12 @@ fi
 # Define required files in an array
 # These files must exist and be sourced for the script to work correctly.
 declare -a REQUIRED_FILES=(
-    "$SCRIPT_DIR/config/config.sh"
-    "$SCRIPT_DIR/lib/display.sh"
-    "$SCRIPT_DIR/lib/lists.sh"
-    "$SCRIPT_DIR/lib/utils.sh"
-    "$SCRIPT_DIR/lib/menu.sh"
-    "$SCRIPT_DIR/lib/safe_source.sh"
+    "${SCRIPT_DIR}/config/config.sh"
+    "${SCRIPT_DIR}/lib/display.sh"
+    "${SCRIPT_DIR}/lib/lists.sh"
+    "${SCRIPT_DIR}/lib/utils.sh"
+    "${SCRIPT_DIR}/lib/menu.sh"
+    "${SCRIPT_DIR}/lib/safe_source.sh"
 )
 
 # Source required files and verify their existence

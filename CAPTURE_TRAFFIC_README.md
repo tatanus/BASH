@@ -36,7 +36,7 @@
 
 ### Options
 
-| Option           | Description                                         | Default          |
+| Option            | Description                                         | Default          |
 |-------------------|-----------------------------------------------------|------------------|
 | `-t`, `--time`    | Duration of the capture in seconds                  | `10`             |
 | `-m`, `--messages`| Maximum number of messages to capture               | `100`            |
