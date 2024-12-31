@@ -12,43 +12,60 @@
 # 2024-12-16 16:51:35  | Adam Compton | Initial creation.
 # =============================================================================
 
+# Minimal placeholders (until more robust functions can be defined later)
+function fail() {
+    echo "[- FAIL  ] $*" >&2
+}
+function pass() {
+    echo "[+ PASS  ] $*"
+}
+function info() {
+    echo "[* INFO  ] $*"
+}
+function warn() {
+    echo "[! WARN  ] $*"
+}
+
 # Initialize the error flag
 ERROR_FLAG=false
 
 # Ensure the script is being run under Bash
 if [ -z "${BASH_VERSION:-}" ]; then
-    echo "[- FAIL  ] Error: This script must be run under Bash."
+    fail "Error: This script must be run under Bash."
     ERROR_FLAG=true
 fi
 
 # Ensure Bash version is 4.0 or higher
 if [[ -n "${BASH_VERSION:-}" && "${BASH_VERSINFO[0]}" -lt 4 ]]; then
-    echo "[- FAIL  ] Error: This script requires Bash version 4.0 or higher. Current version: ${BASH_VERSION}"
+    fail "Error: This script requires Bash version 4.0 or higher. Current version: ${BASH_VERSION}"
     ERROR_FLAG=true
 fi
 
 # Ensure the script is run as root (user ID 0)
 if [[ $EUID -ne 0 ]]; then
-    echo "[- FAIL  ] Error: This script must be run as root."
+    fail "Error: This script must be run as root."
     ERROR_FLAG=true
 fi
 
 # If any errors occurred, display a summary and exit
 if $ERROR_FLAG; then
     echo
-    echo "--------------------------------------------------"
-    echo "[- FAIL  ] One or more errors occurred:"
-    echo "  - Ensure you are using Bash version 4.0 or higher."
-    echo "  - Ensure you are running this script as root."
-    echo
-    echo "-----------------------------------"
-    read -n 1 -s -r -p "Press any key to continue..."
+    fail "--------------------------------------------------"
+    fail "One or more errors occurred:"
+    fail "  - Ensure you are using Bash version 4.0 or higher."
+    fail "  - Ensure you are running this script as root."
+    fail
+    fail "-----------------------------------"
+    if [ -t 0 ]; then  # check if running interactively
+        read -n 1 -s -r -p "Press any key to continue..."
+        echo
+    fi
     echo  # Move to the next line after key press
     #exit 1  # Exit with a failure status code
 fi
 
 # Success message if no errors
-echo "[+ PASS  ] All checks passed. Continuing script execution."
+pass "All checks passed. Continuing script execution."
 
 # -----------------------------------------------------------------------------
 # ---------------------------------- IMPORTS/SOURCES --------------------------
@@ -57,24 +74,24 @@ echo "[+ PASS  ] All checks passed. Continuing script execution."
 # Check if the HOME environment variable is set
 if [[ -n "$HOME" ]]; then
     # If HOME is set, use it
-    echo "[* INFO  ] HOME environment variable is set. Using HOME: $HOME"
+    info "HOME environment variable is set. Using HOME: $HOME"
 elif command -v getent > /dev/null 2>&1; then
     # If getent is available, use it to retrieve the home directory
     export HOME=$(getent passwd "$(whoami)" | cut -d: -f6)
     if [[ -n "$HOME" ]]; then
-        echo "[* INFO  ] Using getent to determine HOME: $HOME"
+        info "Using getent to determine HOME: $HOME"
     else
-        echo "[- FAIL  ] Failed to determine HOME using getent."
+        fail "Failed to determine HOME using getent."
         exit 1
     fi
 else
     # Fallback: Use eval to get the home directory
     export HOME=$(eval echo ~)
     if [[ -n "$HOME" ]]; then
-        echo "[! WARN  ] HOME and getent are unavailable. Using fallback with eval: HOME=$HOME"
+        warn "HOME and getent are unavailable. Using fallback with eval: HOME=$HOME"
     else
-        fail "[- FAIL  ] Failed to determine HOME. Unable to proceed."
-        exit $_FAIL
+        fail "Failed to determine HOME. Unable to proceed."
+        exit 1
     fi
 fi
 
@@ -83,9 +100,9 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [[ -n "$SCRIPT_DIR" && -d "$SCRIPT_DIR" ]]; then
     export SCRIPT_DIR
-    echo "[* INFO  ] Script directory determined: $SCRIPT_DIR"
+    info "Script directory determined: $SCRIPT_DIR"
 else
-    fail "[- FAIL  ] Failed to determine the script directory. Exiting."
+    fail "Failed to determine the script directory. Exiting."
     exit 1
 fi
 
@@ -106,13 +123,13 @@ for file in "${REQUIRED_FILES[@]}"; do
         # Source the file if it exists
         source "$file" || {
             fail "Failed to source file: $file. Exiting."
-            exit $_FAIL
+            exit 1
         }
-        success "Sourced required file: $file"
+        pass "Sourced required file: $file"
     else
         # Log an error if the file is missing
         fail "Required file is missing: $file. Exiting."
-        exit $_FAIL
+        exit 1
     fi
 done
 
