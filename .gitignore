@@ -63,3 +63,5 @@ venv/
 dist/
 build/
 
+# Specify filepatterns you want git to ignore.
+
