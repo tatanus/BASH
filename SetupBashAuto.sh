@@ -319,6 +319,28 @@ function Setup_Dot_Files() {
         fi
     done
 
+    for file in "${BASH_DOT_FILES[@]}"; do
+        local target="${BASH_DIR}/${file}"
+        local source="dot/${file}"
+
+        # Backup existing file if it exists
+        if [ -f "$target" ]; then
+            if cp "$target" "${target}.old"; then
+                success "Backed up existing file $target to ${target}.old."
+            else
+                fail "Failed to back up existing file $target."
+                continue
+            fi
+        fi
+
+        # Copy the new file from the dot directory
+        if cp "$source" "$target"; then
+            success "Copied $source to $target."
+        else
+            fail "Failed to copy $source to $target."
+        fi
+    done
+
     # Source the new bashrc
     if source "${HOME}/.bashrc"; then
         success "Sourced new ${HOME}/.bashrc."
@@ -340,20 +362,20 @@ function Setup_Cron_Jobs() {
     fi
 
     # Copy the renew.tgt.sh script
-    if cp dot/renew_tgt.sh "${HOME}/.renew_tgt.sh"; then
-        chmod +x "${HOME}/.renew_tgt.sh"
-        success "Copied and set executable permissions for ${HOME}/.renew_tgt.sh."
+    if cp dot/renew_tgt.sh "${BASH_DIR}/.renew_tgt.sh"; then
+        chmod +x "${BASH_DIR}/renew_tgt.sh"
+        success "Copied and set executable permissions for ${HOME}/renew_tgt.sh."
     else
-        fail "Failed to copy ${HOME}/.renew_tgt.sh."
+        fail "Failed to copy ${HOME}/renew_tgt.sh."
         return $_FAIL
     fi
 
     # Create or update the cron job
-    if (crontab -l 2>/dev/null | grep -v "${HOME}/.renew_tgt.sh"; echo "0 */8 * * * ${HOME}/.renew_tgt.sh >> ${HOME}/renew_tgt.log 2>&1") | crontab -; then
-        success "Cron job for ${HOME}/.renew_tgt.sh created or updated."
+    if (crontab -l 2>/dev/null | grep -v "${BASH_DIR}/renew_tgt.sh"; echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1") | crontab -; then
+        success "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
         return $_PASS
     else
-        fail "Failed to create or update the Cron job for ${HOME}/.renew_tgt.sh."
+        fail "Failed to create or update the Cron job for ${BASH_DIR}/renew_tgt.sh."
         return $_FAIL
     fi
 }

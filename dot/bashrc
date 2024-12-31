@@ -31,49 +31,39 @@ HISTFILESIZE=100000
 HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
 shopt -s histappend
 
-# Array of configuration files to source
-config_files=(
-    ~/.bash_env
-    ~/.bash_path
-    ~/.bash_prompt
-    ~/.bash_aliases
-    ~/.path_env
-    ~/.pentest_env
-    ~/.pentest_aliases
-    ~/.tgt_aliases
-    ~/.screen_aliases
-    ~/.tmux_aliases
-    ~/.logging.sh
-    ~/.screenshot.sh
-    ~/.capture_traffic.sh
-)
-
-config_files=(
+primary_config_files=(
     # Source .bash_env first, if you use it for basic environment variables
-    "$HOME/.bash_env"
+    "${HOME}/.config/bash/bash_env"
 
     # Load environment variable definitions before everything else
-    "$HOME/.path_env"
-
-    # Now that variables are set, load bash_path
-    "$HOME/.bash_path"
-    "$HOME/.bash_prompt"
-    "$HOME/.bash_aliases"
-
-    # Other environment or alias files
-    "$PENTEST_DIR/.pentest_env"
-    "$PENTEST_DIR/.pentest_aliases"
-    "$HOME/.tgt_aliases"
-    "$HOME/.screen_aliases"
-    "$HOME/.tmux_aliases"
-
-    # Scripts or extra configuration
-    "$HOME/.logging.sh"
-    "$HOME/.screenshot.sh"
-    "$HOME/.capture_traffic.sh"
+    "${HOME}/.config/bash/path_env"
 )
 
 # Source additional configurations
-for file in "${config_files[@]}"; do
+for file in "${primary_config_files[@]}"; do
+    [[ -f "$file" ]] && source "$file"
+done
+
+secondary_config_files=(
+    # Now that variables are set, load bash_path
+    "${BASH_DIR}/bash_path"
+    "${BASH_DIR}/bash_prompt"
+    "${BASH_DIR}/bash_aliases"
+
+    # Other environment or alias files
+    "${PENTEST_DIR}/pentest_env"
+    "${PENTEST_DIR}/pentest_aliases"
+    "${BASH_DIR}/tgt_aliases"
+    "${BASH_DIR}/screen_aliases"
+    "${BASH_DIR}/tmux_aliases"
+
+    # Scripts or extra configuration
+    "${BASH_DIR}/logging.sh"
+    "${BASH_DIR}/screenshot.sh"
+    "${BASH_DIR}/capture_traffic.sh"
+)
+
+# Source additional configurations
+for file in "${secondary_config_files[@]}"; do
     [[ -f "$file" ]] && source "$file"
 done

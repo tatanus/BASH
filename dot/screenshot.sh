@@ -30,7 +30,6 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         done
     }
 
-
     # Function to process input (text or command output) and generate a PNG
     generate_screenshot_png() {
         local input="$1"

@@ -21,7 +21,7 @@ if [[ -z "${LOGGING_SH_LOADED:-}" ]]; then
     # =============================================================================
 
     # Log file location
-    LOG_FILE="$HOME/.bash_commands.log"
+    LOG_FILE="${BASH_LOG_DIR}/bash_commands.log"
 
     # =============================================================================
     # Utility Functions

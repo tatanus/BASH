@@ -32,23 +32,40 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     # Interactive menu
     export INTERACTIVE_MENU=false
 
-    # Directories
+    # BASH Directory
+    export BASH_DIR="$HOME/.config/bash"
+    export BASH_LOG_DIR="$BASH_DIR/log"
+
+    # Ensure the BASH directory exists
+    if [ ! -d "$BASH_DIR" ]; then
+        mkdir -p "$BASH_DIR" || {
+            echo "Failed to create directory: $BASH_DIR"
+            exit 1
+        }
+        info "Created directory: $BASH_DIR"
+    fi
+
+    # Ensure the BASH directory exists
+    if [ ! -d "$BASH_LOG_DIR" ]; then
+        mkdir -p "$BASH_LOG_DIR" || {
+            echo "Failed to create directory: $BASH_LOG_DIR"
+            exit 1
+        }
+        info "Created directory: $BASH_LOG_DIR"
+    fi
+
+    # PENTEST Directories
     export DATA_DIR="$HOME/DATA"
     export TOOLS_DIR="$DATA_DIR/TOOLS"
     export LOGS_DIR="$DATA_DIR/LOGS"
+    export PENTEST_DIR="$HOME/.config/pentest"
 
-    export PENTEST_DIR="$HOME/.pentest"
-
-    # Files
-    export CONFIG_FILE="$SCRIPT_DIR/config/config.sh"
+    # PENTEST Files
     export ENV_FILE="$PENTEST_DIR/pentest.env"
     export ALIAS_FILE="$PENTEST_DIR/pentest.alias"
     export KEYS_FILE="$PENTEST_DIR/pentest.keys"
-
-    export LOG_FILE="$PENTEST_DIR/log.log"
-
+    export LOG_FILE="$PENTEST_DIR/pentest.log"
     export MENU_TIMESTAMP_FILE="$PENTEST_DIR/menu_timestamps"
-    export MENU_FILE="$SCRIPT_DIR/lib/menu.sh"
 
     # Ensure the PENTEST directory exists
     if [ ! -d "$PENTEST_DIR" ]; then
@@ -58,6 +75,20 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
         }
         info "Created directory: $PENTEST_DIR"
     fi
+
+    # Ensure the DATA directory exists
+    if [ ! -d "$DATA_DIR" ]; then
+        mkdir -p "$DATA_DIR" || {
+            echo "Failed to create directory: $DATA_DIR"
+            exit 1
+        }
+        info "Created directory: $DATA_DIR"
+    fi
+
+    # MENU Files
+    export CONFIG_FILE="$SCRIPT_DIR/config/config.sh"
+    export MENU_FILE="$SCRIPT_DIR/lib/menu.sh"
+    export SETUP_LOG_FILE="$SCRIPT_DIR/setup.log"
 
     # Ensure the timestamp file exists
     if [ ! -f "$MENU_TIMESTAMP_FILE" ]; then

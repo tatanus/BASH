@@ -66,14 +66,18 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "bashrc"
         "profile"
         "bash_profile"
+        "tmux.conf"
+        "screenrc"
+    )
+
+    ## DOT FILES
+    BASH_DOT_FILES=(
         "bash_env"
         "path_env"
         "bash_aliases"
         "screen_aliases"
         "tmux_aliases"
         "tgt_aliases"
-        "tmux.conf"
-        "screenrc"
         "bash_path"
         "bash_prompt"
         "bash_prompt_funcs"

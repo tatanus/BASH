@@ -40,10 +40,10 @@ if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
     # =============================================================================
 
     # Ensure referenced functions are available
-    if [ -f ~/.bash_prompt_funcs ]; then
-        source ~/.bash_prompt_funcs
+    if [ -f ${BASH_DIR}/bash_prompt_funcs ]; then
+        source ${BASH_DIR}/bash_prompt_funcs
     else
-        echo "Warning: ~/.bash_prompt_funcs not found. Some prompt features may be unavailable." >&2
+        echo "Warning: ${BASH_DIR}/bash_prompt_funcs not found. Some prompt features may be unavailable." >&2
     fi
 
     # Generate the dynamic prompt
@@ -82,10 +82,10 @@ if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
     PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }gen_prompt"
 
     # Preexec setup
-    if [ -f ~/.bash-preexec.sh ]; then
-        source ~/.bash-preexec.sh
+    if [ -f ${BASH_DIR}/bash-preexec.sh ]; then
+        source ${BASH_DIR}/bash-preexec.sh
     else
-        echo "Warning: ~/.bash-preexec.sh not found. Preexec functionality may be unavailable." >&2
+        echo "Warning: ${BASH_DIR}/bash-preexec.sh not found. Preexec functionality may be unavailable." >&2
     fi
 
     preexec() {

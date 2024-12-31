@@ -16,6 +16,13 @@
 if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
     declare -g BASH_ENV_LOADED=true
 
+    # Debug mode (set to true or false)
+    export DEBUG=true
+
+    # pass/fail/true/fall variables
+    export _PASS=0
+    export _FAIL=1
+
     # define default editor
     export EDITOR="vim"
 
@@ -40,4 +47,10 @@ if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
     # configure bat  (bat > cat)
     export BAT_PAGER="less -R"
     export BAT_THEME="ansi"
+
+    # Enable proxychains4 for certain commands (true/false)
+    export PROXYCHAINS_CMD="proxychains4 -q "
+
+    # Proxychains4 configuration file
+    export PROXYCHAINS_CONFIG="/etc/proxychains4.conf"
 fi
