@@ -48,6 +48,31 @@ config_files=(
     ~/.capture_traffic.sh
 )
 
+config_files=(
+    # Source .bash_env first, if you use it for basic environment variables
+    "$HOME/.bash_env"
+
+    # Load environment variable definitions before everything else
+    "$HOME/.path_env"
+
+    # Now that variables are set, load bash_path
+    "$HOME/.bash_path"
+    "$HOME/.bash_prompt"
+    "$HOME/.bash_aliases"
+
+    # Other environment or alias files
+    "$PENTEST_DIR/.pentest_env"
+    "$PENTEST_DIR/.pentest_aliases"
+    "$HOME/.tgt_aliases"
+    "$HOME/.screen_aliases"
+    "$HOME/.tmux_aliases"
+
+    # Scripts or extra configuration
+    "$HOME/.logging.sh"
+    "$HOME/.screenshot.sh"
+    "$HOME/.capture_traffic.sh"
+)
+
 # Source additional configurations
 for file in "${config_files[@]}"; do
     [[ -f "$file" ]] && source "$file"

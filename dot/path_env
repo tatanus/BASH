@@ -16,6 +16,8 @@
 if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
     declare -g PATH_ENV_LOADED=true
 
+    export PENTEST_DIR="${HOME}/.pentest"
+    
     export DATA_DIR="${HOME}/DATA"
 
     export CONFIG_DIR="$DATA_DIR/CONFIG"
