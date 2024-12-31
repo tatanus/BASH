@@ -64,6 +64,8 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ## DOT FILES
     DOT_FILES=(
         "bashrc"
+        "profile"
+        "bash_profile"
         "bash_env"
         "path_env"
         "bash_aliases"

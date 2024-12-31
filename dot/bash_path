@@ -2,7 +2,7 @@
 
 # =============================================================================
 # NAME        : bash_path
-# DESCRIPTION : 
+# DESCRIPTION : Sets the PATH variable for different environments.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
 # =============================================================================
@@ -18,4 +18,10 @@ if [[ -z "${BASH_PATH_LOADED:-}" ]]; then
 
     export GOPATH=$HOME/go
     export PATH=$HOME/go/bin:/usr/local/go/bin:$PATH:$HOME/.local/bin
+
+    # macOS-specific paths
+    # primarily for flock and dircolors
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/util-linux/bin:/usr/local/opt/util-linux/sbin:$PATH"
+    fi
 fi
