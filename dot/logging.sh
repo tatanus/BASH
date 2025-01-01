@@ -67,7 +67,7 @@ if [[ -z "${LOGGING_SH_LOADED:-}" ]]; then
             session_name=$(tmux display-message -p '#S' 2>/dev/null || echo "unknown")
             window_name=$(tmux display-message -p '#I' 2>/dev/null || echo "unknown")
             pane_name=$(tmux display-message -p '#P' 2>/dev/null || echo "unknown")
-            session_info="tmux:$session_name[$window_name:$pane_name]"
+            session_info="tmux:$session_name($window_name:$pane_name)"
         else
             # Fallback to TTY and PID
             tty=$(tty 2>/dev/null | sed 's|/dev/||' || echo "unknown")

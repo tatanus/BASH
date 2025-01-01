@@ -64,7 +64,7 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
                 ;;
             *)
                 echo -e "${light_red}[- FAIL  ] Invalid log type: $type${reset}" >&2
-                return $_FAIL
+                return "$_FAIL"
                 ;;
         esac
 

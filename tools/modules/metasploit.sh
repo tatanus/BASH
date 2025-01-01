@@ -14,8 +14,8 @@
 
 function install_metasploit() {
     if $INSTALL_MEATASPLOIT; then
-        mkdir $TOOLS_DIR/metasploit
-        _Pushd $TOOLS_DIR/metasploit
+        mkdir "$TOOLS_DIR"/metasploit
+        _Pushd "$TOOLS_DIR"/metasploit
 
         # start PostgreSQL
         sudo service postgresql start

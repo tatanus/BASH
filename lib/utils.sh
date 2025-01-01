@@ -30,22 +30,20 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
     function _Pushd() {
         mkdir -p "$1"
         if pushd "$1" > /dev/null 2>&1; then
-            return $_PASS
+            return "$_PASS"
         else
-            return $_FAIL
+            return "$_FAIL"
         fi
     }
 
     # Pop directory from the stack
     function _Popd() {
         if popd > /dev/null 2>&1; then
-            return $_PASS
+            return "$_PASS"
         else
-            return $_FAIL
+            return "$_FAIL"
         fi
     }
-
-
 
     # Function to remove a given path from $PATH
     function _Remove_From_PATH() {
@@ -54,13 +52,14 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         # Check if the path_to_remove is provided
         if [ -z "$path_to_remove" ]; then
             echo "No path provided to remove from \$PATH."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Remove the specified path from $PATH
-        export PATH=$(echo "$PATH" | sed -e "s|$path_to_remove:||" \
-                                         -e "s|:$path_to_remove||" \
-                                         -e "s|$path_to_remove||")
+        PATH_TEMP=$(echo "$PATH" | sed -e "s|$path_to_remove:||" \
+                                       -e "s|:$path_to_remove||" \
+                                       -e "s|$path_to_remove||")
+        export PATH="$PATH_TEMP"
     }
 
     # Check and set proxy if required
@@ -74,7 +73,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         if curl -s --connect-timeout "$timeout" "$test_url" >/dev/null; then
             PROXY=""
             success "Direct Internet access available. No proxy needed."
-            return $_PASS
+            return "$_PASS"
         fi
 
         # Test connectivity via proxychains4
@@ -82,7 +81,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             if proxychains4 -q curl -s --connect-timeout "$timeout" "$test_url" >/dev/null; then
                 PROXY="proxychains4 -q "
                 success "Proxy required. Using proxychains4."
-                return $_PASS
+                return "$_PASS"
             else
                 fail "Proxychains4 is available but cannot connect to $test_url."
             fi
@@ -92,7 +91,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
 
         PROXY=""
         fail "No Internet access available."
-        return $_FAIL
+        return "$_FAIL"
     }
 
     # Function to check if a variable is in a list
@@ -103,11 +102,11 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
 
         for item in "${command_list[@]}"; do
             if [[ "$select" == "$item" ]]; then
-                return $_PASS  # Item found
+                return "$_PASS"  # Item found
             fi
         done
 
-        return $_FAIL  # Item not found
+        return "$_FAIL"  # Item not found
     }
 
     # Get the Ubuntu version
@@ -121,7 +120,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             ubuntu_version=$(lsb_release -rs)
         else
             fail "Unable to determine Ubuntu version."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         echo "$ubuntu_version"
@@ -136,7 +135,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             macos_version=$(sw_vers -productVersion)
         else
             echo "[- FAIL  ] Unable to determine macOS version. 'sw_vers' command not found."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         echo "$macos_version"
@@ -153,11 +152,11 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
                 windows_version=$(cmd.exe /c "ver" 2>/dev/null | grep -oP '\[Version\s\K[^\]]+')
             else
                 echo "[- FAIL  ] Unable to determine Windows version. 'cmd.exe' not found."
-                exit $_FAIL
+                exit "$_FAIL"
             fi
         else
             echo "[- FAIL  ] This does not appear to be a Windows environment."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         echo "$windows_version"
@@ -169,7 +168,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
 
         if [[ -z "$package_name" ]]; then
             fail "Package name is required for installation."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         info "Installing $package_name for $OS_NAME..."
@@ -181,7 +180,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
                     return $?
                 else
                     fail "Unsupported Linux distribution. Please install $package_name manually."
-                    return $_FAIL
+                    return "$_FAIL"
                 fi
                 ;;
             Darwin)
@@ -190,11 +189,11 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
                 ;;
             CYGWIN*|MINGW*|MSYS*|Windows_NT)
                 fail "Automatic installation for $package_name on Windows is not supported. Please install it manually."
-                return $_FAIL
+                return "$_FAIL"
                 ;;
             *)
                 fail "Unsupported operating system: $OS_NAME. Please install $package_name manually."
-                return $_FAIL
+                return "$_FAIL"
                 ;;
         esac
     }

@@ -1,3 +1,8 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Build Status](https://github.com/tatanus/BASH/actions/workflows/main.yml/badge.svg)
+![ShellCheck](https://github.com/tatanus/BASH/actions/workflows/shellcheck.yml/badge.svg)
+
+
 # BASH - "Bash Automation for Simple Hacking"
 
 This repository contains a modular and extensible configuration for setting up and managing a robust Bash environment, particularly useful for developers, system administrators, and penetration testers. It includes utility scripts, environment configurations, and tools to enhance productivity and streamline workflows.

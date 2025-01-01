@@ -29,7 +29,8 @@ function _TAKE_ENV_SNAPSHOT() {
 # Save the current environment snapshot and push to the stack
 function _SAVE_ENVIRONMENT() {
     local script="$1"
-    local snapshot_id="$(basename "$script")_$$"  # Unique identifier using script name and PID
+    local snapshot_id
+    snapshot_id="$(basename "$script")_$$"  # Unique identifier using script name and PID
 
     # Push the snapshot ID to the stack
     _SAFE_SOURCE_STACK+=("$snapshot_id")

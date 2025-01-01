@@ -12,9 +12,9 @@
 # 2024-12-08 19:57:22  | Adam Compton | Initial creation.
 # =============================================================================
 
-## Guard to prevent multiple sourcing
-#if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
-#    declare -g SSH_FUNCS_LOADED=true
+# Guard to prevent multiple sourcing
+if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
+    declare -g SSH_FUNCS_LOADED=true
 
     function _Pause() { 
         echo
@@ -90,7 +90,7 @@
         # Check if a function name was provided
         if [[ -z "$choice" ]]; then
             warn "Usage: _Process_SSH_Hosts_Menu '<host>'"
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         echo "SSHing to [${choice}]"
@@ -100,10 +100,26 @@
 	# Function to add a new TAP_* host entry to the config file
 	function _Add_New_SSH_Host() {
 	    # Prompt user for new host details
-	    echo "Enter new TAP_* host details"
-	    read -p "Host name (e.g., TAP_XXX): " host_name
-	    read -p "ProxyJump server: " proxy_jump
-	    read -p "Port: " port
+            echo "Enter new TAP_* host details"
+
+            # Read inputs safely and validate them
+            read -r -p "Host name (e.g., TAP_XXX): " host_name
+            if [[ -z "$host_name" ]]; then
+                echo "Error: Host name cannot be empty."
+                return
+            fi
+
+            read -r -p "ProxyJump server: " proxy_jump
+            if [[ -z "$proxy_jump" ]]; then
+                echo "Error: ProxyJump server cannot be empty."
+                return
+            fi
+
+            read -r -p "Port: " port
+            if ! [[ "$port" =~ ^[0-9]+$ ]]; then
+                echo "Error: Port must be a valid number."
+                return
+            fi
 
 	    # Validate inputs (ensure they are not empty)
 	    if [[ -z "$host_name" || -z "$proxy_jump" || -z "$port" ]]; then
@@ -134,19 +150,20 @@
 	function _Process_SSH_Menu() {
 	    local choice="$1"
 
-    	# Validate input
+      	    # Validate input
 	    if [[ -z "$choice" ]]; then
         	warn "Usage: _Process_SSH_Menu 'option'"
-    	    return $_FAIL
+    	    return "$_FAIL"
 	    fi
 
 	    # Process choices
-    	if [ "$choice" == "SSH to host" ]; then
-			SSH_HOSTS=($(awk '/^Host / && !/\*/ {print $2}' "${SSH_CONFIG_FILE}"))
+    	    if [ "$choice" == "SSH to host" ]; then
+                # Safely populate the SSH_HOSTS array using mapfile
+                mapfile -t SSH_HOSTS < <(awk '/^Host / && !/\*/ {print $2}' "${SSH_CONFIG_FILE}")
 	        _Display_Menu "SSH hosts" "_Process_SSH_Hosts_Menu" "${SSH_HOSTS[@]}"
-    	elif [ "$choice" == "Add new SSH host" ]; then
+    	    elif [ "$choice" == "Add new SSH host" ]; then
     		_Add_New_SSH_Host
-   		fi
+   	    fi
 	}
 
 	# Main menu function
@@ -159,7 +176,10 @@
 		_Display_Menu "SSH_MENU" "_Process_SSH_Menu" "${SETUP_MENU_ITEMS[@]}"
 	}
 
-	# Run the main menu
-	_Check_SSH_Config  # Ensure the config file exists
-	_Main_SSH_Menu
-#fi
+	# "Main" function
+	function ssh_menu() {
+		# Run the main menu
+		_Check_SSH_Config  # Ensure the config file exists
+		_Main_SSH_Menu
+	}
+fi

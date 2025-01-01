@@ -77,7 +77,8 @@ if [[ -n "$HOME" ]]; then
     info "HOME environment variable is set. Using HOME: $HOME"
 elif command -v getent > /dev/null 2>&1; then
     # If getent is available, use it to retrieve the home directory
-    export HOME=$(getent passwd "$(whoami)" | cut -d: -f6)
+    HOME_TEMP=$(getent passwd "$(whoami)" | cut -d: -f6)
+    export HOME="$HOME_TEMP"
     if [[ -n "$HOME" ]]; then
         info "Using getent to determine HOME: $HOME"
     else
@@ -86,7 +87,8 @@ elif command -v getent > /dev/null 2>&1; then
     fi
 else
     # Fallback: Use eval to get the home directory
-    export HOME=$(eval echo ~)
+    HOME_TEMP=$(eval echo ~)
+    export HOME="$HOME_TEMP"
     if [[ -n "$HOME" ]]; then
         warn "HOME and getent are unavailable. Using fallback with eval: HOME=$HOME"
     else
@@ -152,12 +154,12 @@ case "$OS_NAME" in
         # Check if the _Get_Ubuntu_Version function is available
         if ! command -v _Get_Ubuntu_Version &>/dev/null; then
             fail "Function _Get_Ubuntu_Version is not defined."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         UBUNTU_VER=$(_Get_Ubuntu_Version) || {
             fail "Failed to determine Ubuntu version."
-            exit $_FAIL
+            exit "$_FAIL"
         }
 
         export UBUNTU_VER
@@ -167,12 +169,12 @@ case "$OS_NAME" in
         # Check if the _Get_MacOS_Version function is available
         if ! command -v _Get_MacOS_Version &>/dev/null; then
             fail "Function _Get_MacOS_Version is not defined."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         MACOS_VER=$(_Get_MacOS_Version) || {
             fail "Failed to determine macOS version."
-            exit $_FAIL
+            exit "$_FAIL"
         }
 
         export MACOS_VER
@@ -183,12 +185,12 @@ case "$OS_NAME" in
         # Check if the _Get_Windows_Version function is available
         if ! command -v _Get_Windows_Version &>/dev/null; then
             fail "Function _Get_Windows_Version is not defined."
-            exit $_FAIL
+            exit "$_FAIL"
         fi
 
         WINDOWS_VER=$(_Get_Windows_Version) || {
             fail "Failed to determine Windows version."
-            exit $_FAIL
+            exit "$_FAIL"
         }
 
         export WINDOWS_VER
@@ -197,7 +199,7 @@ case "$OS_NAME" in
     *)
         # Handle unsupported operating systems
         fail "Unsupported operating system detected: $OS_NAME"
-        exit $_FAIL
+        exit "$_FAIL"
         ;;
 esac
 
@@ -218,7 +220,7 @@ function Setup_Directories() {
     # Ensure the directories array is defined
     if [ -z "${REQUIRED_DIRECTORIES+x}" ]; then
         fail "Directories array is not defined."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Create directories
@@ -238,14 +240,14 @@ function Setup_Necessary_Files() {
     local src_dir="$SCRIPT_DIR/config"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Ensure PENTEST_DIR exists
     if [ ! -d "$PENTEST_DIR" ]; then
         mkdir -p "$PENTEST_DIR" || {
             fail "Failed to create directory: $PENTEST_DIR"
-            return $_FAIL
+            return "$_FAIL"
         }
         success "Created directory: $PENTEST_DIR"
     fi
@@ -258,13 +260,13 @@ function Setup_Necessary_Files() {
         if [ -f "$src_file" ]; then
             cp "$src_file" "$dest_file" || {
                 fail "Failed to copy $src_file to $dest_file"
-                return $_FAIL
+                return "$_FAIL"
 
             }
             success "Copied $src_file to $dest_file"
         else
             fail "Source file $src_file does not exist. Skipping."
-            return $_FAIL
+            return "$_FAIL"
         fi
     }
 
@@ -294,7 +296,7 @@ function Setup_Dot_Files() {
     local src_dir="$SCRIPT_DIR/dot"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     for file in "${DOT_FILES[@]}"; do
@@ -344,10 +346,10 @@ function Setup_Dot_Files() {
     # Source the new bashrc
     if source "${HOME}/.bashrc"; then
         success "Sourced new ${HOME}/.bashrc."
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to source ${HOME}/.bashrc."
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -358,7 +360,7 @@ function Setup_Cron_Jobs() {
     local src_dir="$SCRIPT_DIR/dot"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Copy the renew.tgt.sh script
@@ -367,16 +369,16 @@ function Setup_Cron_Jobs() {
         success "Copied and set executable permissions for ${HOME}/renew_tgt.sh."
     else
         fail "Failed to copy ${HOME}/renew_tgt.sh."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Create or update the cron job
     if (crontab -l 2>/dev/null | grep -v "${BASH_DIR}/renew_tgt.sh"; echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1") | crontab -; then
         success "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to create or update the Cron job for ${BASH_DIR}/renew_tgt.sh."
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -386,16 +388,16 @@ function Setup_Docker() {
     # Ensure iptables is available
     if ! command -v iptables &> /dev/null; then
         fail "iptables command not found. Ensure it is installed and accessible."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Allow Docker images to work on the system
     if iptables -P FORWARD ACCEPT; then
         success "Updated iptables policy to ACCEPT for FORWARD."
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to update iptables policy."
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -407,14 +409,14 @@ function Setup_Msf_Scripts() {
     local src_dir="$SCRIPT_DIR/tools/extra/msf"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
     
     # Ensure the target directory exists
     if [[ ! -d "$DATA_DIR/MSF" ]]; then
         mkdir -p "$DATA_DIR/MSF" || {
             fail "Failed to create target directory $DATA_DIR/MSF."
-        return $_FAIL
+        return "$_FAIL"
         }
         success "Created target directory $DATA_DIR/MSF."
     fi
@@ -422,10 +424,10 @@ function Setup_Msf_Scripts() {
     # Copy MSF RC files
     if cp tools/extra/msf/*.rc "$DATA_DIR/MSF/"; then
         success "Copied MSF RC files to $DATA_DIR/MSF/"
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to copy MSF RC files to $DATA_DIR/MSF/"
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -436,17 +438,17 @@ function Setup_Support_Scripts() {
     local src_dir="$SCRIPT_DIR/tools/extra/scripts"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Ensure the source directory exists
     # Copy support scripts
     if cp tools/extra/scripts/* "$DATA_DIR/TOOLS/SCRIPTS/"; then
         success "Copied support scripts to $DATA_DIR/TOOLS/SCRIPTS"
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to copy support scripts to $DATA_DIR/TOOLS/SCRIPTS"
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -458,21 +460,22 @@ function Fix_Dns() {
     # Check if systemd-resolved is active
     if ! systemctl is-active --quiet systemd-resolved; then
         fail "Systemd-resolved is not active. Please start it before updating DNS configuration."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Verify that the systemd-resolved configuration file exists
     if [[ ! -f "$systemd_resolv_conf" ]]; then
         fail "Systemd-resolved configuration file [$systemd_resolv_conf] does not exist. Cannot update DNS configuration."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Backup the existing /etc/resolv.conf if it exists and is not a symlink
     if [[ -e "$resolv_conf" && ! -L "$resolv_conf" ]]; then
-        local backup_file="/etc/resolv.conf.backup.$(date +%s)"
+        local backup_file
+        backup_file="/etc/resolv.conf.backup.$(date +%s)"
         if ! mv "$resolv_conf" "$backup_file"; then
             fail "Failed to backup existing /etc/resolv.conf to [$backup_file]."
-            return $_FAIL
+            return "$_FAIL"
         fi
         info "Backed up existing /etc/resolv.conf to [$backup_file]."
     fi
@@ -481,7 +484,7 @@ function Fix_Dns() {
     if [[ -e "$resolv_conf" || -L "$resolv_conf" ]]; then
         if ! rm -f "$resolv_conf"; then
             fail "Failed to remove existing /etc/resolv.conf."
-            return $_FAIL
+            return "$_FAIL"
         fi
         info "Removed existing /etc/resolv.conf."
     fi
@@ -489,10 +492,10 @@ function Fix_Dns() {
     # Create a symlink to systemd-resolved's configuration
     if ln -s "$systemd_resolv_conf" "$resolv_conf"; then
         success "Successfully updated /etc/resolv.conf to use systemd-resolved."
-        return $_PASS
+        return "$_PASS"
     else
         fail "Failed to create symlink from /etc/resolv.conf to [$systemd_resolv_conf]."
-        return $_FAIL
+        return "$_FAIL"
     fi
 }
 
@@ -520,7 +523,7 @@ function _Install_Inhouse_Tools() {
     local src_dir="$SCRIPT_DIR/tools/extra"
     if [ ! -d "$src_dir" ]; then
         fail "Directory [$src_dir] does not exist."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Move autoTGT tool
@@ -617,20 +620,20 @@ function _Edit_And_Reload_File() {
     # Check if the file exists
     if [[ ! -f "$file" ]]; then
         warn "File not found: $file"
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Open the file in the user's preferred editor, defaulting to nano
     local editor="${EDITOR:-nano}" # Use $EDITOR if set, otherwise nano
     if ! $editor "$file"; then
         warn "Failed to open $file in editor."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Reload the file after editing
     if ! source "$file"; then
         warn "Failed to source $file after editing."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     success "Reloaded configuration from $file."
@@ -644,17 +647,24 @@ function _Process_Tool_Install_Menu() {
     # Validate input
     if [[ -z "$choice" ]]; then
         warn "Usage: _Process_Tool_Install_Menu 'option'"
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Check if the choice matches a predefined menu item
-    if [[ " ${INSTALL_TOOLS_MENU_ITEMS[@]} " =~ " ${choice} " ]]; then
-        info "Executing predefined installation function: $choice"
-        if ! _Exec_Function "$choice"; then
-            fail "Failed to execute predefined installation function: $choice"
-            return $_FAIL
+    found_match=false
+    for item in "${INSTALL_TOOLS_MENU_ITEMS[@]}"; do
+        if [[ "$item" == "$choice" ]]; then
+            found_match=true
+            info "Executing predefined installation function: $choice"
+            if ! _Exec_Function "$choice"; then
+                fail "Failed to execute predefined installation function: $choice"
+                return "$_FAIL"
+            fi
+            break
         fi
-    else
+    done
+
+    if [[ "$found_match" == false ]]; then
         # Define modules directory
         local MODULES_DIR="${SCRIPT_DIR}/tools/modules"
         local script_file="${MODULES_DIR}/${choice}.sh"
@@ -666,7 +676,7 @@ function _Process_Tool_Install_Menu() {
             # Source the script and execute the install function
             source "$script_file" || {
                 fail "Failed to source script: $script_file"
-                return $_FAIL
+                return "$_FAIL"
             }
 
             local tool_name="${choice}" # Assuming the tool name matches the choice
@@ -677,21 +687,21 @@ function _Process_Tool_Install_Menu() {
                 info "Executing installation function: $install_function"
                 if ! "$install_function"; then
                     fail "Installation function failed: $install_function"
-                    return $_FAIL
+                    return "$_FAIL"
                 fi
             else
                 fail "Installation function not found in script: $install_function"
-                return $_FAIL
+                return "$_FAIL"
             fi
         else
             fail "Script file not found: $script_file"
-            return $_FAIL
+            return "$_FAIL"
         fi
     fi
 
     # Success message if no errors occurred
     success "Tool installation for '$choice' completed successfully."
-    return $_PASS
+    return "$_PASS"
 }
 
 # Function to process start menu choices
@@ -702,7 +712,7 @@ function _Process_Start_Menu() {
     # Validate input
     if [[ -z "$choice" ]]; then
         warn "Usage: _Process_Start_Menu 'option'"
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Process choices

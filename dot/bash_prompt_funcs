@@ -101,61 +101,52 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
                 local connection_profile
                 connection_profile=$(nmcli -g GENERAL.CONNECTION device show "$interface" 2>/dev/null)
 
-                if [[ "$connection_profile" == "--" || -z "$connection_profile" ]]; then
-                    echo "No active connection"
-                    return 1
+                if [[ "$connection_profile" != "--" && -n "$connection_profile" ]]; then
+                    local ip_method
+                    ip_method=$(nmcli -g ipv4.method connection show "$connection_profile" 2>/dev/null)
+
+                    case "$ip_method" in
+                        auto) echo "DHCP"; return 0 ;;
+                        manual) echo "Static"; return 0 ;;
+                    esac
                 fi
-
-                local ip_method
-                ip_method=$(nmcli -g ipv4.method connection show "$connection_profile" 2>/dev/null)
-
-                case "$ip_method" in
-                    auto) echo "DHCP" ;;
-                    manual) echo "Static" ;;
-                    *) echo "Unknown" ;;
-                esac
-                return 0
+            fi
 
             # Check if systemd-networkd is active
-            elif systemctl is-active systemd-networkd &>/dev/null; then
+            if systemctl is-active systemd-networkd &>/dev/null; then
                 local config_file
                 config_file=$(find /etc/netplan/ -name "*.yaml" -print -quit)
 
-                if [[ -z "$config_file" ]]; then
-                    echo "No netplan configuration file found." >&2
-                    return 1
-                fi
+                if [[ -n "$config_file" ]]; then
+                    local config
+                    config=$(grep -A3 "$interface:" "$config_file" 2>/dev/null)
 
-                local config
-                config=$(grep -A3 "$interface:" "$config_file" 2>/dev/null)
-
-                if echo "$config" | grep -q "dhcp4: true"; then
-                    echo "DHCP"
-                elif echo "$config" | grep -q "addresses:"; then
-                    echo "Static"
-                else
-                    echo "Unknown"
+                    if echo "$config" | grep -q "dhcp4: true"; then
+                        echo "DHCP"
+                        return 0
+                    elif echo "$config" | grep -q "addresses:"; then
+                        echo "Static"
+                        return 0
+                    fi
                 fi
-                return 0
+            fi
 
             # Fall back to /etc/network/interfaces
-            elif [[ -f /etc/network/interfaces ]]; then
+            if [[ -f /etc/network/interfaces ]]; then
                 local config
                 config=$(grep -A3 "iface $interface" /etc/network/interfaces 2>/dev/null)
 
                 if echo "$config" | grep -q "dhcp"; then
                     echo "DHCP"
+                    return 0
                 elif echo "$config" | grep -q "static"; then
                     echo "Static"
-                else
-                    echo "Unknown"
+                    return 0
                 fi
-                return 0
-
-            else
-                echo "Network configuration method unknown." >&2
-                return 1
             fi
+
+            echo "Unknown (unable to determine DHCP or Static configuration)." >&2
+            return 1
 
         # Handle macOS systems
         elif [[ "$os_type" == "macOS" ]]; then

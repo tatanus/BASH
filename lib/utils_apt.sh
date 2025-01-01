@@ -27,7 +27,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Verify that package is not empty
         if [ -z "$package" ]; then
             fail "Package name cannot be empty."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Check if the package is already installed
@@ -36,18 +36,18 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             if $PROXY sudo apt update -qq >/dev/null 2>&1 && \
                $PROXY sudo apt install -y "$package" >/dev/null 2>&1; then
                 success "Installed $package using apt."
-                return $_PASS
+                return "$_PASS"
             else
                 fail "Could not install $package using apt."
-                return $_FAIL
+                return "$_FAIL"
             fi
          else
             success "$package is already installed."
-            return $_PASS
+            return "$_PASS"
         fi
 
         fail "Something went wrong while installing $package."
-        return $_FAIL
+        return "$_FAIL"
     }
 
     # Install all missing apt packages from the apt_packages array
@@ -55,7 +55,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Ensure the apt_packages array is defined
         if [ -z "${APT_PACKAGES+x}" ]; then
             fail "apt_packages array is not defined."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         local apt_packages_valid=()
@@ -70,7 +70,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Install all valid packages
         if ! $PROXY apt -qq -y install "${apt_packages_valid[@]}" >/dev/null 2>&1; then
             fail "Failed to install one or more packages."
-            return $_FAIL
+            return "$_FAIL"
         fi
         _Wait_Pid
 
@@ -78,13 +78,13 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         for package in "${apt_packages_valid[@]}"; do
             if ! dpkg -s "$package" >/dev/null 2>&1; then
                 fail "$package is not installed."
-                return $_FAIL
+                return "$_FAIL"
             else
                 success "$package is installed."
             fi
         done
 
-        return $_PASS
+        return "$_PASS"
     }
 
     # Perform a full apt update, autoremove, clean, and upgrade
@@ -92,7 +92,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Update package list
         if ! $PROXY apt -qq -y update --fix-missing >/dev/null 2>&1; then
             fail "Failed to update package list."
-            return $_FAIL
+            return "$_FAIL"
         fi
         _Wait_Pid
         success "Package list updated successfully."
@@ -100,7 +100,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Remove unnecessary packages
         if ! $PROXY apt -qq -y autoremove >/dev/null 2>&1; then
             fail "Failed to remove unnecessary packages."
-            return $_FAIL
+            return "$_FAIL"
         fi
         _Wait_Pid
         success "Unnecessary packages removed successfully."
@@ -108,7 +108,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Clean up the package cache
         if ! $PROXY apt -qq -y clean >/dev/null 2>&1; then
             fail "Failed to clean package cache."
-            return $_FAIL
+            return "$_FAIL"
         fi
         _Wait_Pid
         success "Package cache cleaned successfully."
@@ -116,11 +116,11 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Upgrade installed packages
         if ! $PROXY apt -qq -y upgrade >/dev/null 2>&1; then
             fail "Failed to upgrade packages."
-            return $_FAIL
+            return "$_FAIL"
         fi
         _Wait_Pid
         success "Packages upgraded successfully."
 
-        return $_PASS
+        return "$_PASS"
     }
 fi

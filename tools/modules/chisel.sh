@@ -21,7 +21,7 @@ function install_chisel() {
         _Popd
     else
         fail "Failed to download chisel for Linux."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Download and install chisel for Windows
@@ -32,7 +32,7 @@ function install_chisel() {
         _Popd
     else
         fail "Failed to download chisel for Windows."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Add alias for chisel

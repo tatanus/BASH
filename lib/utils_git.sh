@@ -27,7 +27,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         # Ensure the URL is provided
         if [ -z "$url" ]; then
             fail "Git repository URL cannot be empty."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Extract repository name from the URL
@@ -48,10 +48,10 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         # Attempt to clone the repository
         if $PROXY git clone --recurse-submodules -q "$url" "$TOOLS_DIR/$dname" >/dev/null 2>&1; then
             success "Cloned repository $url into $TOOLS_DIR/$dname."
-            return $_PASS
+            return "$_PASS"
         else
             fail "Failed to clone repository $url into $TOOLS_DIR/$dname."
-            return $_FAIL
+            return "$_FAIL"
         fi
     }
 
@@ -64,7 +64,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         # Validate input parameters
         if [ -z "$full_repo_name" ] || [ -z "$release_name" ] || [ -z "$path" ]; then
             fail "Usage: _Git_Release <full_repo_name> <release_name> <path>"
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Create the directory if it does not exist
@@ -76,10 +76,10 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
             | grep "$release_name" \
             | xargs -r wget --no-check-certificate -P "$path" >/dev/null 2>&1; then
             success "Downloaded latest release '$release_name' from repository '$full_repo_name' to '$path'."
-            return $_PASS
+            return "$_PASS"
         else
             fail "Failed to download latest release '$release_name' from repository '$full_repo_name'."
-            return $_FAIL
+            return "$_FAIL"
         fi
     }
 fi

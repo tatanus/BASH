@@ -28,7 +28,7 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
         if [ ${#gems[@]} -eq 0 ]; then
             if [ -z "${RUBY_GEMS+x}" ]; then
                 fail "ruby_gems array is not defined."
-                return $_FAIL
+                return "$_FAIL"
             fi
             gems=("${ruby_gems[@]}")
         fi
@@ -42,7 +42,7 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
                 success "Successfully installed ${gem}."
             else
                 fail "Failed to install ${gem}."
-            #    return $_FAIL
+            #    return "$_FAIL"
             fi
 
             # Verify installation
@@ -51,6 +51,6 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
             fi
         done
 
-        return $_PASS
+        return "$_PASS"
     }
 fi

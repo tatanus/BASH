@@ -14,7 +14,7 @@
 
 function install_crackmapexec() {
     _Git_Clone https://github.com/byt3bl33d3r/CrackMapExec.git
-    _Pushd $TOOLS_DIR/CrackMapExec
+    _Pushd "$TOOLS_DIR"/CrackMapExec
     _Pipx_Install .
     _Popd
 }

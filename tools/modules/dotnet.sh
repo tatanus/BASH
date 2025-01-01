@@ -16,7 +16,7 @@ function install_dotnet() {
     # Get Ubuntu version
     ubuntu_version=$(lsb_release -rs)
 
-    _Pushd $TOOLS_DIR
+    _Pushd "$TOOLS_DIR"
 
     # Install dotnet SDK based on Ubuntu version
     if [[ "$ubuntu_version" == "20.04" ]]; then

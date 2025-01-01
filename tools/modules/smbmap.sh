@@ -14,7 +14,7 @@
 
 function install_smbmap() {
     _Git_Clone https://github.com/ShawnDEvans/smbmap
-    _Pushd $TOOLS_DIR/smbmap
+    _Pushd "$TOOLS_DIR"/smbmap
     $PYTHON setup.py install
     _Popd
 }

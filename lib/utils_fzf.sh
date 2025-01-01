@@ -32,7 +32,7 @@ if [[ -z "${UTILS_FZF_SH_LOADED:-}" ]]; then
 
     # Function to prompt the user to install fzf
     function _prompt_install_fzf() {
-        read -p "Do you want to install fzf? (Y/n): " answer
+        read -r -p "Do you want to install fzf? (Y/n): " answer
 
         # Set default answer to "Y" if no input is provided
         answer=${answer:-Y}
@@ -42,11 +42,11 @@ if [[ -z "${UTILS_FZF_SH_LOADED:-}" ]]; then
                 ;;
             [Nn]* )
                 warning "fzf will not be installed. Exiting."
-                exit $_FAIL
+                exit "$_FAIL"
                 ;;
             * )
                 fail "Invalid response. Exiting."
-                exit $_FAIL
+                exit "$_FAIL"
                 ;;
         esac
     }

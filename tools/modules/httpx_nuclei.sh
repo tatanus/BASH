@@ -14,15 +14,15 @@
 
 function install_httpx_nuclei() {
     if _Git_Release "projectdiscovery/httpx" "linux_amd64" "$TOOLS_DIR/httpx"; then
-        unzip $TOOLS_DIR/httpx/*.zip -d $TOOLS_DIR/httpx/
-        rm $TOOLS_DIR/httpx/*.zip
+        unzip "$TOOLS_DIR"/httpx/*.zip -d "$TOOLS_DIR"/httpx/
+        rm "$TOOLS_DIR"/httpx/*.zip
 
         _Add_Alias "alias httpx='$TOOLS_DIR/httpx/httpx'"
     fi
 
     if _Git_Release "projectdiscovery/nuclei" "linux_amd64" "$TOOLS_DIR/nuclei"; then
-        unzip $TOOLS_DIR/nuclei/*.zip -d $TOOLS_DIR/nuclei/
-        rm $TOOLS_DIR/nuclei/*.zip
+        unzip "$TOOLS_DIR"/nuclei/*.zip -d "$TOOLS_DIR"/nuclei/
+        rm "$TOOLS_DIR"/nuclei/*.zip
 
         _Add_Alias "alias nuclei='$TOOLS_DIR/nuclei/nuclei'"
     fi

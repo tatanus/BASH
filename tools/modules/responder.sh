@@ -14,7 +14,7 @@
 
 function install_responder() {
     _Git_Clone https://github.com/lgandx/Responder.git
-    _Pushd $TOOLS_DIR/Responder
+    _Pushd "$TOOLS_DIR"/Responder
     chmod +x Responder.py
     chmod +x DumpHash.py
     chmod +x Report.py

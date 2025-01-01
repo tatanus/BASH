@@ -28,19 +28,19 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         if [ -z "$ALIAS_FILE" ]; then
             info "$alias_entry"
             fail "ALIAS_FILE is not set. Cannot add alias."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         if [ ! -w "$ALIAS_FILE" ]; then
             info "$alias_entry"
             fail "ALIAS_FILE ($ALIAS_FILE) is not writable."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Append the alias entry to the alias file
         echo "$alias_entry" >> "$ALIAS_FILE"
         success "Added alias: $alias_entry"
-        return $_PASS
+        return "$_PASS"
     }
 
     # Delete an alias from the alias file
@@ -50,13 +50,13 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Validate inputs
         if [ -z "$alias_name" ] || [ -z "$ALIAS_FILE" ]; then
             fail "Usage: _DelAlias <alias_name>"
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Check if the alias exists
         if ! alias "$alias_name" &>/dev/null; then
             info "Alias $alias_name does not exist."
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Unalias the alias
@@ -68,10 +68,10 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Verify the alias has been removed
         if grep -q "^alias $alias_name=" "$ALIAS_FILE"; then
             fail "Failed to remove alias $alias_name."
-            return $_FAIL
+            return "$_FAIL"
         else
             success "Alias $alias_name removed successfully."
-            return $_PASS
+            return "$_PASS"
         fi
     }
 
@@ -97,7 +97,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Clone the Git repository
         if ! _Git_Clone "$GIT_URL"; then
             fail "Failed to clone repository from $GIT_URL."
-            return $_FAIL
+            return "$_FAIL"
         else
             success "git cloned"
         fi
@@ -108,7 +108,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         if ! $PYTHON -m venv ./venv; then
             fail "Failed to create virtual environment."
             _Popd
-            return $_FAIL
+            return "$_FAIL"
         else
             success "Created virtual env"
         fi
@@ -121,7 +121,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                 fail "Failed to install Impacket."
                 deactivate
                 _Popd
-                return $_FAIL
+                return "$_FAIL"
             }
         fi
 
@@ -131,7 +131,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                 fail "Failed to install requirements from $REQUIREMENTS_FILE."
                 deactivate
                 _Popd
-                return $_FAIL
+                return "$_FAIL"
             fi
         fi
 
@@ -200,7 +200,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         local failed_tests=0
 
         # Get a sorted list of keys (app names) in ascending alphabetical order, ignoring case
-        local sorted_keys=($(for key in "${!APP_TESTS[@]}"; do echo "$key"; done | sort -f))
+        local sorted_keys=()
+        mapfile -t sorted_keys < <(for key in "${!APP_TESTS[@]}"; do echo "$key"; done | sort -f)
 
         # Loop over the sorted keys and run each AppTest
         for app_name in "${sorted_keys[@]}"; do
@@ -223,7 +224,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Dynamically add tool names from scripts in MODULES_DIR
         if [[ -d "$MODULES_DIR" ]]; then
             for script in "$MODULES_DIR"/*.sh; do
-                source "$script" || warn "Failed to source $script_file."
+                source "$script" || warn "Failed to source $script."
 
                 if [[ -f "$script" ]]; then
                     tool_name=$(basename "$script" .sh) # Extract the tool name

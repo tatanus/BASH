@@ -14,7 +14,7 @@
 
 function install_pretender() {
     _Git_Clone https://github.com/RedTeamPentesting/pretender.git
-    _Pushd $TOOLS_DIR/pretender
+    _Pushd "$TOOLS_DIR"/pretender
     go build
     _Popd
 

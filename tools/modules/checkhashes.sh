@@ -19,7 +19,7 @@ function install_checkhashes() {
     # Download check_hashes.py
     if ! _Curl "https://gist.githubusercontent.com/bandrel/3dd47c93cd430606865ec84d281913dc/raw/e9298bd831c214f2bea265137ec276fe3d7bbc28/check_hashes.py" "$TOOLS_DIR/CheckHashes/check_hashes.py"; then
         fail "Failed to download check_hashes.py."
-        return $_FAIL
+        return "$_FAIL"
     fi
 
     # Add aliases for check_hashes

@@ -101,8 +101,8 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
 
         # Capture traffic using tshark
         if ! tshark -i "$CAPTURE_INTERFACE" \
-            -a duration:$CAPTURE_TIME \
-            -c $MAX_MESSAGES \
+            -a duration:"$CAPTURE_TIME" \
+            -c "$MAX_MESSAGES" \
             -Y "ip.src==$SRC_IP && ip.dst==$DST_IP && tcp.srcport==$SRC_PORT && tcp.dstport==$DST_PORT || \
                 ip.src==$DST_IP && ip.dst==$SRC_IP && tcp.srcport==$DST_PORT && tcp.dstport==$SRC_PORT" \
             -T fields -e frame.time -e ip.src -e tcp.srcport -e ip.dst -e tcp.dstport -e text \

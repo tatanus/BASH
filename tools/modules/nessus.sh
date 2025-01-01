@@ -14,12 +14,12 @@
 
 function install_nessus() {
     if $INSTALL_NESSUS; then
-        mkdir -p $TOOLS_DIR/nessus
+        mkdir -p "$TOOLS_DIR"/nessus
         # Download Nessus
         LATEST_NESSUS=$($PROXY curl -s -k -L https://www.tenable.com/downloads/nessus?loginAttempted=true | sed 's/"id":/\n/g' | grep ubuntu | grep amd64 | grep meta_data | head -n1 | awk -F "," '{ print $1 }')
         _Curl "https://www.tenable.com/downloads/api/v1/public/pages/nessus/downloads/$LATEST_NESSUS/download?i_agree_to_tenable_license_agreement=true" "$TOOLS_DIR/nessus/nessus.deb"
         # Install Nessus
-        dpkg -i $TOOLS_DIR/nessus/nessus.deb
+        dpkg -i "$TOOLS_DIR"/nessus/nessus.deb
     fi
     if $SETUP_NESSUS; then
         # Add a new user (requires user interaction)

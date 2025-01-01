@@ -157,7 +157,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
 
         if [[ -z "$input" ]]; then
             warning "Usage: execute_command_or_script '<command or script>'"
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Check if the input is a script in $SCRIPT_DIR/modules
@@ -193,7 +193,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         # Check if the process ID is valid (non-empty and numeric)
         if [[ -z "$process_id" || ! "$process_id" =~ ^[0-9]+$ ]]; then
             #info "Error: Invalid process ID."
-            return $_FAIL  # Return an error code
+            return "$_FAIL"  # Return an error code
         fi
 
         # Wait for the process with the captured PID to complete
@@ -203,7 +203,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         # Check if the wait command was successful
         if [[ $wait_status -ne 0 ]]; then
             fail "Error: Process with PID $process_id did not complete successfully."
-            return $_FAIL  # Return an error code
+            return "$_FAIL"  # Return an error code
         fi
 
         # Get the sleep duration from the argument, default to 0.5 second if not provided
@@ -212,7 +212,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         # Introduce the specified delay after the process completes
         sleep "$sleep_duration"
 
-        return $_PASS  # Return success
+        return "$_PASS"  # Return success
     }
 
     function _Exec_Function() {
@@ -221,7 +221,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         # Check if a function name was provided
         if [[ -z "$function_name" ]]; then
             warn "Usage: _Exec_Function '<function_name>'"
-            return $_FAIL
+            return "$_FAIL"
         fi
 
         # Check if the function is defined
