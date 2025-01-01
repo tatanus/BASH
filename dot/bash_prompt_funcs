@@ -74,7 +74,6 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
         echo -e "$SESSION_STATUS"
     }
 
-
     # Refresh cached IPs periodically
     function update_ip_cache() {
         PROMPT_LOCAL_IP=$(get_local_ip 2>/dev/null || echo "Unavailable")
@@ -82,39 +81,53 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
         LAST_IP_CHECK=$(date +%s)
     }
 
+    # Function to determine if a network interface is configured as DHCP or Static
     function is_dhcp_static() {
+        # Ensure the interface is provided
         local interface=$1
-        local os_type=$(get_os_type)
+        if [[ -z "$interface" ]]; then
+            echo "Error: No interface specified." >&2
+            return 1
+        fi
 
-        if [ "$os_type" = "Linux" ]; then
-            # Check if nmcli is available and NetworkManager is running
-            if command -v nmcli > /dev/null 2>&1 && systemctl is-active NetworkManager > /dev/null 2>&1; then
-                local connection_profile=$(nmcli -g GENERAL.CONNECTION device show "$interface")
+        # Detect OS type
+        local os_type
+        os_type=$(get_os_type)
 
-                if [ "$connection_profile" = "--" ]; then
+        # Handle Linux systems
+        if [[ "$os_type" == "Linux" ]]; then
+            # Check if nmcli is available and NetworkManager is active
+            if command -v nmcli &>/dev/null && systemctl is-active NetworkManager &>/dev/null; then
+                local connection_profile
+                connection_profile=$(nmcli -g GENERAL.CONNECTION device show "$interface" 2>/dev/null)
+
+                if [[ "$connection_profile" == "--" || -z "$connection_profile" ]]; then
                     echo "No active connection"
-                else
-                    local ip_method=$(nmcli -g ipv4.method connection show "$connection_profile")
-
-                    if [ "$ip_method" = "auto" ]; then
-                        echo "DHCP"
-                    elif [ "$ip_method" = "manual" ]; then
-                        echo "Static"
-                    else
-                        echo "Unknown"
-                    fi
-                fi
-
-            # Check if systemd-networkd is active and use netplan configuration
-            elif systemctl is-active systemd-networkd > /dev/null 2>&1; then
-                local config_file=$(find /etc/netplan/ -name "*.yaml" -print -quit)
-
-                if [ -z "$config_file" ]; then
-                    echo "No netplan configuration file found."
                     return 1
                 fi
 
-                local config=$(grep -A3 "$interface:" "$config_file")
+                local ip_method
+                ip_method=$(nmcli -g ipv4.method connection show "$connection_profile" 2>/dev/null)
+
+                case "$ip_method" in
+                    auto) echo "DHCP" ;;
+                    manual) echo "Static" ;;
+                    *) echo "Unknown" ;;
+                esac
+                return 0
+
+            # Check if systemd-networkd is active
+            elif systemctl is-active systemd-networkd &>/dev/null; then
+                local config_file
+                config_file=$(find /etc/netplan/ -name "*.yaml" -print -quit)
+
+                if [[ -z "$config_file" ]]; then
+                    echo "No netplan configuration file found." >&2
+                    return 1
+                fi
+
+                local config
+                config=$(grep -A3 "$interface:" "$config_file" 2>/dev/null)
 
                 if echo "$config" | grep -q "dhcp4: true"; then
                     echo "DHCP"
@@ -123,10 +136,12 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
                 else
                     echo "Unknown"
                 fi
+                return 0
 
-            # Fall back to checking /etc/network/interfaces if it exists
-            elif [ -f /etc/network/interfaces ]; then
-                local config=$(grep -A3 "iface $interface" /etc/network/interfaces)
+            # Fall back to /etc/network/interfaces
+            elif [[ -f /etc/network/interfaces ]]; then
+                local config
+                config=$(grep -A3 "iface $interface" /etc/network/interfaces 2>/dev/null)
 
                 if echo "$config" | grep -q "dhcp"; then
                     echo "DHCP"
@@ -135,30 +150,43 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
                 else
                     echo "Unknown"
                 fi
+                return 0
 
             else
-                echo "Network configuration method unknown."
+                echo "Network configuration method unknown." >&2
+                return 1
             fi
-        elif [ "$os_type" = "macOS" ]; then
-            local service=$(networksetup -listallhardwareports | awk -v interface="$interface" '
+
+        # Handle macOS systems
+        elif [[ "$os_type" == "macOS" ]]; then
+            if ! command -v networksetup &>/dev/null; then
+                echo "Error: 'networksetup' command is not available." >&2
+                return 1
+            fi
+
+            local service
+            service=$(networksetup -listallhardwareports | awk -v interface="$interface" '
             /Hardware Port: / { port = $3; next }
             /Device: / { dev = $2; if (dev == interface) { print port } }')
 
-            if [ -z "$service" ]; then
+            if [[ -z "$service" ]]; then
                 echo "No active connection"
-            else
-                local config=$(networksetup -getinfo "$service")
-
-                # Check if the output contains "DHCP Configuration"
-                if echo "$config" | grep -q "DHCP Configuration"; then
-                    echo "DHCP"
-                else
-                    echo "Static"
-                fi
+                return 1
             fi
 
+            local config
+            config=$(networksetup -getinfo "$service" 2>/dev/null)
+
+            if echo "$config" | grep -q "DHCP Configuration"; then
+                echo "DHCP"
+            else
+                echo "Static"
+            fi
+            return 0
+
         else
-            echo "Unsupported OS: $os_type"
+            echo "Unsupported OS: $os_type" >&2
+            return 1
         fi
     }
 
