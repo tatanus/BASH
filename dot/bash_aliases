@@ -2,7 +2,7 @@
 
 # =============================================================================
 # NAME        : bash_aliases
-# DESCRIPTION : 
+# DESCRIPTION : A collection of useful aliases and functions for Bash.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
 # =============================================================================
@@ -16,40 +16,110 @@
 if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
     declare -g BASH_ALIAS_LOADED=true
 
-    #alias python3="python3.12"
-    alias bat="batcat"
-    alias nc="ncat"
+    # Helper function: Check command availability
+    function check_command() {
+        if ! command -v "$1" &>/dev/null; then
+            log "ERROR" "$1 is not installed. Some functionality may not work."
+            return 1
+        fi
+    }
+
+    # Alias for ncat
+    check_command "ncat" && alias nc="ncat"
+
+    # Alias and function for eza
+    if check_command "eza"; then
+        # Function to convert ls commands to eza commands
+        function convert_ls_to_eza() {
+            local cmd="$*"
+            local eza_cmd="eza --git -F -h"  # Default eza command
+
+            # Separate options and arguments
+            local options=()
+            local arguments=()
+
+            # Parse all arguments
+            for arg in $cmd; do
+                if [[ $arg == --* ]]; then
+                    # Long option (e.g., --tree, --group)
+                    options+=("$arg")
+                elif [[ $arg == -* ]]; then
+                    # Split combined short options into individual flags
+                    for (( i = 1; i < ${#arg}; i++ )); do
+                        options+=("-${arg:i:1}")
+                    done
+                else
+                    # Non-option argument (e.g., file/directory)
+                    arguments+=("$arg")
+                fi
+            done
+
+            # Parse options to convert to eza equivalents
+            for opt in "${options[@]}"; do
+                case "$opt" in
+                    -l) eza_cmd+=" -l --group" ;;                   # Long format with group info
+                    -t) eza_cmd+=" --sort=modified" ;;             # Sort by modification time
+                    -S) eza_cmd+=" --sort=size" ;;                 # Sort by file size
+                    -F) eza_cmd+=" --classify" ;;                  # Append indicator to entries
+                    *) 
+                        # Pass through unrecognized options (e.g., -Z, -U)
+                        eza_cmd+=" $opt" ;;
+                esac
+            done
+
+            # Append non-option arguments to the command
+            for arg in "${arguments[@]}"; do
+                eza_cmd+=" \"$arg\""
+            done
+
+            # Echo and run the final command
+            echo "Running: $eza_cmd"
+            eval "$eza_cmd"
+        }
+
+        # Alias for ls
+        alias ls="convert_ls_to_eza"
+    fi
+
+    # Alias for bat
+    if check_command "bat"; then
+        alias cat='bat --paging=never --style=plain'
+    fi
 
     # Alias to shorten proxychains4
-    alias PROXY="proxychains4 -q "
-    alias pc4='PROXY'
+    check_command "proxychains4" && alias PROXY="proxychains4 -q"
 
-    # Alias to get the public IP address using proxychains4 and ifconfig.me
-    alias myip='PROXY -q curl ifconfig.me/ip'
+    # Alias to get public IP address using proxychains4 and curl
+    if check_command "curl"; then
+        alias myip="${PROXY} curl ifconfig.me/ip"
 
-    # Alias to run 'grep' with the '--color=auto' option for colored output
+        # Alias to run 'curl' with a specific user agent string
+        alias curl='curl -A "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36" -k'
+    fi
+
+    # Alias for grep with color
     alias grep='grep --color=auto'
 
-    # Alias to run 'curl' with a specific user agent string
-    alias curl='curl -A "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36" -k'
-
-    # Alias to run 'dig' with the '+short' option to display only the IP address
+    # Alias for dig with short output
     alias dig='dig +short'
 
-    # Alias to run 'wget' with the '-c' option to resume interrupted downloads
+    # Alias for wget with resume support
     alias wget='wget -c'
 
+    # Function to pause execution and clear pause message
     function _Pause() { 
         echo
         echo "-----------------------------------"
         read -n 1 -s -r -p "Press any key to continue..."
         echo  # Move to the next line after key press
 
-        # Use ANSI escape codes to move the cursor up and clear lines
-        tput cuu 3   # Move the cursor up 3 lines
-        tput el      # Clear the current line
-        tput el      # Clear the next line
-        tput el      # Clear the third line
+        # Clear pause message from terminal
+        if command -v tput &>/dev/null; then
+            tput cuu 3
+            tput el
+            tput el
+            tput el
+        fi
     }
 
     # Function to display the current session name (TMUX or SCREEN)
@@ -58,13 +128,15 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
 
         # Check if we are in a TMUX session
         if [ -n "$TMUX" ]; then
-            local tmux_session=$(tmux display-message -p '#S')
+            local tmux_session
+            tmux_session=$(tmux display-message -p '#S')
             session_names+=("TMUX:${tmux_session}")
         fi
 
         # Check if we are in a SCREEN session
         if [ -n "$STY" ]; then
-            local screen_session=$(echo "$STY" | awk -F '.' '{print $2}')
+            local session_names
+            screen_session=$(echo "$STY" | awk -F '.' '{print $2}')
             session_names+=("SCREEN:${screen_session}")
         fi
 
@@ -74,9 +146,10 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
         fi
     }
 
+
     # Function to sort Responder style hashes in a file
     function sort_first() {
-         cat $@ | sort -u -V | sort -t: -k1,3 -u;
+        sort -u -V "$@" | sort -t: -k1,3 -u
     }
 
     # Function to strip ANSI escape sequences, control characters, and non-printable characters

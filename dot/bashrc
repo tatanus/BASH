@@ -24,12 +24,20 @@ if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
 fi
 
 # History settings
+HISTFILE=~/.bash_history
 HISTCONTROL=
 HISTIGNORE=
 HISTSIZE=100000
 HISTFILESIZE=100000
 HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
 shopt -s histappend
+
+# Check if the history file exists, if not, create it
+if [[ ! -f $HISTFILE ]]; then
+  touch $HISTFILE
+  chmod 600 $HISTFILE
+fi
+
 
 primary_config_files=(
     # Source .bash_env first, if you use it for basic environment variables
