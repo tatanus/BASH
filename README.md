@@ -2,10 +2,9 @@
 ![Build Status](https://github.com/tatanus/BASH/actions/workflows/main.yml/badge.svg)
 ![ShellCheck](https://github.com/tatanus/BASH/actions/workflows/shellcheck.yml/badge.svg)
 
-
 # BASH - "Bash Automation for Simple Hacking"
 
-This repository contains a modular and extensible configuration for setting up and managing a robust Bash environment, particularly useful for developers, system administrators, and penetration testers. It includes utility scripts, environment configurations, and tools to enhance productivity and streamline workflows.
+This repository offers a modular and extensible configuration for establishing and managing a robust Bash environment, tailored for penetration testers but also useful to developers and system administrators. It encompasses a setup script to configure a customized BASH environment, utility scripts to assit in daily activities, environment configurations, and tools designed to enhance productivity and streamline workflows.
 
 ---
 
@@ -34,9 +33,8 @@ The **BASH_SETUP Environment** is designed to:
 ## Features
 
 - Modular configuration system:
-  - `dot/` for environment-specific setups (aliases, prompts, and paths).
-  - `config/` for user-specific configurations.
-  - `lib/` for reusable utility scripts.
+  - `tools/` where install scripts for various tools reside.
+  - `pentest_menu/modules/` where task specific shell scripts reside that are called via the pentest_menu script
 - Automation scripts for pentesting and system tasks.
 - FZF-powered dynamic menus for streamlined workflows.
 - Logging and error-handling utilities.
@@ -57,8 +55,8 @@ The **BASH_SETUP Environment** is designed to:
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url> ~/BASH_SETUP
-   cd ~/BASH_SETUP
+   git clone <repository-url>
+   cd BASH
    ```
 
 2. Run the setup script:
@@ -68,6 +66,7 @@ The **BASH_SETUP Environment** is designed to:
 
 3. Restart your shell or source the environment:
    ```bash
+   # if your system does not automatically source ~/.bashrc you will need to do it manually
    source ~/.bashrc
    ```
 
@@ -76,23 +75,40 @@ The **BASH_SETUP Environment** is designed to:
 ## Directory Structure
 
 ```
-BASH_SETUP/
-├── README.md          # This documentation file
-├── SetupBashEnv.sh    # Main setup script
-├── dot/               # Environment-specific configurations
-│   ├── bashrc         # Main Bash configuration
-│   ├── bash_aliases   # Custom aliases
-│   ├── tmux.conf      # Tmux configuration
-│   └── ...            # Other dotfiles
-├── config/            # User-specific configurations
-│   ├── config.sh      # Central configuration script
-│   ├── pentest.env    # Environment variables for pentesting
-│   └── ...            # Other configuration files
-├── lib/               # Utility scripts
-│   ├── utils.sh       # General utility functions
-│   ├── menu.sh        # FZF-powered menus
-│   └── ...            # Other utilities
-└── ...
+BASH/
+├── README.md                  # Project documentation
+├── SetupBashAuto.sh           # Main setup script
+├── dot/                       # Environment-specific configurations
+│   ├── bashrc
+│   ├── bash_aliases
+│   ├── tmux.conf
+│   └── ...
+├── config/                    # User-specific configurations
+│   ├── config.sh
+│   ├── pentest.env
+│   └── ...
+├── lib/                       # Utility scripts for common functions
+│   ├── utils.sh
+│   ├── menu.sh
+│   └── ...
+├── tools/                     # Scripts and modules for various tools
+│   ├── modules/
+│   │   ├── run_aquatone.sh    # Script to run Aquatone
+│   │   ├── run_nuclei.sh      # Script to run Nuclei
+│   │   └── ...
+│   └── other_tool.sh          # Placeholder for other tool scripts
+├── pentest_menu/              # Pentesting-related menus and scripts
+│   ├── modules/
+│   │   ├── recon_menu.sh      # Recon menu script
+│   │   ├── exploit_menu.sh    # Exploit menu script
+│   │   └── ...
+│   └── pentest_menu.sh        # Main pentest menu entry script
+└── tests/                     # Automated test scripts
+    ├── bats/                  # Tests using BATS framework
+    │   ├── run_tests.sh       # Test runner
+    │   └── example_test.bats  # Example test
+    └── shellcheck_test.sh     # ShellCheck linting script
+
 ```
 
 ---
@@ -117,3 +133,5 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Notes
 
 For any questions, feature requests, or bug reports, feel free to open an issue or contact the repository owner.
+
+Enjoy using BASH - "Bash Automation for Simple Hacking"!
