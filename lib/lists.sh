@@ -289,6 +289,8 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Array for Setup_Environment functions
     ENVIRONMENT_MENU_ITEMS=(
+        "Undo_Setup_Dot_Files"
+        
         "Setup_Directories"
         "Setup_Necessary_Files"
         "Setup_Dot_Files"

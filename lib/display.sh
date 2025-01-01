@@ -74,18 +74,21 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
         local log_entry="$timestamp [$context] $message"
 
         # Display to screen with color
-        echo -e "${color}${prefix} ${message}${reset}"
+        if [[ "${NO_DISPLAY}" != "true" ]]; then
+            echo -e "${color}${prefix} ${message}${reset}"
+
+            # Automatically call debug if DEBUG is true, but avoid infinite loop
+            if [[ "${DEBUG:-false}" == true && "$type" != "debug" ]]; then
+                # Capture the caller stack info from log_message
+                local caller_info
+                caller_info=$(caller 1) # Get the caller of log_message
+                debug "$message" "$context" "$caller_info"
+            fi
+        fi
 
         # Write to log file
         echo "$log_entry" >> "$LOG_FILE"
 
-        # Automatically call debug if DEBUG is true, but avoid infinite loop
-        if [[ "${DEBUG:-false}" == true && "$type" != "debug" ]]; then
-            # Capture the caller stack info from log_message
-            local caller_info
-            caller_info=$(caller 1) # Get the caller of log_message
-            debug "$message" "$context" "$caller_info"
-        fi
     }
 
     # Wrapper functions for each log type

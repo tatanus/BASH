@@ -252,24 +252,6 @@ function Setup_Necessary_Files() {
         success "Created directory: $PENTEST_DIR"
     fi
 
-    # Internal function to copy files with error handling
-    copy_file() {
-        local src_file="$1"
-        local dest_file="$2"
-
-        if [ -f "$src_file" ]; then
-            cp "$src_file" "$dest_file" || {
-                fail "Failed to copy $src_file to $dest_file"
-                return "$_FAIL"
-
-            }
-            success "Copied $src_file to $dest_file"
-        else
-            fail "Source file $src_file does not exist. Skipping."
-            return "$_FAIL"
-        fi
-    }
-
     # Copy configuration files
     for file in "${PENTEST_FILES[@]}"; do
         copy_file "$SCRIPT_DIR/config/$file" "$PENTEST_DIR/$file"
@@ -303,18 +285,8 @@ function Setup_Dot_Files() {
         local target="${HOME}/.${file}"
         local source="dot/${file}"
 
-        # Backup existing file if it exists
-        if [ -f "$target" ]; then
-            if cp "$target" "${target}.old"; then
-                success "Backed up existing file $target to ${target}.old."
-            else
-                fail "Failed to back up existing file $target."
-                continue
-            fi
-        fi
-
         # Copy the new file from the dot directory
-        if cp "$source" "$target"; then
+        if copy_file "$source" "$target"; then
             success "Copied $source to $target."
         else
             fail "Failed to copy $source to $target."
@@ -325,18 +297,8 @@ function Setup_Dot_Files() {
         local target="${BASH_DIR}/${file}"
         local source="dot/${file}"
 
-        # Backup existing file if it exists
-        if [ -f "$target" ]; then
-            if cp "$target" "${target}.old"; then
-                success "Backed up existing file $target to ${target}.old."
-            else
-                fail "Failed to back up existing file $target."
-                continue
-            fi
-        fi
-
         # Copy the new file from the dot directory
-        if cp "$source" "$target"; then
+        if copy_file "$source" "$target"; then
             success "Copied $source to $target."
         else
             fail "Failed to copy $source to $target."
@@ -350,6 +312,42 @@ function Setup_Dot_Files() {
     else
         fail "Failed to source ${HOME}/.bashrc."
         return "$_FAIL"
+    fi
+}
+
+# Function to undo the setup of dotfiles
+function Undo_Setup_Dot_Files() {
+    # Revert dotfiles in the home directory
+    for file in "${DOT_FILES[@]}"; do
+        local target="${HOME}/.${file}"
+
+        if [ -f "$target" ]; then
+            if ! restore_file "$target"; then
+                info "No backup for $target. Leaving it untouched."
+            else
+                success "Restored $target from backup."
+            fi
+        fi
+    done
+
+    # Revert dotfiles in the bash directory
+    for file in "${BASH_DOT_FILES[@]}"; do
+        local target="${BASH_DIR}/${file}"
+
+        if [ -f "$target" ]; then
+            if ! restore_file "$target"; then
+                info "No backup for $target. Leaving it untouched."
+            else
+                success "Restored $target from backup."
+            fi
+        fi
+    done
+
+    # Reload the bashrc if it was restored
+    if source "${HOME}/.bashrc"; then
+        success "Reloaded ${HOME}/.bashrc after undoing dotfile setup."
+    else
+        warn "Failed to reload ${HOME}/.bashrc after undoing dotfile setup."
     fi
 }
 

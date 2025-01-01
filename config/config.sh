@@ -18,6 +18,7 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
 
     # Debug mode (set to true or false)
     export DEBUG=true
+    export NO_DISPLAY=flase
 
     # pass/fail/true/fall variables
     export _PASS=0
