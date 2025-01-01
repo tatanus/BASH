@@ -167,10 +167,13 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
             while :; do
                 backup_file="${dest}.old-${backup_num}"
                 if [[ ! -f "$backup_file" ]]; then
-                    mv "$dest" "$backup_file" && pass "Moved existing file to $backup_file" || {
-                        fail "Failed to move existing file to $backup_file"
+                    if mv "$dest" "$backup_file"; then
+                        pass "Moved existing file to $backup_file"
+                    else
+                        # Handle the failure
+                        fail "Failed to move $dest to $backup_file"
                         return "$_FAIL"
-                    }
+                    fi
                     break
                 fi
                 ((backup_num++))
@@ -178,10 +181,13 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
         fi
 
         # Copy the source file to the destination
-        cp "$src" "$dest" && pass "Copied $src to $dest" || {
+        if cp "$src" "$dest"; then
+            pass "Copied $src to $dest"
+        else
+            # Handle the failure
             fail "Failed to copy $src to $dest"
             return "$_FAIL"
-        }
+        fi
     }
 
     # Restore the highest numbered <filename>.old-<num> to <filename>
@@ -197,7 +203,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         # Find all backup files matching <filename>.old-<num>
         local backups
-        backups=($(ls "${filename}.old-"* 2>/dev/null || true))
+        mapfile -t backups < <(ls "${filename}.old-"* 2>/dev/null || true)
 
         # Check if there are any backups
         if [[ ${#backups[@]} -eq 0 ]]; then
