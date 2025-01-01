@@ -1,0 +1,31 @@
+name: CI Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y bash
+
+      # Run Tests
+      - name: Execute Tests
+        run: |
+          ./tests/run_tests.sh
+          # Replace with your actual test commands
