@@ -47,6 +47,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         fi
 
         fail "Something went wrong while installing $package."
+        # shellcheck disable=SC2317
         return "$_FAIL"
     }
 

@@ -27,6 +27,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     fi
 
     ## WHICH PYTHON VERSION TO USE
+    # shellcheck disable=SC2153
     PYTHON="python$PYTHON_VERSION "
     export PYTHON
 
