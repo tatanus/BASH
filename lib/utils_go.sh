@@ -108,7 +108,7 @@ if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
                 success "Successfully installed ${tool}."
             else
                 fail "Failed to install ${tool}."
-            #    return "$_FAIL"
+                #return "$_FAIL"
             fi
 
             # Verify installation

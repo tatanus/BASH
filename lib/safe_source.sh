@@ -99,9 +99,9 @@ function _SAFE_UNSOURCE() {
 
     # Cleanup snapshot files
     rm -f "/tmp/env_vars_${snapshot_id}" "/tmp/env_funcs_${snapshot_id}" \
-          "/tmp/env_aliases_${snapshot_id}" "/tmp/env_exported_${snapshot_id}" \
-          /tmp/env_vars_after_$$ /tmp/env_funcs_after_$$ \
-          /tmp/env_aliases_after_$$ /tmp/env_exported_after_$$
+        "/tmp/env_aliases_${snapshot_id}" "/tmp/env_exported_${snapshot_id}" \
+        /tmp/env_vars_after_$$ /tmp/env_funcs_after_$$ \
+        /tmp/env_aliases_after_$$ /tmp/env_exported_after_$$
 
     echo "Reverted environment to the state before sourcing '$snapshot_id'."
 }

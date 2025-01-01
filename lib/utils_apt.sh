@@ -34,14 +34,14 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         if ! dpkg -s "$package" >/dev/null 2>&1; then
             info "Installing $package using apt..."
             if $PROXY sudo apt update -qq >/dev/null 2>&1 && \
-               $PROXY sudo apt install -y "$package" >/dev/null 2>&1; then
+                $PROXY sudo apt install -y "$package" >/dev/null 2>&1; then
                 success "Installed $package using apt."
                 return "$_PASS"
             else
                 fail "Could not install $package using apt."
                 return "$_FAIL"
             fi
-         else
+        else
             success "$package is already installed."
             return "$_PASS"
         fi

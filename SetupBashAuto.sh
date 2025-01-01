@@ -117,7 +117,7 @@ declare -a REQUIRED_FILES=(
     "${SCRIPT_DIR}/lib/utils.sh"
     "${SCRIPT_DIR}/lib/menu.sh"
     "${SCRIPT_DIR}/lib/safe_source.sh"
-)
+    )
 
 # Source required files and verify their existence
 for file in "${REQUIRED_FILES[@]}"; do
@@ -414,7 +414,7 @@ function Setup_Msf_Scripts() {
     if [[ ! -d "$DATA_DIR/MSF" ]]; then
         mkdir -p "$DATA_DIR/MSF" || {
             fail "Failed to create target directory $DATA_DIR/MSF."
-        return "$_FAIL"
+            return "$_FAIL"
         }
         success "Created target directory $DATA_DIR/MSF."
     fi

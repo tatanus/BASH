@@ -57,8 +57,8 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
 
         # Remove the specified path from $PATH
         PATH_TEMP=$(echo "$PATH" | sed -e "s|$path_to_remove:||" \
-                                       -e "s|:$path_to_remove||" \
-                                       -e "s|$path_to_remove||")
+            -e "s|:$path_to_remove||" \
+            -e "s|$path_to_remove||")
         export PATH="$PATH_TEMP"
     }
 

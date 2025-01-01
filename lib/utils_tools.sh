@@ -137,7 +137,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Install additional pip packages if provided
         for PACKAGE in "${PIP_INSTALLS[@]}"; do
-              if [ "$PACKAGE" == "." ]; then
+            if [ "$PACKAGE" == "." ]; then
                 if ! _Pip_Install "$TOOLS_DIR/$DIRECTORY_NAME/." ""; then
                     fail "Failed to install package: $TOOLS_DIR/$DIRECTORY_NAME/."
                     deactivate
@@ -228,7 +228,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
                 if [[ -f "$script" ]]; then
                     tool_name=$(basename "$script" .sh) # Extract the tool name
-        
+
                     "test_$tool_name"
                     local status=$?  # Capture the exit status immediately
 

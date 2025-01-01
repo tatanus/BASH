@@ -222,7 +222,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     # Check if a directory exists
     # Usage: check_dir_exists "dir_path"
     function check_dir_exists() {
-       local dir_path="$1"
+        local dir_path="$1"
 
         if [[ -z "$dir_path" ]]; then
             fail "No directory path provided."

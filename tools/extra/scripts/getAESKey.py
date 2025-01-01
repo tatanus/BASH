@@ -44,6 +44,7 @@ def validate_nt_hash(nt_hash):
     """
     if len(nt_hash) != 32:
         raise ValueError("NT hash must be exactly 32 hexadecimal characters.")
+    
     try:
         unhexlify(nt_hash)
     except BinasciiError:
@@ -91,4 +92,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

@@ -157,8 +157,8 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
 
             local service
             service=$(networksetup -listallhardwareports | awk -v interface="$interface" '
-            /Hardware Port: / { port = $3; next }
-            /Device: / { dev = $2; if (dev == interface) { print port } }')
+                /Hardware Port: / { port = $3; next }
+                /Device: / { dev = $2; if (dev == interface) { print port } }')
 
             if [[ -z "$service" ]]; then
                 echo "No active connection"

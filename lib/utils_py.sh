@@ -61,7 +61,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
     function _Install_Python() {
          # Ensure version variable is set
-        if [ -z "$PYTHON" ]; then
+         if [ -z "$PYTHON" ]; then
             fail "Python version ($PYTHON_VERSION) is not specified."
             return "$_FAIL"
         fi
@@ -82,7 +82,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         else
             fail "Failed to install pip."
             ERROR_FLAG=true
-#            return "$_FAIL"
+            #return "$_FAIL"
         fi
         _Wait_Pid
 
@@ -92,7 +92,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         else
             fail "Failed to install pip."
             ERROR_FLAG=true
-#            return "$_FAIL"
+            #return "$_FAIL"
         fi
         _Wait_Pid
 
@@ -102,7 +102,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         else
             fail "Failed to install pipx."
             ERROR_FLAG=true
-#            return "$_FAIL"
+            #return "$_FAIL"
         fi
         _Wait_Pid
 

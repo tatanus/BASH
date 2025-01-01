@@ -133,9 +133,8 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
                 _Update_Menu_Timestamp "$title" "$actual_choice"
 
                 # Perform the action associated with the choice
-    #            clear
                 "$action_function" "$actual_choice"
-                
+
                 _Pause
             fi
         done

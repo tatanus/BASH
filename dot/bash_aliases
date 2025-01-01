@@ -128,7 +128,7 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
 
     # Function to display the current session name (TMUX or SCREEN)
     function get_session_name() {
-       local session_names=()
+        local session_names=()
 
         # Check if we are in a TMUX session
         if [ -n "$TMUX" ]; then
@@ -173,13 +173,13 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
         if [[ -f "$1" ]]; then
             # Read file and clean non-printable characters and escape sequences
             LANG=C sed -E -e "s/${ansi_pattern}//g" \
-                          -e "s/${control_pattern}//g" \
-                          -e "s/${nonprintable_pattern}//g" "$1"
+            -e "s/${control_pattern}//g" \
+            -e "s/${nonprintable_pattern}//g" "$1"
         else
             # Treat input as a string and clean non-printable characters and escape sequences
             echo -e "$1" | LANG=C sed -E -e "s/${ansi_pattern}//g" \
-                                         -e "s/${control_pattern}//g" \
-                                         -e "s/${nonprintable_pattern}//g"
+            -e "s/${control_pattern}//g" \
+            -e "s/${nonprintable_pattern}//g"
         fi
     }
 fi
