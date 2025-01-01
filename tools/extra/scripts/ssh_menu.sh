@@ -73,8 +73,7 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
     }
 
 	# Path to your SSH config file
-	#SSH_CONFIG_FILE="$HOME/.ssh/config"
-	SSH_CONFIG_FILE="../ssh_config"
+	SSH_CONFIG_FILE="$HOME/.ssh/config"
 
 	# Function to check if the SSH config file exists
 	function _Check_SSH_Config() {
