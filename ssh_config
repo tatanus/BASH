@@ -1,0 +1,112 @@
+# Global settings for all hosts
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_rsa
+    StrictHostKeyChecking yes
+    UserKnownHostsFile ~/.ssh/known_hosts
+    ControlMaster auto
+    ControlPath ~/.ssh/ssh_mux_%h_%p_%r
+    ControlPersist 10m
+    PasswordAuthentication no
+    LogLevel INFO
+    HostKeyAlgorithms +ssh-rsa
+    Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+
+
+
+# TS hosts
+Host pentest
+    User adam.compton
+    Port 44444
+    HostName pentest.trustedsec.net
+
+Host davros
+    User adam.compton
+    Port 44444
+    HostName davros.trustedsec.com
+
+Host platform
+    User adam.compton
+    Port 44444
+    HostName platform.trustedsec.net
+
+
+
+# Password cracking hosts
+Host brutalis
+    User root
+    Port 44444
+    HostName brutalis.trustedsec.net
+
+Host inmanis
+    User root
+    Port 44444
+    HostName inmanis.trustedsec.net
+
+Host barbarus
+    User root
+    Port 44444
+    HostName barbarus.trustedsec.local
+
+Host cracker
+    User root
+    Port 44444
+    HostName cracker.trustedsec.net
+
+
+
+# ProxyJump hosts
+Host badwolf
+    User adam.compton
+    Port 44444
+    StrictHostKeyChecking no
+    ForwardAgent yes
+    HostName badwolf.trustedsec.net
+
+Host torchwood
+    User adam.compton
+    Port 44444
+    StrictHostKeyChecking no
+    ForwardAgent yes
+    HostName torchwood.trustedsec.net
+
+
+
+# Shared settings for all TAP_ hosts
+Host TAP_*
+    Hostname localhost
+    User root
+    StrictHostKeyChecking no
+    DynamicForward 8081
+    LocalForward 127.0.0.1:8834 127.0.0.1:8834
+    ControlMaster auto
+    ControlPath ~/.ssh/ssh_mux_%h_%p_%r
+    ControlPersist 10m
+
+
+
+# Specific settings for each TAP_Cust host
+Host TAP_100
+    ProxyJump torchwood
+    Port 10000
+
+Host TAP_101
+    ProxyJump badwolf
+    Port 10101
+
+Host TAP_300
+    ProxyJump torchwood
+    Port 300333
+
+Host TAP_999
+    ProxyJump torchwood
+    Port 999111
+
+Host TAP_300
+    ProxyJump badwolf
+    Port 30101
+
+Host TAP_888
+    ProxyJump llk
+    Port 233443

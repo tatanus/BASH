@@ -21,7 +21,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     # =============================================================================
 
     # Function to verify required tools are available
-    check_required_screenshot_tools() {
+    function check_required_screenshot_tools() {
         for cmd in ansifilter a2ps convert; do
             if ! command -v "$cmd" &>/dev/null; then
                 echo "Error: Required tool '$cmd' is not installed or not in PATH." >&2
@@ -31,7 +31,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     }
 
     # Function to process input (text or command output) and generate a PNG
-    generate_screenshot_png() {
+    function generate_screenshot_png() {
         local input="$1"
         local output_file="$2"
         local temp_html_file
@@ -77,7 +77,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     # =============================================================================
 
     # Function to capture command output and save it as a PNG file
-    screenshot_command() {
+    function screenshot_command() {
         local output_file="${2:-output.png}"  # Default output file name is "output.png"
 
         # Check if required tools are available
@@ -103,7 +103,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     }
 
     # Function to capture text output and save it as a PNG file
-    screenshot_text() {
+    function screenshot_text() {
         local output_file="${2:-output.png}"  # Default output file name is "output.png"
 
         # Check if required tools are available
