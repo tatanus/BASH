@@ -40,10 +40,8 @@ fi
 
 
 primary_config_files=(
-    # Source .bash_env first, if you use it for basic environment variables
+    "${HOME}/.config/bash/bash_path"
     "${HOME}/.config/bash/bash_env"
-
-    # Load environment variable definitions before everything else
     "${HOME}/.config/bash/path_env"
 )
 
@@ -54,7 +52,7 @@ done
 
 secondary_config_files=(
     # Now that variables are set, load bash_path
-    "${BASH_DIR}/bash_path"
+    "${HOME}/.config/bash/path_env"
     "${BASH_DIR}/bash_prompt"
     "${BASH_DIR}/bash_aliases"
 

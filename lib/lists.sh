@@ -72,13 +72,13 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## DOT FILES
     BASH_DOT_FILES=(
+        "bash_path"
         "bash_env"
         "path_env"
         "bash_aliases"
         "screen_aliases"
         "tmux_aliases"
         "tgt_aliases"
-        "bash_path"
         "bash_prompt"
         "bash_prompt_funcs"
         "bash-preexec.sh"

@@ -97,52 +97,53 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
 
 	# Function to add a new TAP_* host entry to the config file
 	function _Add_New_SSH_Host() {
-	    # Prompt user for new host details
-        echo "Enter new TAP_* host details"
+    # Prompt user for new host details
+    echo "Enter new TAP_* host details."
 
-        # Read inputs safely and validate them
-        read -r -p "Host name (e.g., TAP_XXX): " host_name
-        if [[ -z "$host_name" ]]; then
-            echo "Error: Host name cannot be empty."
-            return
-        fi
+    # Read inputs safely and validate them
+    read -r -p "Host name (e.g., TAP_100): " host_name
+    if [[ -z "$host_name" || ! "$host_name" =~ ^TAP_ ]]; then
+        echo "Error: Host name must start with 'TAP_' and cannot be empty."
+        return
+    fi
 
-        read -r -p "ProxyJump server: " proxy_jump
-        if [[ -z "$proxy_jump" ]]; then
-            echo "Error: ProxyJump server cannot be empty."
-            return
-        fi
+    read -r -p "ProxyJump server (e.g., badwolf): " proxy_jump
+    if [[ -z "$proxy_jump" ]]; then
+        echo "Error: ProxyJump server cannot be empty."
+        return
+    fi
 
-        read -r -p "Port: " port
-        if ! [[ "$port" =~ ^[0-9]+$ ]]; then
-            echo "Error: Port must be a valid number."
-            return
-        fi
+    read -r -p "Port (e.g., 10000): " port
+    if ! [[ "$port" =~ ^[0-9]+$ ]]; then
+        echo "Error: Port must be a valid number."
+        return
+    fi
 
-	    # Validate inputs (ensure they are not empty)
-	    if [[ -z "$host_name" || -z "$proxy_jump" || -z "$port" ]]; then
-           echo "All fields are required. Aborting."
-           exit 1
-        fi
+    # Validate input formatting and ensure required fields are not empty
+    if [[ -z "$host_name" || -z "$proxy_jump" || -z "$port" ]]; then
+        echo "Error: All fields are required."
+        return
+    fi
 
-	    # Validate that the port is a valid number
-	    if ! [[ "$port" =~ ^[0-9]+$ ]]; then
-           echo "Error: Port must be a valid number. Aborting."
-           exit 1
-        fi
+    # Generate the LocalCommand dynamically
+    local local_command="umount -u /Users/pentest/mnt/$proxy_jump 2>/dev/null || true && mkdir -p /Users/pentest/mnt/$host_name && sshfs -o IdentityFile=~/.ssh/id_rsa -o ProxyJump=$proxy_jump root@localhost:/ /Users/pentest/mnt/$host_name -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3"
 
-	    # Validate host_name format (ensure it's in the correct format for a TAP_* host)
-	    if ! [[ "$host_name" =~ ^TAP_ ]]; then
-           echo "Error: Host name must start with TAP_. Aborting."
-           exit 1
-        fi
+    # Format the new host entry
+    local new_entry=$(cat <<EOF
 
-	    # Format the new TAP_* host entry to append to the config file
-	    new_entry="\nHost $host_name\n    ProxyJump $proxy_jump\n    Port $port"
+Host $host_name
+    Hostname $host_name
+    ProxyJump $proxy_jump
+    Port $port
+    #LocalCommand $local_command
+EOF
+)
 
-	    # Append the new entry to the SSH config file
-	    echo -e "$new_entry" >> "$SSH_CONFIG_FILE"
-	    echo "New host entry added to $SSH_CONFIG_FILE"
+    # Append the new entry to the SSH config file
+    echo -e "$new_entry" >> "$SSH_CONFIG_FILE"
+
+    # Inform the user of success
+    echo "New host entry for $host_name added to $SSH_CONFIG_FILE."
 	}
 
 	function _Process_SSH_Menu() {

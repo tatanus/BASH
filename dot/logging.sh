@@ -22,13 +22,14 @@ if [[ -z "${LOGGING_SH_LOADED:-}" ]]; then
 
     # Log file location
     LOG_FILE="${BASH_LOG_DIR}/bash_commands.log"
+    LOCK_FILE="$LOG_FILE.lock"
 
     # =============================================================================
     # Utility Functions
     # =============================================================================
 
     # Ensure the log directory exists and the log file is writable
-    ensure_log_file() {
+    function ensure_log_file() {
         local log_dir
         log_dir=$(dirname "$LOG_FILE")
 
@@ -53,8 +54,27 @@ if [[ -z "${LOGGING_SH_LOADED:-}" ]]; then
         return 0
     }
 
+    # Basic lock fallback function
+    function basic_lock() {
+        if [[ -f "$LOCK_FILE" ]]; then
+            # Check if the lock file is stale
+            local pid
+            pid=$(<"$LOCK_FILE")
+            if ! kill -0 "$pid" 2>/dev/null; then
+                # Stale lock, remove it
+                rm -f "$LOCK_FILE"
+            else
+                # Lock is active, exit
+                return 1
+            fi
+        fi
+        # Create lock file with current PID
+        echo "$$" >"$LOCK_FILE"
+        return 0
+    }
+
     # Logging function
-    log_bash_command() {
+    function log_bash_command() {
         local date_time session_info command tty pid
 
         # Detect session type (screen, tmux, or TTY)
@@ -90,6 +110,20 @@ if [[ -z "${LOGGING_SH_LOADED:-}" ]]; then
             flock -n 200 || exit 1
             echo "[$date_time] $session_info # $command" >> "$LOG_FILE"
         ) 200>"$LOG_FILE.lock"
+        date_time=$(date +"%Y-%m-%d %H:%M:%S")
+        if command -v flock &>/dev/null; then
+            (
+                flock -n 200 || exit 1
+                echo "[$date_time] $session_info # $command" >>"$LOG_FILE"
+            ) 200>"$LOCK_FILE"
+        else
+            if basic_lock; then
+                echo "[$date_time] $session_info # $command" >>"$LOG_FILE"
+                basic_unlock
+            else
+                echo "Error: Could not acquire lock. Skipping log entry." >&2
+            fi
+        fi
     }
 
     # =============================================================================

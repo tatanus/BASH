@@ -2,7 +2,7 @@
 
 # =============================================================================
 # NAME        : bash_env
-# DESCRIPTION : 
+# DESCRIPTION : Environment setup for Bash
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
 # =============================================================================
@@ -37,18 +37,27 @@ if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
 
     # Helper function: Check command availability
     function check_command() {
-        if ! command -v "$1" &>/dev/null; then
-            echo "$1 is not installed. Some functionality may not work."
+        which "$1" &>/dev/null 2>&1
+        if [[ $? -ne 0 ]]; then
+            echo "$1 is not installed or not functional. Some functionality may not work."
             return 1
-        fi
+        fi 
+        return 0
     }
 
     # Apply LS_COLORS to the environment
-    check_command "gdircolors" && alias dircolors="gdircolors"
-    eval $(/usr/bin/dircolors -b)
+    # Apply dircolors if available
+    if check_command "dircolors"; then
+        eval "$(dircolors -b)"
+    elif check_command "gdircolors"; then
+        alias dircolors="gdircolors"
+        eval "$(gdircolors -b)"
+    else
+        echo "Neither dircolors nor gdircolors is available. Skipping color setup."
+    fi
 
     # If you want to use LS_COLORS in completion (for example, with GNU Readline):
-    if [[ "$SHELL" == "/bin/bash" ]]; then
+    if [[ -n "$BASH_VERSION" ]]; then
         bind 'set colored-stats on'
     fi
 
