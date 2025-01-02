@@ -38,8 +38,8 @@ The **BASH_SETUP Environment** is designed to:
 - FZF-powered dynamic menus for streamlined workflows.
 - Logging and error-handling utilities.
 - Predefined aliases and prompts to improve command-line efficiency.
-- Customized BASH [prompt](https://github.com/tatanus/BASH/docs/BASH_PROMPT_README.md)
-- [Logging](https://github.com/tatanus/BASH/docs/LOGGINGREADME.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
+- Customized BASH [prompt](docs/BASH_PROMPT_README.md)
+- [Logging](docs/LOGGINGREADME.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
 
 ---
 
