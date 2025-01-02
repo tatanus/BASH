@@ -129,7 +129,8 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
     local local_command="umount -u /Users/pentest/mnt/$proxy_jump 2>/dev/null || true && mkdir -p /Users/pentest/mnt/$host_name && sshfs -o IdentityFile=~/.ssh/id_rsa -o ProxyJump=$proxy_jump root@localhost:/ /Users/pentest/mnt/$host_name -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3"
 
     # Format the new host entry
-    local new_entry=$(cat <<EOF
+    local new_entry
+    new_entry=$(cat <<EOF
 
 Host $host_name
     Hostname $host_name
