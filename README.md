@@ -17,38 +17,50 @@ This repository offers a modular and extensible configuration for establishing a
 - [Contributing](#contributing)
 - [License](#license)
 
+
 ---
 
 ## Overview
 
 The **BASH_SETUP Environment** is designed to:
-- Provide a structured and organized Bash environment.
-- Automate common tasks and workflows.
-- Include configurations and scripts tailored for penetration testing, development, and system administration.
-- Ensure easy customization, modularity, and maintainability.
+- Establish a structured, organized Bash environment.
+- Automate penetration testing workflows.
+- Provide utility scripts for system administration and development tasks.
+- Enable dynamic, interactive menus for streamlined operations.
+- Facilitate modular customization with extensive logging and error handling.
 
 ---
 
 ## Features
 
-- Modular configuration system:
-  - `tools/` where install scripts for various tools reside.
-  - `pentest_menu/modules/` where task specific shell scripts reside that are called via the pentest_menu script
-- Automation scripts for pentesting and system tasks.
-- FZF-powered dynamic menus for streamlined workflows.
-- Logging and error-handling utilities.
-- Predefined aliases and prompts to improve command-line efficiency.
-- Customized BASH [prompt](docs/BASH_PROMPT_README.md)
-- [Logging](docs/LOGGING_README.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
+- **Dynamic Menus**:
+  - FZF-powered menus for quick access to tools and scripts.
+  - Persistent tracking of menu selections and timestamps.
+
+- **Predefined Utilities**:
+  - [Logging](docs/LOGGING_README.md) and error-handling utilities.
+  - Modular scripts for common pentesting tasks.
+
+- **Tool Integrations**:
+  - Scripts for popular tools like Aquatone, Nuclei, and more.
+  - Preconfigured modules for reconnaissance, exploitation, and credential testing.
+
+- **Custom Environment Setup**:
+  - Configurable `.bashrc`, `.bash_aliases`, and `.tmux.conf`.
+  - Tailored prompts, aliases, and environment variables.
+
+- **Documentation**:
+  - Detailed README files for individual components.
 
 ---
 
 ## Requirements
 
-- **Operating System**: Ubuntu or similar Linux distribution.
-- **Tools and Dependencies**:
+- **Operating System**: Ubuntu or a similar Linux distribution.
+- **Dependencies**:
   - `bash` (>=4.0)
   - `fzf` (for interactive menus)
+  - Standard Linux utilities (`curl`, `git`, `tmux`, etc.)
 
 ---
 
@@ -78,38 +90,41 @@ The **BASH_SETUP Environment** is designed to:
 ```
 BASH/
 ├── README.md                  # Project documentation
-├── SetupBashAuto.sh           # Main setup script
-├── dot/                       # Environment-specific configurations
+├── SetupBashEnv.sh            # Main setup script
+├── dot/                       # Environment configurations
 │   ├── bashrc
-│   ├── bash_aliases
 │   ├── tmux.conf
+│   ├── logging.sh
 │   └── ...
-├── config/                    # User-specific configurations
-│   ├── config.sh
+├── config/                    # Configuration files for tools
 │   ├── pentest.env
+│   ├── pentest.keys
 │   └── ...
-├── lib/                       # Utility scripts for common functions
+├── lib/                       # Utility scripts
 │   ├── utils.sh
 │   ├── menu.sh
+│   ├── utils_tools.sh
+│   ├── lists.sh
 │   └── ...
-├── tools/                     # Scripts and modules for various tools
-│   ├── modules/
-│   │   ├── run_aquatone.sh    # Script to run Aquatone
-│   │   ├── run_nuclei.sh      # Script to run Nuclei
+├── tools/                     # Modules for external tools
+│   ├── modules/               # Task-specific scripts
+│   │   ├── run_aquatone.sh
 │   │   └── ...
-│   └── other_tool.sh          # Placeholder for other tool scripts
-├── pentest_menu/              # Pentesting-related menus and scripts
+│   └── ...
+├── pentest_menu/              # Pentest menu scripts
 │   ├── modules/
-│   │   ├── recon_menu.sh      # Recon menu script
-│   │   ├── exploit_menu.sh    # Exploit menu script
+│   │   ├── recon_menu.sh
 │   │   └── ...
-│   └── pentest_menu.sh        # Main pentest menu entry script
-└── tests/                     # Automated test scripts
-    ├── bats/                  # Tests using BATS framework
-    │   ├── run_tests.sh       # Test runner
-    │   └── example_test.bats  # Example test
-    └── shellcheck_test.sh     # ShellCheck linting script
-
+│   └── pentest_menu.sh
+├── docs/                      # Documentation
+│   ├── BASH_PROMPT_README.md
+│   ├── LOGGING_README.md
+│   └── ...
+├── tests/                     # Automated tests
+│   ├── shellcheck_test.sh
+│   ├── unit/
+│   │   └── example_unit_test.sh
+│   └── ...
 ```
 
 ---
@@ -127,7 +142,7 @@ Contributions are welcome! Please follow these steps:
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
@@ -135,4 +150,4 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 For any questions, feature requests, or bug reports, feel free to open an issue or contact the repository owner.
 
-Enjoy using BASH - "Bash Automation for Simple Hacking"!
+Enjoy using **BASH - "Bash Automation for Simple Hacking"!**
