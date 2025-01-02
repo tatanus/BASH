@@ -39,7 +39,7 @@ The **BASH_SETUP Environment** is designed to:
 - Logging and error-handling utilities.
 - Predefined aliases and prompts to improve command-line efficiency.
 - Customized BASH [prompt](docs/BASH_PROMPT_README.md)
-- [Logging](docs/LOGGINGREADME.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
+- [Logging](docs/LOGGING_README.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
 
 ---
 
