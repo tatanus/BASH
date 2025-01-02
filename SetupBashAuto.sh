@@ -53,7 +53,9 @@ if $ERROR_FLAG; then
     fail "--------------------------------------------------"
     fail "One or more errors occurred:"
     fail "  - Ensure you are using Bash version 4.0 or higher."
-    fail "  - Ensure you are running this script as root."
+    fail "  - Ensure you are running this script as root as"
+    fail "    some tools will need to be installed and other"
+    fail "    'root' tasks will possibly be performed"
     fail
     fail "-----------------------------------"
     if [ -t 0 ]; then  # check if running interactively
