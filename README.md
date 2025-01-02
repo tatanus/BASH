@@ -13,7 +13,6 @@ This repository offers a modular and extensible configuration for establishing a
 - [Features](#features)
 - [Requirements](#requirements)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Directory Structure](#directory-structure)
 - [Contributing](#contributing)
 - [License](#license)
@@ -39,6 +38,8 @@ The **BASH_SETUP Environment** is designed to:
 - FZF-powered dynamic menus for streamlined workflows.
 - Logging and error-handling utilities.
 - Predefined aliases and prompts to improve command-line efficiency.
+- Customized BASH [prompt](https://github.com/tatanus/BASH/docs/BASH_PROMPT_README.md)
+- [Logging](https://github.com/tatanus/BASH/docs/LOGGINGREADME.md) functionality that adds timestamp, source of log, and unified across GNU screen, tmux, and ttys.
 
 ---
 
