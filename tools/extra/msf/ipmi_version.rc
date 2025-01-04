@@ -1,0 +1,7 @@
+use auxiliary/scanner/ipmi/ipmi_version
+set RHOSTS file:/root/DATA/NMAP/623.txt
+spool /root/DATA/TEE/MSF_ipmi_version.tee
+set threads 10
+run
+spool off
+exit

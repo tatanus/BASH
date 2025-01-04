@@ -1,0 +1,7 @@
+use auxiliary/scanner/rdp/cve_2019_0708_bluekeep
+set RHOSTS file:/root/DATA/NMAP/3389.txt
+spool /root/DATA/TEE/MSF_cve_2019_0708_bluekeep.tee
+set threads 10
+run
+spool off
+exit

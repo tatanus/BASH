@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -uo pipefail
+
+# =============================================================================
+# NAME        : bash_prompt
+# DESCRIPTION :
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2024-12-08 19:57:22
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# =============================================================================
+
+# Guard to prevent multiple sourcing
+if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
+    declare -g BASH_PROMPT_LOADED=true
+
+    # =============================================================================
+    # Configuration
+    # =============================================================================
+
+    # Define colors using tput for compatibility across systems
+    light_green=$(tput setaf 2)
+    light_blue=$(tput setaf 6)
+    blue=$(tput setaf 4)
+    light_red=$(tput setaf 1)
+    yellow=$(tput setaf 3)
+    orange=$(tput setaf 214 2>/dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
+    white=$(tput setaf 7)
+    reset=$(tput sgr0)
+
+    # Variables for IPs
+    PROMPT_LOCAL_IP="${PROMPT_LOCAL_IP:-Unavailable}"
+    PROMPT_EXTERNAL_IP="${PROMPT_EXTERNAL_IP:-Unavailable}"
+    LAST_IP_CHECK=0
+
+    # =============================================================================
+    # Functions
+    # =============================================================================
+
+    # Ensure referenced functions are available
+    if [[ -f "${BASH_DIR}"/bash_prompt_funcs ]]; then
+        source "${BASH_DIR}"/bash_prompt_funcs
+    else
+        echo "Warning: ${BASH_DIR}/bash_prompt_funcs not found. Some prompt features may be unavailable." >&2
+    fi
+
+    # Generate the dynamic prompt
+    function gen_prompt() {
+        # Get the active session name
+        session_name=$(get_session_name 2>/dev/null)
+
+        # Construct the prompt
+        PS1="\n"
+        # SCREEN SESSION STATUS
+        PS1+="$(check_session 2>/dev/null)"
+        # KERBEROS CREDENTIAL CACHE
+        PS1+="$(check_kerb_ccache 2>/dev/null)"
+        # PYTHON VENV
+        PS1+="$(check_venv 2>/dev/null)"
+        # DATE TIME
+        PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
+        # INTERNAL IP
+        PS1+="${white}[${light_blue}${PROMPT_LOCAL_IP}${white}]━"
+        # EXTERNAL IP
+        PS1+="${white}[ext:${blue}${PROMPT_EXTERNAL_IP}${white}]━"
+        # USER@FQDN
+        PS1+="${white}[${light_red}\u@\h${white}]\n"
+        # PATH
+        PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
+
+        export PS1="${PS1}"
+    }
+
+    # Call update_ip_cache if it's been more than 5 minutes
+    if (($(date +%s) - LAST_IP_CHECK > 300)); then
+        update_ip_cache
+    fi
+
+    # Append to PROMPT_COMMAND to avoid overwriting
+    PROMPT_COMMAND="${PROMPT_COMMAND:+${PROMPT_COMMAND}; }gen_prompt"
+
+    # Preexec setup
+    if [[ -f "${BASH_DIR}"/bash-preexec.sh ]]; then
+        source "${BASH_DIR}"/bash-preexec.sh
+    else
+        echo "Warning: ${BASH_DIR}/bash-preexec.sh not found. Preexec functionality may be unavailable." >&2
+    fi
+
+    preexec() {
+        local date_time_stamp=$(date +"[%D %T]")
+        echo
+        echo "${date_time_stamp} # $1"
+        echo
+    }
+fi

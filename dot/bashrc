@@ -1,0 +1,93 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# If not running interactively, don't do anything
+if [[ -z "${PS1:-}" ]]; then
+    return
+fi
+
+PWD="${PWD:-}"
+HOSTNAME="${HOSTNAME:-localhost}"
+PS0="${PS0:-}"
+PS1="${PS1:-}"
+PS2="${PS2:-}"
+
+# Check if we are running inside Ghostty terminal and fixig unbound variables
+if [[ "${TERM_PROGRAM:-}" == "ghostty" ]]; then
+    GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
+    GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
+    GHOSTTY_BASH_ENV="${GHOSTTY_BASH_ENV:-}"
+    GHOSTTY_BASH_RCFILE="${GHOSTTY_BASH_RCFILE:-$HOME/.bashrc}"
+    GHOSTTY_SHELL_INTEGRATION_NO_SUDO="${GHOSTTY_SHELL_INTEGRATION_NO_SUDO:-0}"
+    GHOSTTY_SHELL_INTEGRATION_NO_CURSOR="${GHOSTTY_SHELL_INTEGRATION_NO_CURSOR:-0}"
+    GHOSTTY_SHELL_INTEGRATION_NO_TITLE="${GHOSTTY_SHELL_INTEGRATION_NO_TITLE:-0}"
+    _ghostty_executing="${_ghostty_executing:-}"
+    _ghostty_last_reported_cwd="${_ghostty_last_reported_cwd:-}"
+fi
+
+# Set VIMRUNTIME and TERM variables
+export TERM=xterm-256color
+
+# Silence bash deprecation warning
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+# Check window size after each command and update LINES and COLUMNS if necessary
+shopt -s checkwinsize
+
+# Make less more friendly for non-text input files
+if [[ -x /usr/bin/lesspipe ]]; then
+    eval "$(SHELL=/bin/sh lesspipe)"
+fi
+
+# Set variable identifying the chroot you work in (used in the prompt below)
+if [[ -z "${debian_chroot}" ]] && [[ -r /etc/debian_chroot ]]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# History settings
+HISTFILE=~/.bash_history
+HISTCONTROL=
+HISTIGNORE=
+HISTSIZE=100000
+HISTFILESIZE=100000
+HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
+shopt -s histappend
+
+# Check if the history file exists, if not, create it
+if [[ ! -f ${HISTFILE} ]]; then
+    touch "${HISTFILE}"
+    chmod 600 "${HISTFILE}"
+fi
+
+primary_config_files=(
+    "${HOME}/.config/bash/bash_path"
+    "${HOME}/.config/bash/bash_env"
+    "${HOME}/.config/bash/path_env"
+)
+
+# Source additional configurations
+for file in "${primary_config_files[@]}"; do
+    [[ -f "${file}" ]] && source "${file}"
+done
+
+secondary_config_files=(
+    # Now that variables are set, load bash_path
+    "${HOME}/.config/bash/path_env"
+    "${BASH_DIR}/bash_prompt"
+    "${BASH_DIR}/bash_aliases"
+
+    # Other environment or alias files
+    "${PENTEST_DIR}/pentest_env"
+    "${PENTEST_DIR}/pentest_aliases"
+    "${BASH_DIR}/tgt_aliases"
+    "${BASH_DIR}/screen_aliases"
+    "${BASH_DIR}/tmux_aliases"
+
+    # Scripts or extra configuration
+    "${BASH_DIR}/logging.sh"
+    "${BASH_DIR}/screenshot.sh"
+    "${BASH_DIR}/capture_traffic.sh"
+)
+
+# Source additional configurations
+for file in "${secondary_config_files[@]}"; do
+    [[ -f "${file}" ]] && source "${file}"
+done
