@@ -10,7 +10,7 @@ PS0="${PS0:-}"
 PS1="${PS1:-}"
 PS2="${PS2:-}"
 
-# Check if we are running inside Ghostty terminal and fixig unbound variables
+# Check if we are running inside Ghostty terminal and fixing unbound variables
 if [[ "${TERM_PROGRAM:-}" == "ghostty" ]]; then
     GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
     GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
