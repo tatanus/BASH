@@ -20,21 +20,21 @@ function install_pre2k() {
     PIP_INSTALLS=("rich" "pycryptodome")
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" false "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 
     _Del_Alias "pre2k.py"
     _Del_Alias "pre2k"
-    _Add_Alias "function pre2k.py { (cd $TOOLS_DIR/pre2k-TS && $TOOLS_DIR/pre2k-TS/venv/bin/$PYTHON $TOOLS_DIR/pre2k-TS/pre2k.py) }"
-    _Add_Alias "function pre2k { (cd $TOOLS_DIR/pre2k-TS && $TOOLS_DIR/pre2k-TS/venv/bin/$PYTHON $TOOLS_DIR/pre2k-TS/pre2k.py) }"
+    _Add_Alias "function pre2k.py { (cd ${TOOLS_DIR}/pre2k-TS && ${TOOLS_DIR}/pre2k-TS/venv/bin/${PYTHON} ${TOOLS_DIR}/pre2k-TS/pre2k.py) }"
+    _Add_Alias "function pre2k { (cd ${TOOLS_DIR}/pre2k-TS && ${TOOLS_DIR}/pre2k-TS/venv/bin/${PYTHON} ${TOOLS_DIR}/pre2k-TS/pre2k.py) }"
 }
 
 # Test function for pre2k
 function test_pre2k() {
     local TOOL_NAME="pre2k"
     local TOOL_COMMAND="pre2k -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

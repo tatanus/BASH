@@ -49,10 +49,10 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
             done
 
             local choice
-            choice=$(printf "%s\n" "${menu_items[@]}" | fzf --prompt "$title > ")
+            choice=$(printf "%s\n" "${menu_items[@]}" | fzf --prompt "${title} > ")
 
             # Handle choice
-            if [[ -z "$choice" || "$choice" == "0) Back/Exit" ]]; then
+            if [[ -z "${choice}" || "${choice}" == "0) Back/Exit" ]]; then
                 return 0
             else
                 # This command processes the user's menu choice and extracts the meaningful part:
@@ -61,10 +61,10 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
                 # 3. Removes any extra leading or trailing whitespace.
                 # The result is stored in the variable `actual_choice`.
                 local actual_choice
-                actual_choice=$(echo "$choice" | sed 's/^[[:space:]]*[0-9]*)[[:space:]]*//' | sed 's/[[:space:]]*(Last:.*)//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+                actual_choice=$(echo "${choice}" | sed 's/^[[:space:]]*[0-9]*)[[:space:]]*//' | sed 's/[[:space:]]*(Last:.*)//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 
                 # Perform the action associated with the choice
-                "$action_function" "$actual_choice"
+                "${action_function}" "${actual_choice}"
 
                 _Pause
             fi
@@ -72,12 +72,12 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
     }
 
 	# Path to your SSH config file
-	SSH_CONFIG_FILE="$HOME/.ssh/config"
+	SSH_CONFIG_FILE="${HOME}/.ssh/config"
 
 	# Function to check if the SSH config file exists
 	function _Check_SSH_Config() {
-       if [[ ! -f "$SSH_CONFIG_FILE" ]]; then
-           echo "Error: SSH config file $SSH_CONFIG_FILE does not exist."
+       if [[ ! -f "${SSH_CONFIG_FILE}" ]]; then
+           echo "Error: SSH config file ${SSH_CONFIG_FILE} does not exist."
            exit 1
        fi
     }
@@ -86,13 +86,13 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
         local choice="$1"
 
         # Check if a function name was provided
-        if [[ -z "$choice" ]]; then
+        if [[ -z "${choice}" ]]; then
             warn "Usage: _Process_SSH_Hosts_Menu '<host>'"
-            return "$_FAIL"
+            return "${_FAIL}"
         fi
 
         echo "SSHing to [${choice}]"
-        ssh -tt "$choice"
+        ssh -tt "${choice}"
     }
 
 	# Function to add a new TAP_* host entry to the config file
@@ -102,66 +102,66 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
 
     # Read inputs safely and validate them
     read -r -p "Host name (e.g., TAP_100): " host_name
-    if [[ -z "$host_name" || ! "$host_name" =~ ^TAP_ ]]; then
+    if [[ -z "${host_name}" || ! "${host_name}" =~ ^TAP_ ]]; then
         echo "Error: Host name must start with 'TAP_' and cannot be empty."
         return
     fi
 
     read -r -p "ProxyJump server (e.g., badwolf): " proxy_jump
-    if [[ -z "$proxy_jump" ]]; then
+    if [[ -z "${proxy_jump}" ]]; then
         echo "Error: ProxyJump server cannot be empty."
         return
     fi
 
     read -r -p "Port (e.g., 10000): " port
-    if ! [[ "$port" =~ ^[0-9]+$ ]]; then
+    if ! [[ "${port}" =~ ^[0-9]+$ ]]; then
         echo "Error: Port must be a valid number."
         return
     fi
 
     # Validate input formatting and ensure required fields are not empty
-    if [[ -z "$host_name" || -z "$proxy_jump" || -z "$port" ]]; then
+    if [[ -z "${host_name}" || -z "${proxy_jump}" || -z "${port}" ]]; then
         echo "Error: All fields are required."
         return
     fi
 
     # Generate the LocalCommand dynamically
-    local local_command="umount -u /Users/pentest/mnt/$proxy_jump 2>/dev/null || true && mkdir -p /Users/pentest/mnt/$host_name && sshfs -o IdentityFile=~/.ssh/id_rsa -o ProxyJump=$proxy_jump root@localhost:/ /Users/pentest/mnt/$host_name -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3"
+    local local_command="umount -u /Users/pentest/mnt/${proxy_jump} 2>/dev/null || true && mkdir -p /Users/pentest/mnt/${host_name} && sshfs -o IdentityFile=~/.ssh/id_rsa -o ProxyJump=${proxy_jump} root@localhost:/ /Users/pentest/mnt/${host_name} -o reconnect,ServerAliveInterval=15,ServerAliveCountMax=3"
 
     # Format the new host entry
     local new_entry
     new_entry=$(cat <<EOF
 
-Host $host_name
-    Hostname $host_name
-    ProxyJump $proxy_jump
-    Port $port
-    #LocalCommand $local_command
+Host ${host_name}
+    Hostname ${host_name}
+    ProxyJump ${proxy_jump}
+    Port ${port}
+    #LocalCommand ${local_command}
 EOF
 )
 
     # Append the new entry to the SSH config file
-    echo -e "$new_entry" >> "$SSH_CONFIG_FILE"
+    echo -e "${new_entry}" >> "${SSH_CONFIG_FILE}"
 
     # Inform the user of success
-    echo "New host entry for $host_name added to $SSH_CONFIG_FILE."
+    echo "New host entry for ${host_name} added to ${SSH_CONFIG_FILE}."
 	}
 
 	function _Process_SSH_Menu() {
        local choice="$1"
 
         # Validate input
-        if [[ -z "$choice" ]]; then
+        if [[ -z "${choice}" ]]; then
             warn "Usage: _Process_SSH_Menu 'option'"
-            return "$_FAIL"
+            return "${_FAIL}"
         fi
 
 	    # Process choices
-        if [ "$choice" == "SSH to host" ]; then
+        if [[ "${choice}" == "SSH to host" ]]; then
             # Safely populate the SSH_HOSTS array using mapfile
             mapfile -t SSH_HOSTS < <(awk '/^Host / && !/\*/ {print $2}' "${SSH_CONFIG_FILE}")
             _Display_Menu "SSH hosts" "_Process_SSH_Hosts_Menu" "${SSH_HOSTS[@]}"
-        elif [ "$choice" == "Add new SSH host" ]; then
+        elif [[ "${choice}" == "Add new SSH host" ]]; then
             _Add_New_SSH_Host
         fi
     }

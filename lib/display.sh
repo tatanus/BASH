@@ -41,53 +41,53 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
 
         # Determine prefix and color
         local prefix color
-        case "$type" in
+        case "${type}" in
             info)
                 prefix="[* INFO  ]"
-                color="$blue"
+                color="${blue}"
                 ;;
             success)
                 prefix="[+ PASS  ]"
-                color="$light_green"
+                color="${light_green}"
                 ;;
             warning)
                 prefix="[! WARN  ]"
-                color="$yellow"
+                color="${yellow}"
                 ;;
             fail)
                 prefix="[- FAIL  ]"
-                color="$light_red"
+                color="${light_red}"
                 ;;
             debug)
                 prefix="[# DEBUG ]"
-                color="$orange"
+                color="${orange}"
                 ;;
             *)
-                echo -e "${light_red}[- FAIL  ] Invalid log type: $type${reset}" >&2
-                return "$_FAIL"
+                echo -e "${light_red}[- FAIL  ] Invalid log type: ${type}${reset}" >&2
+                return "${_FAIL}"
                 ;;
         esac
 
         # Construct log entry
         local timestamp
         timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
-        local log_entry="$timestamp [$context] $message"
+        local log_entry="${timestamp} [${context}] ${message}"
 
         # Display to screen with color
         if [[ "${NO_DISPLAY}" != "true" ]]; then
             echo -e "${color}${prefix} ${message}${reset}"
 
             # Automatically call debug if DEBUG is true, but avoid infinite loop
-            if [[ "${DEBUG:-false}" == true && "$type" != "debug" ]]; then
+            if [[ "${DEBUG:-false}" == true && "${type}" != "debug" ]]; then
                 # Capture the caller stack info from log_message
                 local caller_info
                 caller_info=$(caller 1) # Get the caller of log_message
-                debug "$message" "$context" "$caller_info"
+                debug "${message}" "${context}" "${caller_info}"
             fi
         fi
 
         # Write to log file
-        echo "$log_entry" >> "$LOG_FILE"
+        echo "${log_entry}" >> "${LOG_FILE}"
 
     }
 
@@ -112,11 +112,11 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
         local line_number
         local function_name
         local file_name
-        read -r line_number function_name file_name <<< "$(echo "$caller_info" | awk '{print $1, $2, $3}')"
+        read -r line_number function_name file_name <<< "$(echo "${caller_info}" | awk '{print $1, $2, $3}')"
 
         # Include detailed debug information
-        local debug_message="CALLER: $file_name:$line_number ($function_name) - $message"
-        log_message "debug" "$debug_message" "$context"
+        local debug_message="CALLER: ${file_name}:${line_number} (${function_name}) - ${message}"
+        log_message "debug" "${debug_message}" "${context}"
     }
 
     function _Pause() { 

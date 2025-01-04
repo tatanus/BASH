@@ -19,10 +19,10 @@ function install_ntlmv1_multi() {
 # Test function for ntlmv1_multi
 function test_ntlmv1_multi() {
     local TOOL_NAME="ntlmv1_multi"
-    local TOOL_COMMAND="ls $TOOLS_DIR/ntlmv1-multi"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    local TOOL_COMMAND="ls ${TOOLS_DIR}/ntlmv1-multi"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

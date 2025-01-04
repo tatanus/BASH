@@ -1,11 +1,11 @@
 # Set default shell to bash
-shell -$SHELL
+shell -"${SHELL}"
 
 # Disable startup message
 startup_message off
 
 # Make sure the LOG directory exists
-startup_command mkdir -p $HOME/DATA/LOGS
+startup_command mkdir -p "${HOME}"/DATA/LOGS
 
 # Fix xterm issue
 termcapinfo xterm* ti@:te@
@@ -16,7 +16,7 @@ autodetach on
 deflog on
 
 # Define the log file name and path
-logfile $HOME/DATA/LOGS/%S_%n.%Y%m%d-%H%M%S.screen
+logfile "${HOME}"/DATA/LOGS/%S_%n.%Y%m%d-%H%M%S.screen
 
 # Flush the logging buffer every second
 logfile flush 1

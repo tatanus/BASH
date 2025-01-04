@@ -20,16 +20,16 @@ function install_enum4linux_ng() {
     PIP_INSTALLS=(".")
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" false "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 }
 
 # Test function for enum4linux_ng
 function test_enum4linux_ng() {
     local TOOL_NAME="enum4linux_ng"
     local TOOL_COMMAND="enum4linux-ng -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

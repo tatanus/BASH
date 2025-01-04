@@ -20,20 +20,20 @@ function install_pcredz() {
     PIP_INSTALLS=("Cython" "python-libpcap")
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" false "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 
     _Del_Alias "Pcredz"
     _Del_Alias "Pcredz.py"
-    _Add_Alias "alias Pcredz='$TOOLS_DIR/PCredz/venv/bin/$PYTHON $TOOLS_DIR/PCredz/Pcredz'"
+    _Add_Alias "alias Pcredz='${TOOLS_DIR}/PCredz/venv/bin/${PYTHON} ${TOOLS_DIR}/PCredz/Pcredz'"
 }
 
 # Test function for pcredz
 function test_pcredz() {
     local TOOL_NAME="pcredz"
     local TOOL_COMMAND="Pcredz -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

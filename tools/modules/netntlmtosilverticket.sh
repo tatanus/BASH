@@ -20,16 +20,16 @@ function install_netntlmtosilverticket() {
     PIP_INSTALLS=()
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" true "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 }
 
 # Test function for netntlmtosilverticket
 function test_netntlmtosilverticket() {
     local TOOL_NAME="dementor"
     local TOOL_COMMAND="dementor -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

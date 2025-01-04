@@ -21,21 +21,21 @@ if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
     export BASH_LOG_DIR="${BASH_DIR}/log"
 
     # Ensure the BASH directory exists
-    if [ ! -d "$BASH_DIR" ]; then
-        mkdir -p "$BASH_DIR" || {
-            echo "Failed to create directory: $BASH_DIR"
+    if [[ ! -d "${BASH_DIR}" ]]; then
+        mkdir -p "${BASH_DIR}" || {
+            echo "Failed to create directory: ${BASH_DIR}"
             exit 1
         }
-        info "Created directory: $BASH_DIR"
+        info "Created directory: ${BASH_DIR}"
     fi
 
     # Ensure the BASH directory exists
-    if [ ! -d "$BASH_LOG_DIR" ]; then
-        mkdir -p "$BASH_LOG_DIR" || {
-            echo "Failed to create directory: $BASH_LOG_DIR"
+    if [[ ! -d "${BASH_LOG_DIR}" ]]; then
+        mkdir -p "${BASH_LOG_DIR}" || {
+            echo "Failed to create directory: ${BASH_LOG_DIR}"
             exit 1
         }
-        info "Created directory: $BASH_LOG_DIR"
+        info "Created directory: ${BASH_LOG_DIR}"
     fi
 
     # PENTEST Directories
@@ -58,7 +58,7 @@ if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
     export MENU_TIMESTAMP_FILE="${PENTEST_DIR}/menu_timestamps"
 
     # Ensure the PENTEST directory exists
-    if [ ! -d "${PENTEST_DIR}" ]; then
+    if [[ ! -d "${PENTEST_DIR}" ]]; then
         mkdir -p "${PENTEST_DIR}" || {
             echo "Failed to create directory: ${PENTEST_DIR}"
             exit 1
@@ -67,21 +67,21 @@ if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
     fi
 
     # Ensure the DATA directory exists
-    if [ ! -d "$DATA_DIR" ]; then
-        mkdir -p "$DATA_DIR" || {
-            echo "Failed to create directory: $DATA_DIR"
+    if [[ ! -d "${DATA_DIR}" ]]; then
+        mkdir -p "${DATA_DIR}" || {
+            echo "Failed to create directory: ${DATA_DIR}"
             exit 1
         }
-        info "Created directory: $DATA_DIR"
+        info "Created directory: ${DATA_DIR}"
     fi
 
     # -----------------------------
     # API/License Keys Configuration
     # -----------------------------
 
-    if [[ -f "$KEYS_FILE" ]]; then
-        source "$KEYS_FILE"
+    if [[ -f "${KEYS_FILE}" ]]; then
+        source "${KEYS_FILE}"
     else
-        echo "File not found: $KEYS_FILE. Skipping sourcing."
+        echo "File not found: ${KEYS_FILE}. Skipping sourcing."
     fi
 fi

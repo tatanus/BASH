@@ -14,7 +14,7 @@
 
 function install_netexec() {
     _Git_Clone https://github.com/Pennyw0rth/NetExec.git
-    _Pushd "$TOOLS_DIR"/NetExec
+    _Pushd "${TOOLS_DIR}"/NetExec
     _Pipx_Install .
     _Popd
 }
@@ -23,9 +23,9 @@ function install_netexec() {
 function test_netexec() {
     local TOOL_NAME="netexec"
     local TOOL_COMMAND="nxc -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

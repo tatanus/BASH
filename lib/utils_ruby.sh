@@ -25,20 +25,20 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
         local gems=("$@")
 
         # If no parameters are passed, use the default ruby_gems array
-        if [ ${#gems[@]} -eq 0 ]; then
-            if [ -z "${RUBY_GEMS+x}" ]; then
+        if [[ ${#gems[@]} -eq 0 ]]; then
+            if [[ -z "${RUBY_GEMS+x}" ]]; then
                 fail "ruby_gems array is not defined."
-                return "$_FAIL"
+                return "${_FAIL}"
             fi
             gems=("${ruby_gems[@]}")
         fi
 
         # Install each gem in the list
         for gem in "${gems[@]}"; do
-            info "Installing $gem..."
+            info "Installing ${gem}..."
 
             # Install the package using Ruby Gem
-            if $PROXY gem install "$gem" >/dev/null 2>&1; then
+            if ${PROXY} gem install "${gem}" >/dev/null 2>&1; then
                 success "Successfully installed ${gem}."
             else
                 fail "Failed to install ${gem}."
@@ -46,11 +46,11 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
             fi
 
             # Verify installation
-            if ! gem list -i "$gem" >/dev/null 2>&1; then
+            if ! gem list -i "${gem}" >/dev/null 2>&1; then
                 fail "Verification failed: ${gem} is not installed."
             fi
         done
 
-        return "$_PASS"
+        return "${_PASS}"
     }
 fi

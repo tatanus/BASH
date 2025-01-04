@@ -39,42 +39,42 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
             local arguments=()
 
             # Parse all arguments
-            for arg in $cmd; do
-                if [[ $arg == --* ]]; then
+            for arg in ${cmd}; do
+                if [[ ${arg} == --* ]]; then
                     # Long option (e.g., --tree, --group)
-                    options+=("$arg")
-                elif [[ $arg == -* ]]; then
+                    options+=("${arg}")
+                elif [[ ${arg} == -* ]]; then
                     # Split combined short options into individual flags
                     for (( i = 1; i < ${#arg}; i++ )); do
                         options+=("-${arg:i:1}")
                     done
                 else
                     # Non-option argument (e.g., file/directory)
-                    arguments+=("$arg")
+                    arguments+=("${arg}")
                 fi
             done
 
             # Parse options to convert to eza equivalents
             for opt in "${options[@]}"; do
-                case "$opt" in
+                case "${opt}" in
                     -l) eza_cmd+=" -l --group" ;;                   # Long format with group info
                     -t) eza_cmd+=" --sort=modified" ;;             # Sort by modification time
                     -S) eza_cmd+=" --sort=size" ;;                 # Sort by file size
                     -F) eza_cmd+=" --classify" ;;                  # Append indicator to entries
                     *) 
                         # Pass through unrecognized options (e.g., -Z, -U)
-                        eza_cmd+=" $opt" ;;
+                        eza_cmd+=" ${opt}" ;;
                 esac
             done
 
             # Append non-option arguments to the command
             for arg in "${arguments[@]}"; do
-                eza_cmd+=" \"$arg\""
+                eza_cmd+=" \"${arg}\""
             done
 
             # Echo and run the final command
-            echo "Running: $eza_cmd"
-            eval "$eza_cmd"
+            echo "Running: ${eza_cmd}"
+            eval "${eza_cmd}"
         }
 
         # Alias for ls
@@ -131,21 +131,21 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
         local session_names=()
 
         # Check if we are in a TMUX session
-        if [ -n "$TMUX" ]; then
+        if [[ -n "${TMUX}" ]]; then
             local tmux_session
             tmux_session=$(tmux display-message -p '#S')
             session_names+=("TMUX:${tmux_session}")
         fi
 
         # Check if we are in a SCREEN session
-        if [ -n "$STY" ]; then
+        if [[ -n "${STY}" ]]; then
             local session_names
-            screen_session=$(echo "$STY" | awk -F '.' '{print $2}')
+            screen_session=$(echo "${STY}" | awk -F '.' '{print $2}')
             session_names+=("SCREEN:${screen_session}")
         fi
 
         # Return session names, comma-separated if multiple
-        if [ ${#session_names[@]} -gt 0 ]; then
+        if [[ ${#session_names[@]} -gt 0 ]]; then
             echo "${session_names[*]}" | sed 's/ /, /g'  # Replace spaces with commas
         fi
     }

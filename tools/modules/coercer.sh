@@ -20,16 +20,16 @@ function install_coercer() {
     PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe" ".")
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" true "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 }
 
 # Test function for coercer
 function test_coercer() {
     local TOOL_NAME="coercer"
     local TOOL_COMMAND="Coercer -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

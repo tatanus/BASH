@@ -57,7 +57,7 @@ if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
     fi
 
     # If you want to use LS_COLORS in completion (for example, with GNU Readline):
-    if [[ -n "$BASH_VERSION" ]]; then
+    if [[ -n "${BASH_VERSION}" ]]; then
         bind 'set colored-stats on'
     fi
 

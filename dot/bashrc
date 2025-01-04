@@ -1,6 +1,6 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # If not running interactively, don't do anything
-if [[ -z "$PS1" ]]; then
+if [[ -z "${PS1}" ]]; then
     return
 fi
 
@@ -19,7 +19,7 @@ if [[ -x /usr/bin/lesspipe ]]; then
 fi
 
 # Set variable identifying the chroot you work in (used in the prompt below)
-if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
+if [[ -z "${debian_chroot}" ]] && [[ -r /etc/debian_chroot ]]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
@@ -33,9 +33,9 @@ HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
 shopt -s histappend
 
 # Check if the history file exists, if not, create it
-if [[ ! -f $HISTFILE ]]; then
-  touch $HISTFILE
-  chmod 600 $HISTFILE
+if [[ ! -f ${HISTFILE} ]]; then
+  touch "${HISTFILE}"
+  chmod 600 "${HISTFILE}"
 fi
 
 
@@ -47,7 +47,7 @@ primary_config_files=(
 
 # Source additional configurations
 for file in "${primary_config_files[@]}"; do
-    [[ -f "$file" ]] && source "$file"
+    [[ -f "${file}" ]] && source "${file}"
 done
 
 secondary_config_files=(
@@ -71,5 +71,5 @@ secondary_config_files=(
 
 # Source additional configurations
 for file in "${secondary_config_files[@]}"; do
-    [[ -f "$file" ]] && source "$file"
+    [[ -f "${file}" ]] && source "${file}"
 done

@@ -20,22 +20,22 @@ function install_pkinittools() {
     PIP_INSTALLS=("git+https://github.com/wbond/oscrypto.git" "minikerberos")
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" false "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 
     _Del_Alias "gettgtpkinit"
     _Del_Alias "gettgtpkinit.py"
-    _Add_Alias "alias gettgtpkinit='$TOOLS_DIR/PKINITtools/venv/bin/$PYTHON $TOOLS_DIR/PKINITtools/gettgtpkinit.py'"
-    _Add_Alias "alias gettgtpkinit.py='$TOOLS_DIR/PKINITtools/venv/bin/$PYTHON $TOOLS_DIR/PKINITtools/gettgtpkinit.py'"
+    _Add_Alias "alias gettgtpkinit='${TOOLS_DIR}/PKINITtools/venv/bin/${PYTHON} ${TOOLS_DIR}/PKINITtools/gettgtpkinit.py'"
+    _Add_Alias "alias gettgtpkinit.py='${TOOLS_DIR}/PKINITtools/venv/bin/${PYTHON} ${TOOLS_DIR}/PKINITtools/gettgtpkinit.py'"
 }
 
 # Test function for pkinittools
 function test_pkinittools() {
     local TOOL_NAME="pkinittools"
     local TOOL_COMMAND="gettgtpkinit -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }
 

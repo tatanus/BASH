@@ -18,47 +18,47 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## DIRECTORIES
     REQUIRED_DIRECTORIES=(
-        "$DATA_DIR"
-        "$TOOLS_DIR"
-        "$LOGS_DIR"
+        "${DATA_DIR}"
+        "${TOOLS_DIR}"
+        "${LOGS_DIR}"
     )
 
     # List of directories
     REQUIRED_DIRECTORIES=(
-        "$DATA_DIR/CONFIG"
-        "$DATA_DIR/TOOLS"
-        "$DATA_DIR/TOOLS/SCRIPTS"
-        "$DATA_DIR/LOGS"
-        "$DATA_DIR/BACKUP"
-        "$DATA_DIR/OUTPUT/RAW"
-        "$DATA_DIR/OUTPUT/PROCESSED"
-        "$DATA_DIR/LOOT/CREDENTIALS"
-        "$DATA_DIR/LOOT/CREDENTIALS/CCACHE"
-        "$DATA_DIR/LOOT/SCREENSHOTS"
-        "$DATA_DIR/LOOT/FILES"
-        "$DATA_DIR/TASKS/PCAP"
-        "$DATA_DIR/TASKS/RECON/NMAP"
-        "$DATA_DIR/TASKS/RECON/SPOONMAP"
-        "$DATA_DIR/TASKS/RECON/SHARES"
-        "$DATA_DIR/TASKS/MITM/BETTERCAP"
-        "$DATA_DIR/TASKS/MITM/MITM6"
-        "$DATA_DIR/TASKS/MITM/RESPONDER"
-        "$DATA_DIR/TASKS/ADCS"
-        "$DATA_DIR/TASKS/COERCION"
-        "$DATA_DIR/TASKS/LDAP"
-        "$DATA_DIR/TASKS/WEB"
-        "$DATA_DIR/TASKS/SMB/NXC"
-        "$DATA_DIR/TASKS/SMB/E4L"
-        "$DATA_DIR/TASKS/SMB/KERBEROAST"
-        "$DATA_DIR/TASKS/CISCO/PHONES"
-        "$DATA_DIR/TASKS/CISCO/SIET"
-        "$DATA_DIR/TASKS/BLOODHOUND"
-        "$DATA_DIR/TASKS/VULN_SCAN/MSF"
+        "${DATA_DIR}/CONFIG"
+        "${DATA_DIR}/TOOLS"
+        "${DATA_DIR}/TOOLS/SCRIPTS"
+        "${DATA_DIR}/LOGS"
+        "${DATA_DIR}/BACKUP"
+        "${DATA_DIR}/OUTPUT/RAW"
+        "${DATA_DIR}/OUTPUT/PROCESSED"
+        "${DATA_DIR}/LOOT/CREDENTIALS"
+        "${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"
+        "${DATA_DIR}/LOOT/SCREENSHOTS"
+        "${DATA_DIR}/LOOT/FILES"
+        "${DATA_DIR}/TASKS/PCAP"
+        "${DATA_DIR}/TASKS/RECON/NMAP"
+        "${DATA_DIR}/TASKS/RECON/SPOONMAP"
+        "${DATA_DIR}/TASKS/RECON/SHARES"
+        "${DATA_DIR}/TASKS/MITM/BETTERCAP"
+        "${DATA_DIR}/TASKS/MITM/MITM6"
+        "${DATA_DIR}/TASKS/MITM/RESPONDER"
+        "${DATA_DIR}/TASKS/ADCS"
+        "${DATA_DIR}/TASKS/COERCION"
+        "${DATA_DIR}/TASKS/LDAP"
+        "${DATA_DIR}/TASKS/WEB"
+        "${DATA_DIR}/TASKS/SMB/NXC"
+        "${DATA_DIR}/TASKS/SMB/E4L"
+        "${DATA_DIR}/TASKS/SMB/KERBEROAST"
+        "${DATA_DIR}/TASKS/CISCO/PHONES"
+        "${DATA_DIR}/TASKS/CISCO/SIET"
+        "${DATA_DIR}/TASKS/BLOODHOUND"
+        "${DATA_DIR}/TASKS/VULN_SCAN/MSF"
     )
 
     NECESSARY_ENGAGEMENT_FILES=(
-        "$DATA_DIR/targets.txt"
-        "$DATA_DIR/excludes.txt"
+        "${DATA_DIR}/targets.txt"
+        "${DATA_DIR}/excludes.txt"
     )
 
     ## DOT FILES
@@ -96,11 +96,11 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Define the list of configuration files to copy
     TOOL_CONFIG_FILES=(
-        "tools/config/msf.config:$HOME/.msf4/config"
-        "tools/config/cme.conf:$HOME/.cme/cme.conf"
-        "tools/config/nxc.conf:$HOME/.nxc/nxc.conf"
-        "tools/config/Responder.conf:$TOOLS_DIR/Responder/Responder.conf"
-        "tools/config/spoonmap.config.json:$TOOLS_DIR/spoonmap/config.json"
+        "tools/config/msf.config:${HOME}/.msf4/config"
+        "tools/config/cme.conf:${HOME}/.cme/cme.conf"
+        "tools/config/nxc.conf:${HOME}/.nxc/nxc.conf"
+        "tools/config/Responder.conf:${TOOLS_DIR}/Responder/Responder.conf"
+        "tools/config/spoonmap.config.json:${TOOLS_DIR}/spoonmap/config.json"
     )
 
     ## APT-GET PACKAGES

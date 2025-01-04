@@ -19,10 +19,10 @@ function install_powersploit() {
 # Test function for powersploit
 function test_powersploit() {
     local TOOL_NAME="powersploit"
-    local TOOL_COMMAND="ls $TOOLS_DIR/PowerSploit"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    local TOOL_COMMAND="ls ${TOOLS_DIR}/PowerSploit"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

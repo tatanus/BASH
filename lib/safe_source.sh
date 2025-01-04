@@ -30,13 +30,13 @@ function _TAKE_ENV_SNAPSHOT() {
 function _SAVE_ENVIRONMENT() {
     local script="$1"
     local snapshot_id
-    snapshot_id="$(basename "$script")_$$"  # Unique identifier using script name and PID
+    snapshot_id="$(basename "${script}")_$$"  # Unique identifier using script name and PID
 
     # Push the snapshot ID to the stack
-    _SAFE_SOURCE_STACK+=("$snapshot_id")
+    _SAFE_SOURCE_STACK+=("${snapshot_id}")
 
     # Take a snapshot of the current environment
-    _TAKE_ENV_SNAPSHOT "$snapshot_id"
+    _TAKE_ENV_SNAPSHOT "${snapshot_id}"
 }
 
 # Safely source a script and track changes
@@ -44,16 +44,16 @@ function _SAFE_SOURCE_SCRIPT() {
     local script="$1"
 
     # Ensure the script exists
-    if [[ ! -f "$script" ]]; then
-        echo "Error: Script '$script' does not exist." >&2
+    if [[ ! -f "${script}" ]]; then
+        echo "Error: Script '${script}' does not exist." >&2
         return 1
     fi
 
     # Save the current environment state
-    _SAVE_ENVIRONMENT "$script"
+    _SAVE_ENVIRONMENT "${script}"
 
     # Source the specified script
-    source "$script"
+    source "${script}"
 }
 
 # Safely "unsource" a script by reverting the changes made by sourcing
@@ -77,12 +77,12 @@ function _SAFE_UNSOURCE() {
 
     # Revert variables added or modified
     for var in $(comm -13 "/tmp/env_vars_${snapshot_id}" /tmp/env_vars_after_$$); do
-        unset "$var"
+        unset "${var}"
     done
 
     # Revert functions added or modified
     for func in $(comm -13 "/tmp/env_funcs_${snapshot_id}" /tmp/env_funcs_after_$$); do
-        unset -f "$func"
+        unset -f "${func}"
     done
 
     # Revert aliases added or modified
@@ -93,8 +93,8 @@ function _SAFE_UNSOURCE() {
     # Revert exported variables added or modified
     for exported in $(comm -13 "/tmp/env_exported_${snapshot_id}" /tmp/env_exported_after_$$); do
         export_name="${exported%%=*}"  # Extract variable name
-        original_value=$(grep "^$export_name=" "/tmp/env_exported_${snapshot_id}" | cut -d= -f2-)
-        export "$export_name=$original_value"
+        original_value=$(grep "^${export_name}=" "/tmp/env_exported_${snapshot_id}" | cut -d= -f2-)
+        export "${export_name}=${original_value}"
     done
 
     # Cleanup snapshot files
@@ -103,5 +103,5 @@ function _SAFE_UNSOURCE() {
         /tmp/env_vars_after_$$ /tmp/env_funcs_after_$$ \
         /tmp/env_aliases_after_$$ /tmp/env_exported_after_$$
 
-    echo "Reverted environment to the state before sourcing '$snapshot_id'."
+    echo "Reverted environment to the state before sourcing '${snapshot_id}'."
 }

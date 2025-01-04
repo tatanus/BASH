@@ -23,8 +23,8 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     # Function to verify required tools are available
     function check_required_screenshot_tools() {
         for cmd in ansifilter a2ps convert; do
-            if ! command -v "$cmd" &>/dev/null; then
-                echo "Error: Required tool '$cmd' is not installed or not in PATH." >&2
+            if ! command -v "${cmd}" &>/dev/null; then
+                echo "Error: Required tool '${cmd}' is not installed or not in PATH." >&2
                 return 1
             fi
         done
@@ -42,33 +42,33 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         temp_ps_file=$(mktemp)
 
         # Process the input through ansifilter
-        echo "$input" | ansifilter --html >"$temp_html_file" 2>/dev/null
+        echo "${input}" | ansifilter --html >"${temp_html_file}" 2>/dev/null
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to process input with ansifilter." >&2
-            rm -f "$temp_html_file" "$temp_ps_file"
+            rm -f "${temp_html_file}" "${temp_ps_file}"
             return 1
         fi
 
         # Convert HTML to PostScript using a2ps
-        a2ps --no-header "$temp_html_file" -o "$temp_ps_file" >/dev/null 2>&1
+        a2ps --no-header "${temp_html_file}" -o "${temp_ps_file}" >/dev/null 2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to convert HTML to PostScript using a2ps." >&2
-            rm -f "$temp_html_file" "$temp_ps_file"
+            rm -f "${temp_html_file}" "${temp_ps_file}"
             return 1
         fi
 
         # Convert PostScript to PNG using ImageMagick's convert
-        convert -density 300 "$temp_ps_file" -quality 100 "$output_file" >/dev/null 2>&1
+        convert -density 300 "${temp_ps_file}" -quality 100 "${output_file}" >/dev/null 2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to convert PostScript to PNG using ImageMagick's convert." >&2
-            rm -f "$temp_html_file" "$temp_ps_file"
+            rm -f "${temp_html_file}" "${temp_ps_file}"
             return 1
         fi
 
         # Clean up temporary files
-        rm -f "$temp_html_file" "$temp_ps_file"
+        rm -f "${temp_html_file}" "${temp_ps_file}"
 
-        echo "Success: Output has been saved to '$output_file'."
+        echo "Success: Output has been saved to '${output_file}'."
         return 0
     }
 
@@ -99,7 +99,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         fi
 
         # Generate PNG from the command output
-        generate_screenshot_png "$command_output" "$output_file"
+        generate_screenshot_png "${command_output}" "${output_file}"
     }
 
     # Function to capture text output and save it as a PNG file
@@ -117,6 +117,6 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         fi
 
         # Generate PNG from the provided text
-        generate_screenshot_png "$1" "$output_file"
+        generate_screenshot_png "$1" "${output_file}"
     }
 fi

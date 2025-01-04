@@ -14,7 +14,7 @@
 
 function install_crackmapexec() {
     _Git_Clone https://github.com/byt3bl33d3r/CrackMapExec.git
-    _Pushd "$TOOLS_DIR"/CrackMapExec
+    _Pushd "${TOOLS_DIR}"/CrackMapExec
     _Pipx_Install .
     _Popd
 }
@@ -23,9 +23,9 @@ function install_crackmapexec() {
 function test_crackmapexec() {
     local TOOL_NAME="crackmapexec"
     local TOOL_COMMAND="cme -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

@@ -31,7 +31,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
 
     # Check if tshark is available
     check_tshark() {
-        if [[ -z "$TSHARK_CMD" ]]; then
+        if [[ -z "${TSHARK_CMD}" ]]; then
             echo "Error: tshark is not installed or not in PATH." >&2
             exit 1
         fi
@@ -49,9 +49,9 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         DST_IP=$2
         SRC_PORT=$3
         DST_PORT=$4
-        CAPTURE_TIME=$DEFAULT_CAPTURE_TIME
-        MAX_MESSAGES=$DEFAULT_MAX_MESSAGES
-        CAPTURE_INTERFACE=$DEFAULT_INTERFACE
+        CAPTURE_TIME=${DEFAULT_CAPTURE_TIME}
+        MAX_MESSAGES=${DEFAULT_MAX_MESSAGES}
+        CAPTURE_INTERFACE=${DEFAULT_INTERFACE}
 
         shift 4
         while [[ $# -gt 0 ]]; do
@@ -71,9 +71,9 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
                 --help)
                     echo "Usage: $0 <src_ip> <dst_ip> <src_port> <dst_port> [-t <seconds>] [-m <messages>] [--interface <iface>]"
                     echo "Options:"
-                    echo "  -t, --time       Capture time in seconds (default: $DEFAULT_CAPTURE_TIME)"
-                    echo "  -m, --messages   Maximum number of messages to capture (default: $DEFAULT_MAX_MESSAGES)"
-                    echo "  --interface      Network interface to capture traffic (default: $DEFAULT_INTERFACE)"
+                    echo "  -t, --time       Capture time in seconds (default: ${DEFAULT_CAPTURE_TIME})"
+                    echo "  -m, --messages   Maximum number of messages to capture (default: ${DEFAULT_MAX_MESSAGES})"
+                    echo "  --interface      Network interface to capture traffic (default: ${DEFAULT_INTERFACE})"
                     echo "Example:"
                     echo "  $0 192.168.1.1 192.168.1.2 5000 5001 -t 10 --interface eth0"
                     exit 0
@@ -97,14 +97,14 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         # Check if tshark is available
         check_tshark
 
-        echo "Capturing traffic between $SRC_IP:$SRC_PORT and $DST_IP:$DST_PORT on interface $CAPTURE_INTERFACE for $CAPTURE_TIME seconds or $MAX_MESSAGES messages..."
+        echo "Capturing traffic between ${SRC_IP}:${SRC_PORT} and ${DST_IP}:${DST_PORT} on interface ${CAPTURE_INTERFACE} for ${CAPTURE_TIME} seconds or ${MAX_MESSAGES} messages..."
 
         # Capture traffic using tshark
-        if ! tshark -i "$CAPTURE_INTERFACE" \
-            -a duration:"$CAPTURE_TIME" \
-            -c "$MAX_MESSAGES" \
-           -Y "ip.src==$SRC_IP && ip.dst==$DST_IP && tcp.srcport==$SRC_PORT && tcp.dstport==$DST_PORT || \
-            ip.src==$DST_IP && ip.dst==$SRC_IP && tcp.srcport==$DST_PORT && tcp.dstport==$SRC_PORT" \
+        if ! tshark -i "${CAPTURE_INTERFACE}" \
+            -a duration:"${CAPTURE_TIME}" \
+            -c "${MAX_MESSAGES}" \
+           -Y "ip.src==${SRC_IP} && ip.dst==${DST_IP} && tcp.srcport==${SRC_PORT} && tcp.dstport==${DST_PORT} || \
+            ip.src==${DST_IP} && ip.dst==${SRC_IP} && tcp.srcport==${DST_PORT} && tcp.dstport==${SRC_PORT}" \
             -T fields -e frame.time -e ip.src -e tcp.srcport -e ip.dst -e tcp.dstport -e text \
             2>/dev/null | awk '
             BEGIN { OFS = ""; print "Timestamp\tSource\t\tDestination\t\tPayload" }

@@ -1,4 +1,4 @@
 # If running bash in login mode, source ~/.bashrc
-if [ -f ~/.bashrc ]; then
+if [[ -f ~/.bashrc ]]; then
     . ~/.bashrc
 fi

@@ -15,19 +15,19 @@
 function install_rdp_sec_check() {
     _Git_Clone https://github.com/CiscoCXSecurity/rdp-sec-check.git
     export PERL_MM_USE_DEFAULT=1
-    $PROXY perl -MCPAN -e 'install Encoding::BER'
+    ${PROXY} perl -MCPAN -e 'install Encoding::BER'
 
-    _Add_Alias "alias rdp-sec-check.pl='$TOOLS_DIR/rdp-sec-check/rdp-sec-check.pl'"
-    _Add_Alias "alias rdp-sec-check='$TOOLS_DIR/rdp-sec-check/rdp-sec-check.pl'"
+    _Add_Alias "alias rdp-sec-check.pl='${TOOLS_DIR}/rdp-sec-check/rdp-sec-check.pl'"
+    _Add_Alias "alias rdp-sec-check='${TOOLS_DIR}/rdp-sec-check/rdp-sec-check.pl'"
 }
 
 # Test function for rdp_sec_check
 function test_rdp_sec_check() {
     local TOOL_NAME="rdp_sec_check"
     local TOOL_COMMAND="rdp-sec-check -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

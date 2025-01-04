@@ -13,17 +13,17 @@
 # =============================================================================
 
 function install_evil_winrm() {
-    $PROXY gem install nori -v 2.6.0 #temp fix until Ruby is upgraded
-    $PROXY gem install evil-winrm
+    ${PROXY} gem install nori -v 2.6.0 #temp fix until Ruby is upgraded
+    ${PROXY} gem install evil-winrm
 }
 
 # Test function for evil_winrm
 function test_evil_winrm() {
     local TOOL_NAME="evil_winrm"
     local TOOL_COMMAND="evil-winrm -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

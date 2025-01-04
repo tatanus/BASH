@@ -20,21 +20,21 @@ function install_ek47() {
     PIP_INSTALLS=()
 
     # Call the function
-    _Install_Git_Python_Tool "$TOOL_NAME" "$GIT_URL" false "$REQUIREMENTS_FILE" "${PIP_INSTALLS[@]}"
+    _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 
     _Del_Alias "ek47.py"
     _Del_Alias "ek47"
-    _Add_Alias "function ek47.py { (cd $TOOLS_DIR/ek47 && $TOOLS_DIR/ek47/venv/bin/$PYTHON $TOOLS_DIR/ek47/ek47.py) }"
-    _Add_Alias "function ek47 { (cd $TOOLS_DIR/ek47 && $TOOLS_DIR/ek47/venv/bin/$PYTHON $TOOLS_DIR/ek47/ek47.py) }"
+    _Add_Alias "function ek47.py { (cd ${TOOLS_DIR}/ek47 && ${TOOLS_DIR}/ek47/venv/bin/${PYTHON} ${TOOLS_DIR}/ek47/ek47.py) }"
+    _Add_Alias "function ek47 { (cd ${TOOLS_DIR}/ek47 && ${TOOLS_DIR}/ek47/venv/bin/${PYTHON} ${TOOLS_DIR}/ek47/ek47.py) }"
 }
 
 # Test function for ek47
 function test_ek47() {
     local TOOL_NAME="ek47"
     local TOOL_COMMAND="ek47 -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

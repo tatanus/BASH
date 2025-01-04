@@ -14,7 +14,7 @@
 
 function install_webclientservicesscanner() {
     _Git_Clone https://github.com/Hackndo/WebclientServiceScanner.git
-    _Pushd "$TOOLS_DIR"/WebclientServiceScanner
+    _Pushd "${TOOLS_DIR}"/WebclientServiceScanner
     _PipInstall "."
     _Popd
 }
@@ -23,9 +23,9 @@ function install_webclientservicesscanner() {
 function test_webclientservicesscanner() {
     local TOOL_NAME="webclientservicesscanner"
     local TOOL_COMMAND="webclientservicesscanner -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

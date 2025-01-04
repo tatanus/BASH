@@ -13,9 +13,9 @@
 # =============================================================================
 
 function install_metasploit() {
-    if $INSTALL_MEATASPLOIT; then
-        mkdir "$TOOLS_DIR"/metasploit
-        _Pushd "$TOOLS_DIR"/metasploit
+    if ${INSTALL_MEATASPLOIT}; then
+        mkdir "${TOOLS_DIR}"/metasploit
+        _Pushd "${TOOLS_DIR}"/metasploit
 
         # start PostgreSQL
         sudo service postgresql start
@@ -28,7 +28,7 @@ function install_metasploit() {
         # download and run the meatsploit install script
         _Curl "https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb" "msfinstall"
         chmod 755 msfinstall
-        $PROXY ./msfinstall
+        ${PROXY} ./msfinstall
         rm msfinstall
 
         # init the msfdb
@@ -43,7 +43,7 @@ function install_metasploit() {
     else
         # JUST UPDATE THE CURRENTLY INSTALLED VERSION
         if command -v msfupdate > /dev/null 2>&1; then
-            $PROXY msfupdate
+            ${PROXY} msfupdate
         fi
     fi
 }
@@ -52,9 +52,9 @@ function install_metasploit() {
 function test_metasploit() {
     local TOOL_NAME="metasploit"
     local TOOL_COMMAND="msfconsole -h"
-    AppTest "$TOOL_NAME" "$TOOL_COMMAND"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
-    return $status
+    return "${status}"
 }

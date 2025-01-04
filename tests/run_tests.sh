@@ -7,10 +7,10 @@ set -euo pipefail
 function print_result() {
     local name="$1"
     local result="$2"
-    if [[ "$result" -eq 0 ]]; then
-        echo -e "[\e[32mPASS\e[0m] $name"
+    if [[ "${result}" -eq 0 ]]; then
+        echo -e "[\e[32mPASS\e[0m] ${name}"
     else
-        echo -e "[\e[31mFAIL\e[0m] $name"
+        echo -e "[\e[31mFAIL\e[0m] ${name}"
     fi
 }
 
@@ -23,23 +23,23 @@ function run_all_tests() {
 
     echo "Running Unit Tests..."
     for test_script in ./tests/unit/*.sh; do
-        bash "$test_script"
-        print_result "$(basename "$test_script")" $?
+        bash "${test_script}"
+        print_result "$(basename "${test_script}")" $?
     done
 
     echo "Running Integration Tests..."
     for test_script in ./tests/integration/*.sh; do
-        bash "$test_script"
-        print_result "$(basename "$test_script")" $?
+        bash "${test_script}"
+        print_result "$(basename "${test_script}")" $?
     done
 
     echo "Running Functional Tests..."
     for test_script in ./tests/functional/*.sh; do
-        bash "$test_script"
-        print_result "$(basename "$test_script")" $?
+        bash "${test_script}"
+        print_result "$(basename "${test_script}")" $?
     done
 
-    if [[ "$failed" -ne 0 ]]; then
+    if [[ "${failed}" -ne 0 ]]; then
         echo "Some tests failed. Check the logs above."
         exit 1
     fi

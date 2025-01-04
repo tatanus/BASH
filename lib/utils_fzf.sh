@@ -36,17 +36,17 @@ if [[ -z "${UTILS_FZF_SH_LOADED:-}" ]]; then
 
         # Set default answer to "Y" if no input is provided
         answer=${answer:-Y}
-        case $answer in
+        case ${answer} in
             [Yy]* )
                 _install_package "fzf"
                 ;;
             [Nn]* )
                 warning "fzf will not be installed. Exiting."
-                exit "$_FAIL"
+                exit "${_FAIL}"
                 ;;
             * )
                 fail "Invalid response. Exiting."
-                exit "$_FAIL"
+                exit "${_FAIL}"
                 ;;
         esac
     }
