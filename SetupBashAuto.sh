@@ -149,7 +149,6 @@ _Check_Proxy_Needed
 # ---------------------------------- INIT SETUP -------------------------------
 # -----------------------------------------------------------------------------
 
-
 # Function to configure dotfiles
 # This function backs up existing dotfiles and replaces them with new ones from a designated directory.
 function Setup_Dot_Files() {

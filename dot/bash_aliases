@@ -35,7 +35,7 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
     if check_command "eza"; then
         # Function to convert ls commands to eza commands
         function convert_ls_to_eza() {
-            local cmd=("$@") # Capture all arguments as an array
+            local cmd=("$@")                             # Capture all arguments as an array
             local eza_cmd=("eza" "--git" "-F" "-h" "-B") # Default eza command options
 
             # Separate options and arguments
@@ -65,11 +65,14 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
             # Parse options to convert to eza equivalents
             for opt in "${options[@]}"; do
                 case "${opt}" in
-                -l) eza_cmd+=("-l" "--group") ;;      # Long format with group info
-                -t) eza_cmd+=("--sort=modified"); has_t_flag=true ;; # Sort by modification time
-                -S) eza_cmd+=("--sort=size") ;;       # Sort by file size
-                -F) eza_cmd+=("--classify") ;;        # Append indicator to entries
-                -r) has_r_flag=true ;;               # Track -r flag
+                -l) eza_cmd+=("-l" "--group") ;; # Long format with group info
+                -t)
+                    eza_cmd+=("--sort=modified")
+                    has_t_flag=true
+                    ;;                          # Sort by modification time
+                -S) eza_cmd+=("--sort=size") ;; # Sort by file size
+                -F) eza_cmd+=("--classify") ;;  # Append indicator to entries
+                -r) has_r_flag=true ;;          # Track -r flag
                 *)
                     # Pass through unrecognized options (e.g., -Z, -U)
                     eza_cmd+=("${opt}")
@@ -80,7 +83,7 @@ if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
             # Handle -r and -t combinations
             if [[ "$has_t_flag" == true && "$has_r_flag" == true ]]; then
                 # Drop -r if both -t and -r are present
-                eza_cmd=("${eza_cmd[@]/--reverse}") # Remove --reverse equivalent if already added
+                eza_cmd=("${eza_cmd[@]/--reverse/}") # Remove --reverse equivalent if already added
             elif [[ "$has_t_flag" == true && "$has_r_flag" == false ]]; then
                 # Add -r if -t is present and -r is not
                 eza_cmd+=("--reverse")

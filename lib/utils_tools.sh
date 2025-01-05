@@ -77,15 +77,15 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
     }
 
     function _Install_Git_Python_Tool() {
-        local TOOL_NAME=$1
-        local GIT_URL=$2
-        local INSTALL_IMPACKET=$3
-        local REQUIREMENTS_FILE=$4
+        local TOOL_NAME="$1"
+        local GIT_URL="$2"
+        local INSTALL_IMPACKET="$3"
+        local REQUIREMENTS_FILE="$4"
         shift 4
         local PIP_INSTALLS=("$@")
 
         # Determine DIRECTORY_NAME from GIT_URL
-        local DIRECTORY_NAME=${GIT_URL}
+        local DIRECTORY_NAME="${GIT_URL}"
 
         # Remove .git suffix if it exists
         if [[ "${DIRECTORY_NAME}" == *.git ]]; then

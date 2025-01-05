@@ -32,7 +32,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         fi
 
         # Extract repository name from the URL
-        local repo_name=${url##*/}
+        local repo_name="${url##*/}"
         repo_name=${repo_name%.git}
 
         # Determine the destination directory name

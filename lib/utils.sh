@@ -65,8 +65,8 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
 
     # Check and set proxy if required
     function _Check_Proxy_Needed() {
-        local test_url=${1:-"http://google.com"}  # Default test URL
-        local timeout=${2:-5}  # Timeout for connectivity tests
+        local test_url="${1:-"http://google.com"}"  # Default test URL
+        local timeout="${2:-5}"  # Timeout for connectivity tests
 
         info "Testing connectivity to ${test_url}..."
 

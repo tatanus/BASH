@@ -175,7 +175,6 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
                 exit 1
             fi
 
-
             # Process each line in the list
             while IFS= read -r line; do
                 local device="${line%%,*}"
@@ -202,7 +201,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
                         return 1
                     fi
                 fi
-            done <<< "${resulting_list}"
+            done <<<"${resulting_list}"
 
             echo "Unknown"
             return 1

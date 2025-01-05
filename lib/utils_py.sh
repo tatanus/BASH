@@ -408,7 +408,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     # Function to install a Python library using pip
     function _Pip_Install() {
         local lib="$1"
-        local USE_PIP_ARGS=${2:-"true"}
+        local USE_PIP_ARGS="${2:-"true"}"
 
         if [[ "${USE_PIP_ARGS}" = "true" ]]; then
             tmp_PIP_ARGS=${PIP_ARGS}
@@ -470,7 +470,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     # Function to install Python libraries from a requirements file
     function _Pip_Install_Requirements() {
         local file="$1"
-        local USE_PIP_ARGS=${2:-"true"}
+        local USE_PIP_ARGS="${2:-"true"}"
 
         if [[ "${USE_PIP_ARGS}" = "true" ]]; then
             tmp_PIP_ARGS=${PIP_ARGS}

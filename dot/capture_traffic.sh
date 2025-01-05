@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
-    declare -g SCREENSHOT_SH_LOADED=true
+if [[ -z "${CAPTURETRAFFIC_SH_LOADED:-}" ]]; then
+    declare -g CAPTURETRAFFIC_SH_LOADED=true
 
     # =============================================================================
     # Configuration and Defaults

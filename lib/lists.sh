@@ -268,20 +268,20 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ## TOOLS to APP TEST
     ## The command should return an exit status of 0 if the application is installed
     declare -A APP_TESTS=(
-          ["bettercap"]="bettercap -h"
-          ["certi"]="certi.py -h"
-          ["certipy"]="certipy -h"
-          ["GoogleChrome"]="google-chrome --version"
-          ["gowitness"]="gowitness -h"
-          ["ldapdomaindump"]="ldapdomaindump -h"
-          ["ldapnomnom"]="ldapnomnom -h"
-          ["lsassy"]="lsassy -h"
-          ["masscan"]="masscan --ping 127.0.0.1"
-          ["mitm6"]="mitm6 -h"
-          ["nmap"]="nmap --version"
-          ["pypykatz"]="pypykatz -h"
-          ["secretsdump"]="secretsdump.py -h"
-          ["tshark"]="tshark -h"
+         ["bettercap"]="bettercap -h"
+         ["certi"]="certi.py -h"
+         ["certipy"]="certipy -h"
+         ["GoogleChrome"]="google-chrome --version"
+         ["gowitness"]="gowitness -h"
+         ["ldapdomaindump"]="ldapdomaindump -h"
+         ["ldapnomnom"]="ldapnomnom -h"
+         ["lsassy"]="lsassy -h"
+         ["masscan"]="masscan --ping 127.0.0.1"
+         ["mitm6"]="mitm6 -h"
+         ["nmap"]="nmap --version"
+         ["pypykatz"]="pypykatz -h"
+         ["secretsdump"]="secretsdump.py -h"
+         ["tshark"]="tshark -h"
     )
 
     ###################################################################
