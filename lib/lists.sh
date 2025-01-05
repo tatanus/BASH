@@ -289,12 +289,15 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ###################################################################
 
     # Array for Setup_Environment functions
-    ENVIRONMENT_MENU_ITEMS=(
+    BASH_ENVIRONMENT_MENU_ITEMS=(
         "Undo_Setup_Dot_Files"
+        "Setup_Dot_Files"
+    )
 
+    # Array for Setup_Environment functions
+    PENTEST_ENVIRONMENT_MENU_ITEMS=(
         "Setup_Directories"
         "Setup_Necessary_Files"
-        "Setup_Dot_Files"
         "Setup_Cron_Jobs"
 
         "Setup_Docker"
@@ -312,8 +315,9 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Array for FullSetup tasks
     SETUP_MENU_ITEMS=(
-        "Setup Environment"
         "Edit Config Files"
+        "Setup BASH Environment"
+        "Setup PENTEST Environment"
         "Install Tools"
         "Test Tool Installs"
         "Pentest Menu"

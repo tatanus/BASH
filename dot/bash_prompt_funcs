@@ -157,31 +157,55 @@ if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
 
         # Handle macOS systems
         elif [[ "${os_type}" == "macOS" ]]; then
+            # Check if the 'networksetup' command is available
             if ! command -v networksetup &>/dev/null; then
                 echo "Error: 'networksetup' command is not available." >&2
-                return 1
+                exit 1
             fi
 
-            local service
-            service=$(networksetup -listallhardwareports | awk -v interface="${interface}" '
-                /Hardware Port: / { port = $3; next }
-                /Device: / { dev = $2; if (dev == interface) { print port } }')
+            # Capture the list of hardware ports and devices
+            resulting_list=$(networksetup -listallhardwareports | awk '
+                /^Hardware Port:/ { port_name = substr($0, index($0, $3)) }
+                /^Device:/ { device_name = $2; print device_name "," port_name }
+            ')
 
-            if [[ -z "${service}" ]]; then
-                echo "No active connection"
-                return 1
+            # Ensure the resulting list is not empty
+            if [[ -z "${resulting_list}" ]]; then
+                echo "Error: No hardware ports or devices found." >&2
+                exit 1
             fi
 
-            local config
-            config=$(networksetup -getinfo "${service}" 2>/dev/null)
 
-            if echo "${config}" | grep -q "DHCP Configuration"; then
-                echo "DHCP"
-            else
-                echo "Static"
-            fi
-            return 0
+            # Process each line in the list
+            while IFS= read -r line; do
+                local device="${line%%,*}"
+                local port_name="${line#*,}"
 
+                if [[ "${interface}" == "${device}" ]]; then
+                    # Get network configuration for the matching port
+                    local config
+                    config=$(networksetup -getinfo "${port_name}" 2>/dev/null)
+
+                    if [[ $? -ne 0 ]]; then
+                        echo "Error: Failed to get network information for '${port_name}' (${device})." >&2
+                        return 1
+                    fi
+
+                    if echo "${config}" | grep -q "DHCP Configuration"; then
+                        echo "DHCP"
+                        return 0
+                    elif echo "${config}" | grep -q "Manually configured"; then
+                        echo "Static"
+                        return 0
+                    else
+                        echo "Unknown"
+                        return 1
+                    fi
+                fi
+            done <<< "${resulting_list}"
+
+            echo "Unknown"
+            return 1
         else
             echo "Unsupported OS: ${os_type}" >&2
             return 1

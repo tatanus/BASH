@@ -149,62 +149,6 @@ _Check_Proxy_Needed
 # ---------------------------------- INIT SETUP -------------------------------
 # -----------------------------------------------------------------------------
 
-# Function to create required directories
-# This function ensures that all directories listed in the REQUIRED_DIRECTORIES array are created.
-function Setup_Directories() {
-    # Ensure the directories array is defined
-    if [[ -z "${REQUIRED_DIRECTORIES+x}" ]]; then
-        fail "Directories array is not defined."
-        return "${_FAIL}"
-    fi
-
-    # Create directories
-    for directory in "${REQUIRED_DIRECTORIES[@]}"; do
-        if mkdir -p "${directory}"; then
-            success "Created directory ${directory}."
-        else
-            fail "Failed to create directory ${directory}."
-        fi
-    done
-}
-
-# Function to set up necessary files
-# This function ensures the presence of critical files, including configuration files and log files.
-function Setup_Necessary_Files() {
-    # Ensure the source directory exists
-    local src_dir="${SCRIPT_DIR}/config"
-    if [[ ! -d "${src_dir}" ]]; then
-        fail "Directory [${src_dir}] does not exist."
-        return "${_FAIL}"
-    fi
-
-    # Ensure PENTEST_DIR exists
-    if [[ ! -d "${PENTEST_DIR}" ]]; then
-        mkdir -p "${PENTEST_DIR}" || {
-            fail "Failed to create directory: ${PENTEST_DIR}"
-            return "${_FAIL}"
-        }
-        success "Created directory: ${PENTEST_DIR}"
-    fi
-
-    # Copy configuration files
-    for file in "${PENTEST_FILES[@]}"; do
-        copy_file "${SCRIPT_DIR}/config/${file}" "${PENTEST_DIR}/${file}"
-    done
-
-    # Create or touch log and timestamp files
-    for file in "${LOG_FILE}" "${MENU_TIMESTAMP_FILE}"; do
-        if [[ ! -e "${file}" ]]; then
-            touch "${file}" || {
-                fail "Failed to create file: ${file}. Skipping to next file."
-                continue  # Skip to the next file in the loop
-            }
-            success "Created file: ${file}"
-        else
-            info "File already exists: ${file}"
-        fi
-    done
-}
 
 # Function to configure dotfiles
 # This function backs up existing dotfiles and replaces them with new ones from a designated directory.
@@ -284,6 +228,63 @@ function Undo_Setup_Dot_Files() {
     else
         warn "Failed to reload ${HOME}/.bashrc after undoing dotfile setup."
     fi
+}
+
+# Function to set up necessary files
+# This function ensures the presence of critical files, including configuration files and log files.
+function Setup_Necessary_Files() {
+    # Ensure the source directory exists
+    local src_dir="${SCRIPT_DIR}/config"
+    if [[ ! -d "${src_dir}" ]]; then
+        fail "Directory [${src_dir}] does not exist."
+        return "${_FAIL}"
+    fi
+
+    # Ensure PENTEST_DIR exists
+    if [[ ! -d "${PENTEST_DIR}" ]]; then
+        mkdir -p "${PENTEST_DIR}" || {
+            fail "Failed to create directory: ${PENTEST_DIR}"
+            return "${_FAIL}"
+        }
+        success "Created directory: ${PENTEST_DIR}"
+    fi
+
+    # Copy configuration files
+    for file in "${PENTEST_FILES[@]}"; do
+        copy_file "${SCRIPT_DIR}/config/${file}" "${PENTEST_DIR}/${file}"
+    done
+
+    # Create or touch log and timestamp files
+    for file in "${LOG_FILE}" "${MENU_TIMESTAMP_FILE}"; do
+        if [[ ! -e "${file}" ]]; then
+            touch "${file}" || {
+                fail "Failed to create file: ${file}. Skipping to next file."
+                continue  # Skip to the next file in the loop
+            }
+            success "Created file: ${file}"
+        else
+            info "File already exists: ${file}"
+        fi
+    done
+}
+
+# Function to create required directories
+# This function ensures that all directories listed in the REQUIRED_DIRECTORIES array are created.
+function Setup_Directories() {
+    # Ensure the directories array is defined
+    if [[ -z "${REQUIRED_DIRECTORIES+x}" ]]; then
+        fail "Directories array is not defined."
+        return "${_FAIL}"
+    fi
+
+    # Create directories
+    for directory in "${REQUIRED_DIRECTORIES[@]}"; do
+        if mkdir -p "${directory}"; then
+            success "Created directory ${directory}."
+        else
+            fail "Failed to create directory ${directory}."
+        fi
+    done
 }
 
 # Function to set up a cron job for renewing TGTs
@@ -651,8 +652,10 @@ function _Process_Start_Menu() {
     fi
 
     # Process choices
-    if [[ "${choice}" == "Setup Environment" ]]; then
-        _Display_Menu "ENVIRONMENT SETUP" "_Exec_Function" "${ENVIRONMENT_MENU_ITEMS[@]}"
+    if [[ "${choice}" == "Setup BASH Environment" ]]; then
+        _Display_Menu "Setup BASH Environment" "_Exec_Function" "${BASH_ENVIRONMENT_MENU_ITEMS[@]}"
+    elif [[ "${choice}" == "Setup PENTEST Environment" ]]; then
+        _Display_Menu "Setup PENTEST Environment" "_Exec_Function" "${PENTEST_ENVIRONMENT_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Edit Config Files" ]]; then
         _Display_Menu "Configuration Menu" "_Process_Config_Menu" "${CONFIG_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Install Tools" ]]; then
