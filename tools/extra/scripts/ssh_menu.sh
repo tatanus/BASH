@@ -108,7 +108,7 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
             return
         fi
 
-        read -r -p "ProxyJump server (e.g., badwolf): " proxy_jump
+        read -r -p "ProxyJump server (e.g., jump1, jump2): " proxy_jump
         if [[ -z "${proxy_jump}" ]]; then
             echo "Error: ProxyJump server cannot be empty."
             return
@@ -135,7 +135,7 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
                 cat << EOF
 
 Host ${host_name}
-    Hostname ${host_name}
+    Hostname localhost
     ProxyJump ${proxy_jump}
     Port ${port}
     #LocalCommand ${local_command}
