@@ -48,6 +48,21 @@ if [[ ${EUID} -ne 0 ]]; then
     ERROR_FLAG=true
 fi
 
+function _Pause() {
+    if [[ -t 0 ]]; then  # check if running interactively
+        echo
+        echo "-----------------------------------"
+        read -n 1 -s -r -p "Press any key to continue..."
+        echo  # Move to the next line after key press
+
+        # Use ANSI escape codes to move the cursor up and clear lines
+        tput cuu 3   # Move the cursor up 3 lines
+        tput el      # Clear the current line
+        tput el      # Clear the next line
+        tput el      # Clear the third line
+    fi
+}
+
 # If any errors occurred, display a summary and exit
 if ${ERROR_FLAG}; then
     echo
@@ -59,11 +74,7 @@ if ${ERROR_FLAG}; then
     fail "    'root' tasks will possibly be performed"
     fail
     fail "-----------------------------------"
-    if [[ -t 0 ]]; then  # check if running interactively
-        read -n 1 -s -r -p "Press any key to continue..."
-        echo
-    fi
-    echo  # Move to the next line after key press
+    _Pause
     #exit 1  # Exit with a failure status code
 fi
 
@@ -652,11 +663,11 @@ function _Process_Start_Menu() {
 
     # Process choices
     if [[ "${choice}" == "Setup BASH Environment" ]]; then
-        _Display_Menu "Setup BASH Environment" "_Exec_Function" "${BASH_ENVIRONMENT_MENU_ITEMS[@]}"
+        _Display_Menu "Setup BASH Environment" "_Exec_Function" true "${BASH_ENVIRONMENT_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Setup PENTEST Environment" ]]; then
-        _Display_Menu "Setup PENTEST Environment" "_Exec_Function" "${PENTEST_ENVIRONMENT_MENU_ITEMS[@]}"
+        _Display_Menu "Setup PENTEST Environment" "_Exec_Function" true "${PENTEST_ENVIRONMENT_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Edit Config Files" ]]; then
-        _Display_Menu "Configuration Menu" "_Process_Config_Menu" "${CONFIG_MENU_ITEMS[@]}"
+        _Display_Menu "Configuration Menu" "_Process_Config_Menu" false "${CONFIG_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Install Tools" ]]; then
         TOOL_MENU_ITEMS=("${INSTALL_TOOLS_MENU_ITEMS[@]}")
         MODULES_DIR="tools/modules"
@@ -688,4 +699,4 @@ function _Process_Start_Menu() {
 _check_fzf
 
 # Display the main setup menu
-_Display_Menu "BASH SETUP" "_Process_Start_Menu" "${SETUP_MENU_ITEMS[@]}"
+_Display_Menu "BASH SETUP" "_Process_Start_Menu" false "${SETUP_MENU_ITEMS[@]}"

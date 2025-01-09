@@ -92,12 +92,15 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
 
     # Display menu from a provided list
     # $1: Menu title (unique identifier for the menu)
-    # $2: List of options (array or file path)
-    # $3: Function to execute on selection
+    # $2: Function to execute on selection
+    # $3: "true" or "false" flag to indicate whether to call _Pause
+    # $4..: List of options (array or file path)
     function _Display_Menu() {
         local title="$1"
         shift
-        local action_function="$1"
+        local action_function="${1:-"_Perform_Menu_Action"}"
+        shift
+        local pause_flag="${1:-false}"
         shift
         local options=("$@")
 
@@ -118,25 +121,29 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
             local choice
             choice=$(printf "%s\n" "${menu_items[@]}" | fzf --prompt "${title} > ")
 
+            # This command processes the user's menu choice and extracts the meaningful part:
+            # 1. Removes leading numbers and parentheses (e.g., "2) " becomes "").
+            # 2. Strips out any trailing "(Last: ...)" text.
+            # 3. Removes any extra leading or trailing whitespace.
+            # The result is stored in the variable `actual_choice`.
+            local actual_choice
+            choice=$(echo "${choice}" | sed 's/^[[:space:]]*[0-9]*)[[:space:]]*//' | sed 's/[[:space:]]*(Last:.*)//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
+
             # Handle choice
-            if [[ -z "${choice}" || "${choice}" == "0) Back/Exit" ]]; then
+            if [[ -z "${choice}" ]]; then
+                return 0
+            elif [[ "${choice}" == "Back/Exit" ]]; then
                 return 0
             else
-                # This command processes the user's menu choice and extracts the meaningful part:
-                # 1. Removes leading numbers and parentheses (e.g., "2) " becomes "").
-                # 2. Strips out any trailing "(Last: ...)" text.
-                # 3. Removes any extra leading or trailing whitespace.
-                # The result is stored in the variable `actual_choice`.
-                local actual_choice
-                actual_choice=$(echo "${choice}" | sed 's/^[[:space:]]*[0-9]*)[[:space:]]*//' | sed 's/[[:space:]]*(Last:.*)//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
-
                 # Update menu item timestamp persistently
-                _Update_Menu_Timestamp "${title}" "${actual_choice}"
+                _Update_Menu_Timestamp "${title}" "${choice}"
 
                 # Perform the action associated with the choice
-                "${action_function}" "${actual_choice}"
+                "${action_function}" "${choice}"
 
-                _Pause
+                if [[ "${pause_flag}" == "true" ]]; then
+                    _Pause
+                fi
             fi
         done
     }
