@@ -45,7 +45,7 @@ function install_aquatone() {
 
     # Add alias for Aquatone
     _Add_Alias "alias aquatone='${TOOLS_DIR}/aquatone/aquatone'"
-    success "Aquatone installed and alias added successfully."
+    pass "Aquatone installed and alias added successfully."
 }
 
 # Test function for aquatone

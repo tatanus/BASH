@@ -40,7 +40,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Append the alias entry to the alias file
         echo "${alias_entry}" >> "${ALIAS_FILE}"
-        success "Added alias: ${alias_entry}"
+        pass "Added alias: ${alias_entry}"
         return "${_PASS}"
     }
 
@@ -71,7 +71,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             fail "Failed to remove alias ${alias_name}."
             return "${_FAIL}"
         else
-            success "Alias ${alias_name} removed successfully."
+            pass "Alias ${alias_name} removed successfully."
             return "${_PASS}"
         fi
     }
@@ -100,7 +100,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             fail "Failed to clone repository from ${GIT_URL}."
             return "${_FAIL}"
         else
-            success "git cloned"
+            pass "git cloned"
         fi
 
         _Pushd "${TOOLS_DIR}/${DIRECTORY_NAME}"
@@ -111,7 +111,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             _Popd
             return "${_FAIL}"
         else
-            success "Created virtual env"
+            pass "Created virtual env"
         fi
 
         source ./venv/bin/activate
@@ -164,7 +164,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         _Add_Alias "alias ${TOOL_NAME}='${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py'"
 
         _Popd
-        success "${DIRECTORY_NAME} installed and virtual environment set up successfully."
+        pass "${DIRECTORY_NAME} installed and virtual environment set up successfully."
     }
 
     function AppTest() {
@@ -181,9 +181,9 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Check if the command was successful or if specific conditions are met
         if [[ "${status}" -eq 0 ]]; then
-            success "SUCCESS: [${appName}] - [${appCommand}]"
+            pass "SUCCESS: [${appName}] - [${appCommand}]"
         elif { [[ "${appName}" = "aquatone" ]] || [[ "${appName}" = "pretender" ]]; } && [[ "${status}" -eq 2 ]]; then
-            success "SUCCESS: [${appName}] - [${appCommand}] - Exit Status [${status}]"
+            pass "SUCCESS: [${appName}] - [${appCommand}] - Exit Status [${status}]"
         else
             fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
         fi

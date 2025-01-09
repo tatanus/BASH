@@ -39,14 +39,14 @@ if [[ -z "${UTILS_BREW_SH_LOADED:-}" ]]; then
 
         # Check if the package is already installed
         if brew list --formula | grep -q "^${package}\$"; then
-            success "${package} is already installed via Homebrew."
+            pass "${package} is already installed via Homebrew."
             return "${_PASS}"
         fi
 
         # Attempt to install the package
         info "Installing ${package} using Homebrew..."
         if ${PROXY} brew install "${package}"; then
-            success "Successfully installed ${package} using Homebrew."
+            pass "Successfully installed ${package} using Homebrew."
             return "${_PASS}"
         else
             fail "Failed to install ${package} using Homebrew."

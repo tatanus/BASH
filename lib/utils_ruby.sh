@@ -40,7 +40,7 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
 
             # Install the package using Ruby Gem
             if ${PROXY} gem install "${gem}" > /dev/null 2>&1; then
-                success "Successfully installed ${gem}."
+                pass "Successfully installed ${gem}."
             else
                 fail "Failed to install ${gem}."
             #    return "$_FAIL"

@@ -17,6 +17,9 @@ set -uo pipefail
 if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     declare -g UTILS_FILES_SH_LOADED=true
 
+    #   This function checks if an environment variable with the provided name exists and is set.
+    #   If the variable is set, it prints the value and returns success.
+    #   If the variable is unset or undefined, it prints an error and returns failure.
     function check_env_var() {
         local var_name="$1"
 
@@ -25,12 +28,36 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
             return 1
         fi
 
-        if [[ -v "${var_name}" ]]; then
-            pass "Environment variable ${var_name} exists."
+        # Use indirect expansion to check if the variable is set and retrieve its value
+        if [[ -n "${!var_name+x}" ]]; then
+            pass "Environment variable ${var_name} exists and is set."
             return 0
         else
             fail "Environment variable ${var_name} is not set."
             return 1
+        fi
+    }
+
+    # =============================================================================
+    # FUNCTION: _check_tool
+    # DESCRIPTION: Verifies that a required tool is installed and executable.
+    # =============================================================================
+    # Usage:
+    # _check_tool TOOL
+    # - TOOL: Name of the command-line tool to check.
+    # - Outputs an error message if the tool is not found or not executable.
+    # - Returns:
+    #   - 0: Tool is installed and executable.
+    #   - 1: Tool is missing or not executable.
+    # =============================================================================
+    function check_tool() {
+        local tool="$1"
+
+        if ! command -v "${tool}" > /dev/null 2>&1; then
+            fail "Tool '${tool}' is not installed or not found in PATH."
+            return 1
+        else
+            return 0
         fi
     }
 

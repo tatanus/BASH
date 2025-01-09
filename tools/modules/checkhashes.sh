@@ -26,7 +26,7 @@ function install_checkhashes() {
     # Add aliases for check_hashes
     _Add_Alias "alias check_hashes.py='${PYTHON} ${TOOLS_DIR}/CheckHashes/check_hashes.py'"
     _Add_Alias "alias check_hashes='${PYTHON} ${TOOLS_DIR}/CheckHashes/check_hashes.py'"
-    success "check_hashes installed and aliases added successfully."
+    pass "check_hashes installed and aliases added successfully."
 }
 
 # Test function for checkhashes

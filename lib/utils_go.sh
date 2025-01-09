@@ -78,7 +78,7 @@ if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
         if command -v go > /dev/null 2>&1; then
             local go_version_installed
             go_version_installed=$(go version)
-            success "Golang installed successfully: ${go_version_installed}"
+            pass "Golang installed successfully: ${go_version_installed}"
         else
             fail "Golang installation failed. The 'go' command is not available."
             _Popd
@@ -109,7 +109,7 @@ if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
 
             # Install the package using Go
             if ${PROXY} go install "${tool}" > /dev/null 2>&1; then
-                success "Successfully installed ${tool}."
+                pass "Successfully installed ${tool}."
             else
                 fail "Failed to install ${tool}."
                 #return "$_FAIL"

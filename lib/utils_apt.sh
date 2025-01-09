@@ -36,14 +36,14 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             info "Installing ${package} using apt..."
             if ${PROXY} sudo apt update -qq > /dev/null 2>&1 &&
                 ${PROXY} sudo apt install -y "${package}" > /dev/null 2>&1; then
-                success "Installed ${package} using apt."
+                pass "Installed ${package} using apt."
                 return "${_PASS}"
             else
                 fail "Could not install ${package} using apt."
                 return "${_FAIL}"
             fi
         else
-            success "${package} is already installed."
+            pass "${package} is already installed."
             return "${_PASS}"
         fi
 
@@ -83,7 +83,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
                 fail "${package} is not installed."
                 return "${_FAIL}"
             else
-                success "${package} is installed."
+                pass "${package} is installed."
             fi
         done
 
@@ -98,7 +98,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
         _Wait_Pid
-        success "Package list updated successfully."
+        pass "Package list updated successfully."
 
         # Remove unnecessary packages
         if ! ${PROXY} apt -qq -y autoremove > /dev/null 2>&1; then
@@ -106,7 +106,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
         _Wait_Pid
-        success "Unnecessary packages removed successfully."
+        pass "Unnecessary packages removed successfully."
 
         # Clean up the package cache
         if ! ${PROXY} apt -qq -y clean > /dev/null 2>&1; then
@@ -114,7 +114,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
         _Wait_Pid
-        success "Package cache cleaned successfully."
+        pass "Package cache cleaned successfully."
 
         # Upgrade installed packages
         if ! ${PROXY} apt -qq -y upgrade > /dev/null 2>&1; then
@@ -122,7 +122,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
         _Wait_Pid
-        success "Packages upgraded successfully."
+        pass "Packages upgraded successfully."
 
         return "${_PASS}"
     }

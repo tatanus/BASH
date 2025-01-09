@@ -57,7 +57,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             -exec sed -i \
             's/raise ImportError("Could not import keysym for local pythonversion", x)/raise ImportError("Could not import keysym for local pythonversion")/g' \
             {} \;; then
-            success "Successfully fixed pyreadline issue."
+            pass "Successfully fixed pyreadline issue."
             return "${_PASS}"
         else
             fail "Failed to fix pyreadline issue."
@@ -74,7 +74,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Install Python 3
         if _Install_Python3; then
-            success "Python ${PYTHON_VERSION} installed successfully."
+            pass "Python ${PYTHON_VERSION} installed successfully."
         else
             fail "Failed to install Python ${PYTHON_VERSION}."
             return "${_FAIL}"
@@ -84,7 +84,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         ERROR_FLAG=false
         # Install Pip for python3.x
         if _Install_Pip "${PYTHON}"; then
-            success "pip was installed successfully."
+            pass "pip was installed successfully."
         else
             fail "Failed to install pip."
             ERROR_FLAG=true
@@ -94,7 +94,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Install Pip for python2.7
         if _Install_Pip "python2.7"; then
-            success "pip was installed successfully."
+            pass "pip was installed successfully."
         else
             fail "Failed to install pip."
             ERROR_FLAG=true
@@ -104,7 +104,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Install Pipx python3.x
         if _Install_Pipx "${PYTHON}"; then
-            success "pipx was installed successfully."
+            pass "pipx was installed successfully."
         else
             fail "Failed to install pipx."
             ERROR_FLAG=true
@@ -209,7 +209,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
             cd "${TOOLS_DIR}" || return "${_FAIL}"
             rm -rf "Python-${LATEST_VER}" "Python-${LATEST_VER}.tgz"
-            success "Python ${LATEST_VER} installed successfully."
+            pass "Python ${LATEST_VER} installed successfully."
         fi
 
         _Popd
@@ -238,7 +238,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Check if pip is already installed
         if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
-            success "pip is already installed for Python ${python_version}."
+            pass "pip is already installed for Python ${python_version}."
             return "${_PASS}"
         fi
 
@@ -259,7 +259,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Verify pip installation
         if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
-            success "pip installed successfully for Python ${python_version} using apt."
+            pass "pip installed successfully for Python ${python_version} using apt."
             return "${_PASS}"
         fi
 
@@ -274,7 +274,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             fail "Failed to download get-pip.py for Python ${python_version}."
             return "${_FAIL}"
         fi
-        success "Downloaded get-pip.py for Python ${python_version}."
+        pass "Downloaded get-pip.py for Python ${python_version}."
 
         # Install pip using get-pip.py
         if ! ${PROXY} "${python_cmd}" "${get_pip_file}"; then
@@ -285,10 +285,10 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Cleanup and final verification
         rm -f "${get_pip_file}"
-        success "Installed pip for Python ${python_version} using get-pip.py."
+        pass "Installed pip for Python ${python_version} using get-pip.py."
 
         if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
-            success "pip installed successfully for Python ${python_version}."
+            pass "pip installed successfully for Python ${python_version}."
             return "${_PASS}"
         else
             fail "pip installation for Python ${python_version} failed after using get-pip.py."
@@ -328,14 +328,14 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
                 # Verify pipx installation
                 if command -v pipx > /dev/null 2>&1; then
-                    success "pipx installed successfully using apt."
+                    pass "pipx installed successfully using apt."
                     return "${_PASS}"
                 else
                     fail "pipx installation failed after using apt."
                 fi
             fi
         else
-            success "pipx is already installed."
+            pass "pipx is already installed."
             return "${_PASS}"
         fi
 
@@ -367,7 +367,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Verify pipx installation
         if command -v pipx > /dev/null 2>&1; then
-            success "pipx installed successfully using pip."
+            pass "pipx installed successfully using pip."
             return "${_PASS}"
         else
             fail "pipx installation failed after using pip."
@@ -401,7 +401,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        success "Successfully installed ${lib} using python${python_version}."
+        pass "Successfully installed ${lib} using python${python_version}."
         return "${_PASS}"
     }
 
@@ -463,7 +463,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             fi
         done < "${file}"
 
-        success "Successfully installed packages from ${file} using python${python_version}."
+        pass "Successfully installed packages from ${file} using python${python_version}."
         return "${_PASS}"
     }
 
@@ -511,7 +511,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        success "Successfully installed ${package} with pipx."
+        pass "Successfully installed ${package} with pipx."
         return "${_PASS}"
     }
 
@@ -549,7 +549,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             fail "Failed to install all Python Libraries."
             return "${_FAIL}"
         fi
-        success "Successfully installed all Python libraries."
+        pass "Successfully installed all Python libraries."
         return "${_PASS}"
     }
 
@@ -575,7 +575,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             fail "Failed to install all pipx tools."
             return "${_FAIL}"
         fi
-        success "Successfully installed all pipx tools."
+        pass "Successfully installed all pipx tools."
         return "${_PASS}"
     }
 fi

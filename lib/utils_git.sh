@@ -48,7 +48,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
 
         # Attempt to clone the repository
         if ${PROXY} git clone --recurse-submodules -q "${url}" "${TOOLS_DIR}/${dname}" > /dev/null 2>&1; then
-            success "Cloned repository ${url} into ${TOOLS_DIR}/${dname}."
+            pass "Cloned repository ${url} into ${TOOLS_DIR}/${dname}."
             return "${_PASS}"
         else
             fail "Failed to clone repository ${url} into ${TOOLS_DIR}/${dname}."
@@ -76,7 +76,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
               jq -r '.assets[].browser_download_url' |
               grep "${release_name}" |
               xargs -r wget --no-check-certificate -P "${path}" > /dev/null 2>&1; then
-            success "Downloaded latest release '${release_name}' from repository '${full_repo_name}' to '${path}'."
+            pass "Downloaded latest release '${release_name}' from repository '${full_repo_name}' to '${path}'."
             return "${_PASS}"
         else
             fail "Failed to download latest release '${release_name}' from repository '${full_repo_name}'."

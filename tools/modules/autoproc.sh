@@ -26,7 +26,7 @@ function install_autoproc() {
     # Add aliases for autoProc
     _Add_Alias "alias autoProc.py='${PYTHON} ${TOOLS_DIR}/autoProc/autoProc.py'"
     _Add_Alias "alias autoProc='${PYTHON} ${TOOLS_DIR}/autoProc/autoProc.py'"
-    success "autoProc installed and aliases added successfully."
+    pass "autoProc installed and aliases added successfully."
 }
 
 # Test function for autoproc

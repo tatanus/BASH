@@ -165,7 +165,7 @@ function Setup_Dot_Files() {
 
         # Copy the new file from the dot directory
         if copy_file "${source}" "${target}"; then
-            success "Copied ${source} to ${target}."
+            pass "Copied ${source} to ${target}."
         else
             fail "Failed to copy ${source} to ${target}."
         fi
@@ -177,7 +177,7 @@ function Setup_Dot_Files() {
 
         # Copy the new file from the dot directory
         if copy_file "${source}" "${target}"; then
-            success "Copied ${source} to ${target}."
+            pass "Copied ${source} to ${target}."
         else
             fail "Failed to copy ${source} to ${target}."
         fi
@@ -185,7 +185,7 @@ function Setup_Dot_Files() {
 
     # Source the new bashrc
     if source "${HOME}/.bashrc"; then
-        success "Sourced new ${HOME}/.bashrc."
+        pass "Sourced new ${HOME}/.bashrc."
         return "${_PASS}"
     else
         fail "Failed to source ${HOME}/.bashrc."
@@ -203,7 +203,7 @@ function Undo_Setup_Dot_Files() {
             if ! restore_file "${target}"; then
                 info "No backup for ${target}. Leaving it untouched."
             else
-                success "Restored ${target} from backup."
+                pass "Restored ${target} from backup."
             fi
         fi
     done
@@ -216,14 +216,14 @@ function Undo_Setup_Dot_Files() {
             if ! restore_file "${target}"; then
                 info "No backup for ${target}. Leaving it untouched."
             else
-                success "Restored ${target} from backup."
+                pass "Restored ${target} from backup."
             fi
         fi
     done
 
     # Reload the bashrc if it was restored
     if source "${HOME}/.bashrc"; then
-        success "Reloaded ${HOME}/.bashrc after undoing dotfile setup."
+        pass "Reloaded ${HOME}/.bashrc after undoing dotfile setup."
     else
         warn "Failed to reload ${HOME}/.bashrc after undoing dotfile setup."
     fi
@@ -245,7 +245,7 @@ function Setup_Necessary_Files() {
             fail "Failed to create directory: ${PENTEST_DIR}"
             return "${_FAIL}"
         }
-        success "Created directory: ${PENTEST_DIR}"
+        pass "Created directory: ${PENTEST_DIR}"
     fi
 
     # Copy configuration files
@@ -260,7 +260,7 @@ function Setup_Necessary_Files() {
                 fail "Failed to create file: ${file}. Skipping to next file."
                 continue  # Skip to the next file in the loop
             }
-            success "Created file: ${file}"
+            pass "Created file: ${file}"
         else
             info "File already exists: ${file}"
         fi
@@ -279,7 +279,7 @@ function Setup_Directories() {
     # Create directories
     for directory in "${REQUIRED_DIRECTORIES[@]}"; do
         if mkdir -p "${directory}"; then
-            success "Created directory ${directory}."
+            pass "Created directory ${directory}."
         else
             fail "Failed to create directory ${directory}."
         fi
@@ -299,7 +299,7 @@ function Setup_Cron_Jobs() {
     # Copy the renew.tgt.sh script
     if cp dot/renew_tgt.sh "${BASH_DIR}/.renew_tgt.sh"; then
         chmod +x "${BASH_DIR}/renew_tgt.sh"
-        success "Copied and set executable permissions for ${HOME}/renew_tgt.sh."
+        pass "Copied and set executable permissions for ${HOME}/renew_tgt.sh."
     else
         fail "Failed to copy ${HOME}/renew_tgt.sh."
         return "${_FAIL}"
@@ -310,7 +310,7 @@ function Setup_Cron_Jobs() {
         crontab -l 2> /dev/null | grep -v "${BASH_DIR}/renew_tgt.sh"
                                                                      echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1"
     )                                                                                                                                                   | crontab -; then
-        success "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
+        pass "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
         return "${_PASS}"
     else
         fail "Failed to create or update the Cron job for ${BASH_DIR}/renew_tgt.sh."
@@ -329,7 +329,7 @@ function Setup_Docker() {
 
     # Allow Docker images to work on the system
     if iptables -P FORWARD ACCEPT; then
-        success "Updated iptables policy to ACCEPT for FORWARD."
+        pass "Updated iptables policy to ACCEPT for FORWARD."
         return "${_PASS}"
     else
         fail "Failed to update iptables policy."
@@ -354,12 +354,12 @@ function Setup_Msf_Scripts() {
             fail "Failed to create target directory ${DATA_DIR}/MSF."
             return "${_FAIL}"
         }
-        success "Created target directory ${DATA_DIR}/MSF."
+        pass "Created target directory ${DATA_DIR}/MSF."
     fi
 
     # Copy MSF RC files
     if cp tools/extra/msf/*.rc "${DATA_DIR}/MSF/"; then
-        success "Copied MSF RC files to ${DATA_DIR}/MSF/"
+        pass "Copied MSF RC files to ${DATA_DIR}/MSF/"
         return "${_PASS}"
     else
         fail "Failed to copy MSF RC files to ${DATA_DIR}/MSF/"
@@ -380,7 +380,7 @@ function Setup_Support_Scripts() {
     # Ensure the source directory exists
     # Copy support scripts
     if cp tools/extra/scripts/* "${DATA_DIR}/TOOLS/SCRIPTS/"; then
-        success "Copied support scripts to ${DATA_DIR}/TOOLS/SCRIPTS"
+        pass "Copied support scripts to ${DATA_DIR}/TOOLS/SCRIPTS"
         return "${_PASS}"
     else
         fail "Failed to copy support scripts to ${DATA_DIR}/TOOLS/SCRIPTS"
@@ -427,7 +427,7 @@ function Fix_Dns() {
 
     # Create a symlink to systemd-resolved's configuration
     if ln -s "${systemd_resolv_conf}" "${resolv_conf}"; then
-        success "Successfully updated /etc/resolv.conf to use systemd-resolved."
+        pass "Successfully updated /etc/resolv.conf to use systemd-resolved."
         return "${_PASS}"
     else
         fail "Failed to create symlink from /etc/resolv.conf to [${systemd_resolv_conf}]."
@@ -445,7 +445,7 @@ function Install_Impacket() {
     _Pushd "${TOOLS_DIR}/impacket"
 
     if _Pip_Install "."; then
-        success "Installed pip packages for impacket."
+        pass "Installed pip packages for impacket."
     else
         fail "Failed to install pip packages for impacket."
     fi
@@ -465,7 +465,7 @@ function _Install_Inhouse_Tools() {
     # Move autoTGT tool
     if [[ -d "${src_dir}/autoTGT" ]]; then
         if mv "${src_dir}/autoTGT" "${TOOLS_DIR}/"; then
-            success "Moved autoTGT to ${TOOLS_DIR}/"
+            pass "Moved autoTGT to ${TOOLS_DIR}/"
         else
             fail "Failed to move autoTGT to ${TOOLS_DIR}/"
         fi
@@ -476,7 +476,7 @@ function _Install_Inhouse_Tools() {
     # Move and set up Impacket tool
     if [[ -d "${src_dir}/impacket" ]]; then
         if mv "${src_dir}/impacket" "${TOOLS_DIR}/"; then
-            success "Moved impacket to ${TOOLS_DIR}/"
+            pass "Moved impacket to ${TOOLS_DIR}/"
             Install_Impacket
         else
             fail "Failed to move impacket to ${TOOLS_DIR}/"
@@ -488,7 +488,7 @@ function _Install_Inhouse_Tools() {
     # Move packedcollection tool
     if [[ -d "${src_dir}/packedcollection" ]]; then
         if mv "${src_dir}/packedcollection" "${TOOLS_DIR}/"; then
-            success "Moved packedcollection to ${TOOLS_DIR}/"
+            pass "Moved packedcollection to ${TOOLS_DIR}/"
         else
             fail "Failed to move packedcollection to ${TOOLS_DIR}/"
         fi
@@ -499,7 +499,7 @@ function _Install_Inhouse_Tools() {
     # Move precompiled-offensive-bins tool
     if [[ -d "${src_dir}/precompiled-offensive-bins" ]]; then
         if mv "${src_dir}/precompiled-offensive-bins" "${TOOLS_DIR}/"; then
-            success "Moved precompiled-offensive-bins to ${TOOLS_DIR}/"
+            pass "Moved precompiled-offensive-bins to ${TOOLS_DIR}/"
         else
             fail "Failed to move precompiled-offensive-bins to ${TOOLS_DIR}/"
         fi
@@ -510,7 +510,7 @@ function _Install_Inhouse_Tools() {
     # Move orpheus tool
     if [[ -d "${src_dir}/orpheus" ]]; then
         if mv "${src_dir}/orpheus" "${TOOLS_DIR}/"; then
-            success "Moved orpheus to ${TOOLS_DIR}/"
+            pass "Moved orpheus to ${TOOLS_DIR}/"
         else
             fail "Failed to move orpheus to ${TOOLS_DIR}/"
         fi
@@ -571,7 +571,7 @@ function _Edit_And_Reload_File() {
         return "${_FAIL}"
     fi
 
-    success "Reloaded configuration from ${file}."
+    pass "Reloaded configuration from ${file}."
 }
 
 # Function to process tool installation menu choices
@@ -635,7 +635,7 @@ function _Process_Tool_Install_Menu() {
     fi
 
     # Success message if no errors occurred
-    success "Tool installation for '${choice}' completed successfully."
+    pass "Tool installation for '${choice}' completed successfully."
     return "${_PASS}"
 }
 

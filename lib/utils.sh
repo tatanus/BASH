@@ -73,7 +73,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         # Test direct connectivity
         if curl -s --connect-timeout "${timeout}" "${test_url}" > /dev/null; then
             PROXY=""
-            success "Direct Internet access available. No proxy needed."
+            pass "Direct Internet access available. No proxy needed."
             return "${_PASS}"
         fi
 
@@ -81,7 +81,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
         if command -v proxychains4 > /dev/null 2>&1; then
             if proxychains4 -q curl -s --connect-timeout "${timeout}" "${test_url}" > /dev/null; then
                 PROXY="proxychains4 -q "
-                success "Proxy required. Using proxychains4."
+                pass "Proxy required. Using proxychains4."
                 return "${_PASS}"
             else
                 fail "Proxychains4 is available but cannot connect to ${test_url}."
@@ -228,7 +228,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             }
 
             export UBUNTU_VER
-            success "Detected Ubuntu version: ${UBUNTU_VER}"
+            pass "Detected Ubuntu version: ${UBUNTU_VER}"
             ;;
         Darwin)
             # Check if the _Get_MacOS_Version function is available
@@ -243,7 +243,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             }
 
             export MACOS_VER
-            success "Detected macOS version: ${MACOS_VER}"
+            pass "Detected macOS version: ${MACOS_VER}"
             ;;
         CYGWIN* | MINGW* | MSYS* | Windows_NT)
             # Handle Windows platforms
@@ -259,7 +259,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
             }
 
             export WINDOWS_VER
-            success "Detected Windows version: ${WINDOWS_VER}"
+            pass "Detected Windows version: ${WINDOWS_VER}"
             ;;
         *)
             # Handle unsupported operating systems
