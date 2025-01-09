@@ -17,9 +17,6 @@ set -uo pipefail
 if [[ -z "${MENU_SH_LOADED:-}" ]]; then
     declare -g MENU_SH_LOADED=true
 
-    # Path to persistent menu timestamps
-    MENU_TIMESTAMP_FILE="${PENTEST_DIR}/menu_timestamps"
-
     # Ensure the timestamp file exists
     if [[ ! -f "${MENU_TIMESTAMP_FILE}" ]]; then
         touch "${MENU_TIMESTAMP_FILE}" || {

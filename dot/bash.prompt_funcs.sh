@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : bash_prompt_funcs
+# NAME        : bash.prompt_funcs.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${BASH_PROMPT_FUNCS_LOADED:-}" ]]; then
-    declare -g BASH_PROMPT_FUNCS_LOADED=true
+if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
+    declare -g BASH_PROMPT_FUNCS_SH_LOADED=true
 
     # Function to determine the operating system
     function get_os_type() {

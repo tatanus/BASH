@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : bash_aliases
+# NAME        : bash.aliases.sh
 # DESCRIPTION : A collection of useful aliases and functions for Bash.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${BASH_ALIAS_LOADED:-}" ]]; then
-    declare -g BASH_ALIAS_LOADED=true
+if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
+    declare -g BASH_ALIAS_SH_LOADED=true
 
     # Helper function: Check command availability
     function check_command() {

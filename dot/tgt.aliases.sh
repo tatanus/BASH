@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : tgt_aliases
+# NAME        : tgt.aliases.sh
 # DESCRIPTION : Helper functions for managing Kerberos Ticket Granting Tickets (TGTs)
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${TGT_ALIAS_LOADED:-}" ]]; then
-    declare -g TGT_ALIAS_LOADED=true
+if [[ -z "${TGT_ALIAS_SH_LOADED:-}" ]]; then
+    declare -g TGT_ALIAS_SH_LOADED=true
 
     # Default directory for TGT files
     TGT_DIR="${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"

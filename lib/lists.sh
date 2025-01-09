@@ -26,35 +26,28 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # List of directories
     REQUIRED_DIRECTORIES=(
-        "${DATA_DIR}/CONFIG"
         "${DATA_DIR}/TOOLS"
         "${DATA_DIR}/TOOLS/SCRIPTS"
         "${DATA_DIR}/LOGS"
         "${DATA_DIR}/BACKUP"
-        "${DATA_DIR}/OUTPUT/RAW"
-        "${DATA_DIR}/OUTPUT/PROCESSED"
         "${DATA_DIR}/LOOT/CREDENTIALS"
         "${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"
         "${DATA_DIR}/LOOT/SCREENSHOTS"
         "${DATA_DIR}/LOOT/FILES"
-        "${DATA_DIR}/TASKS/PCAP"
-        "${DATA_DIR}/TASKS/RECON/NMAP"
-        "${DATA_DIR}/TASKS/RECON/SPOONMAP"
-        "${DATA_DIR}/TASKS/RECON/SHARES"
-        "${DATA_DIR}/TASKS/MITM/BETTERCAP"
-        "${DATA_DIR}/TASKS/MITM/MITM6"
-        "${DATA_DIR}/TASKS/MITM/RESPONDER"
-        "${DATA_DIR}/TASKS/ADCS"
-        "${DATA_DIR}/TASKS/COERCION"
-        "${DATA_DIR}/TASKS/LDAP"
-        "${DATA_DIR}/TASKS/WEB"
-        "${DATA_DIR}/TASKS/SMB/NXC"
-        "${DATA_DIR}/TASKS/SMB/E4L"
-        "${DATA_DIR}/TASKS/SMB/KERBEROAST"
-        "${DATA_DIR}/TASKS/CISCO/PHONES"
-        "${DATA_DIR}/TASKS/CISCO/SIET"
-        "${DATA_DIR}/TASKS/BLOODHOUND"
-        "${DATA_DIR}/TASKS/VULN_SCAN/MSF"
+        "${DATA_DIR}/RECON"
+        "${DATA_DIR}/OUTPUT"
+        "${DATA_DIR}/OUTPUT/PCAP"
+        "${DATA_DIR}/OUTPUT/PORTSCAN"
+        "${DATA_DIR}/OUTPUT/SHARES"
+        "${DATA_DIR}/OUTPUT/MITM"
+        "${DATA_DIR}/OUTPUT/ADCS"
+        "${DATA_DIR}/OUTPUT/COERCION"
+        "${DATA_DIR}/OUTPUT/LDAP"
+        "${DATA_DIR}/OUTPUT/WEB"
+        "${DATA_DIR}/OUTPUT/SMB"
+        "${DATA_DIR}/OUTPUT/CISCO"
+        "${DATA_DIR}/OUTPUT/BLOODHOUND"
+        "${DATA_DIR}/OUTPUT/MSF"
     )
 
     NECESSARY_ENGAGEMENT_FILES=(
@@ -73,15 +66,15 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## DOT FILES
     BASH_DOT_FILES=(
-        "bash_path"
-        "bash_env"
-        "path_env"
-        "bash_aliases"
-        "screen_aliases"
-        "tmux_aliases"
-        "tgt_aliases"
-        "bash_prompt"
-        "bash_prompt_funcs"
+        "bash.path.sh"
+        "bash.env.sh"
+        "path.env.sh"
+        "bash.aliases.sh"
+        "screen.aliases.sh"
+        "tmux.aliases.sh"
+        "tgt.aliases.sh"
+        "bash.prompt.sh"
+        "bash.prompt_funcs.sh"
         "bash-preexec.sh"
         "logging.sh"
         "screenshot.sh"
@@ -90,9 +83,10 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## DOT FILES
     PENTEST_FILES=(
-        "pentest.alias"
-        "pentest.env"
+        "pentest.alias.sh"
+        "pentest.env.sh"
         "pentest.keys"
+        "pentest.path.sh"
     )
 
     # Define the list of configuration files to copy
@@ -268,20 +262,20 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ## TOOLS to APP TEST
     ## The command should return an exit status of 0 if the application is installed
     declare -A APP_TESTS=(
-         ["bettercap"]="bettercap -h"
-         ["certi"]="certi.py -h"
-         ["certipy"]="certipy -h"
-         ["GoogleChrome"]="google-chrome --version"
-         ["gowitness"]="gowitness -h"
-         ["ldapdomaindump"]="ldapdomaindump -h"
-         ["ldapnomnom"]="ldapnomnom -h"
-         ["lsassy"]="lsassy -h"
-         ["masscan"]="masscan --ping 127.0.0.1"
-         ["mitm6"]="mitm6 -h"
-         ["nmap"]="nmap --version"
-         ["pypykatz"]="pypykatz -h"
-         ["secretsdump"]="secretsdump.py -h"
-         ["tshark"]="tshark -h"
+             ["bettercap"]="bettercap -h"
+             ["certi"]="certi.py -h"
+             ["certipy"]="certipy -h"
+             ["GoogleChrome"]="google-chrome --version"
+             ["gowitness"]="gowitness -h"
+             ["ldapdomaindump"]="ldapdomaindump -h"
+             ["ldapnomnom"]="ldapnomnom -h"
+             ["lsassy"]="lsassy -h"
+             ["masscan"]="masscan --ping 127.0.0.1"
+             ["mitm6"]="mitm6 -h"
+             ["nmap"]="nmap --version"
+             ["pypykatz"]="pypykatz -h"
+             ["secretsdump"]="secretsdump.py -h"
+             ["tshark"]="tshark -h"
     )
 
     ###################################################################

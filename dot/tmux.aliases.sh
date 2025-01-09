@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : tmux_aliases
+# NAME        : tmux.aliases.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${TMUX_ALIAS_LOADED:-}" ]]; then
-    declare -g TMUX_ALIAS_LOADED=true
+if [[ -z "${TMUX_ALIAS_SH_LOADED:-}" ]]; then
+    declare -g TMUX_ALIAS_SH_LOADED=true
 
     # ------------------------------------------- #
     #####

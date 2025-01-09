@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : bash_env
+# NAME        : bash.env.sh
 # DESCRIPTION : Environment setup for Bash
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${BASH_ENV_LOADED:-}" ]]; then
-    declare -g BASH_ENV_LOADED=true
+if [[ -z "${BASH_ENV_SH_LOADED:-}" ]]; then
+    declare -g BASH_ENV_SH_LOADED=true
 
     # Debug mode (set to true or false)
     export DEBUG=true

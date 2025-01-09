@@ -250,18 +250,18 @@ function Setup_Necessary_Files() {
         return "${_FAIL}"
     fi
 
-    # Ensure PENTEST_DIR exists
-    if [[ ! -d "${PENTEST_DIR}" ]]; then
-        mkdir -p "${PENTEST_DIR}" || {
-            fail "Failed to create directory: ${PENTEST_DIR}"
+    # Ensure BASH_DIR exists
+    if [[ ! -d "${BASH_DIR}" ]]; then
+        mkdir -p "${BASH_DIR}" || {
+            fail "Failed to create directory: ${BASH_DIR}"
             return "${_FAIL}"
         }
-        pass "Created directory: ${PENTEST_DIR}"
+        pass "Created directory: ${BASH_DIR}"
     fi
 
     # Copy configuration files
     for file in "${PENTEST_FILES[@]}"; do
-        copy_file "${SCRIPT_DIR}/config/${file}" "${PENTEST_DIR}/${file}"
+        copy_file "${SCRIPT_DIR}/dot/${file}" "${BASH_DIR}/${file}"
     done
 
     # Create or touch log and timestamp files
@@ -360,20 +360,20 @@ function Setup_Msf_Scripts() {
     fi
 
     # Ensure the target directory exists
-    if [[ ! -d "${DATA_DIR}/MSF" ]]; then
-        mkdir -p "${DATA_DIR}/MSF" || {
-            fail "Failed to create target directory ${DATA_DIR}/MSF."
+    if [[ ! -d "${PENTEST_SCRIPTS_DIR}/MSF" ]]; then
+        mkdir -p "${PENTEST_SCRIPTS_DIR}/MSF" || {
+            fail "Failed to create target directory ${PENTEST_SCRIPTS_DIR}/MSF."
             return "${_FAIL}"
         }
-        pass "Created target directory ${DATA_DIR}/MSF."
+        pass "Created target directory ${PENTEST_SCRIPTS_DIR}/MSF."
     fi
 
     # Copy MSF RC files
-    if cp tools/extra/msf/*.rc "${DATA_DIR}/MSF/"; then
-        pass "Copied MSF RC files to ${DATA_DIR}/MSF/"
+    if cp tools/extra/msf/*.rc "${PENTEST_SCRIPTS_DIR}/MSF/"; then
+        pass "Copied MSF RC files to ${PENTEST_SCRIPTS_DIR}/MSF/"
         return "${_PASS}"
     else
-        fail "Failed to copy MSF RC files to ${DATA_DIR}/MSF/"
+        fail "Failed to copy MSF RC files to ${PENTEST_SCRIPTS_DIR}/MSF/"
         return "${_FAIL}"
     fi
 }

@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : bash_path
+# NAME        : bash.path.sh
 # DESCRIPTION : Sets the PATH variable for different environments.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${BASH_PATH_LOADED:-}" ]]; then
-    declare -g BASH_PATH_LOADED=true
+if [[ -z "${BASH_PATH_SH_LOADED:-}" ]]; then
+    declare -g BASH_PATH_SH_LOADED=true
 
     export GOPATH=${HOME}/go
     export PATH=${HOME}/go/bin:/usr/local/go/bin:${PATH}:${HOME}/.local/bin

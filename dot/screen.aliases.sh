@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : screen_aliases
+# NAME        : screen.aliases.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${SCREEN_ALIAS_LOADED:-}" ]]; then
-    declare -g SCREEN_ALIAS_LOADED=true
+if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
+    declare -g SCREEN_ALIAS_AH_LOADED=true
 
     # Function to determine the appropriate log file path
     function get_logfile_path() {

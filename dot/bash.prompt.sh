@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : bash_prompt
+# NAME        : bash.prompt.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
-    declare -g BASH_PROMPT_LOADED=true
+if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
+    declare -g BASH_PROMPT_SH_LOADED=true
 
     # =============================================================================
     # Configuration
@@ -41,10 +41,10 @@ if [[ -z "${BASH_PROMPT_LOADED:-}" ]]; then
     # =============================================================================
 
     # Ensure referenced functions are available
-    if [[ -f "${BASH_DIR}"/bash_prompt_funcs ]]; then
-        source "${BASH_DIR}"/bash_prompt_funcs
+    if [[ -f "${BASH_DIR}"/bash.prompt_funcs.sh ]]; then
+        source "${BASH_DIR}"/bash.prompt_funcs.sh
     else
-        echo "Warning: ${BASH_DIR}/bash_prompt_funcs not found. Some prompt features may be unavailable." >&2
+        echo "Warning: ${BASH_DIR}/bash.prompt_funcs.sh not found. Some prompt features may be unavailable." >&2
     fi
 
     # Generate the dynamic prompt

@@ -57,29 +57,25 @@ if [[ ! -f ${HISTFILE} ]]; then
     chmod 600 "${HISTFILE}"
 fi
 
-primary_config_files=(
-    "${HOME}/.config/bash/bash_path"
-    "${HOME}/.config/bash/bash_env"
-    "${HOME}/.config/bash/path_env"
+primary_bash_files=(
+    "${HOME}/.config/bash/bash.path.sh"
+    "${HOME}/.config/bash/bash.env.sh"
+    "${HOME}/.config/bash/path.env.sh"
 )
 
 # Source additional configurations
-for file in "${primary_config_files[@]}"; do
+for file in "${primary_bash_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done
 
-secondary_config_files=(
+secondary_bash_files=(
     # Now that variables are set, load bash_path
-    "${HOME}/.config/bash/path_env"
-    "${BASH_DIR}/bash_prompt"
-    "${BASH_DIR}/bash_aliases"
+    "${BASH_DIR}/bash.prompt.sh"
+    "${BASH_DIR}/bash.aliases.sh"
 
-    # Other environment or alias files
-    "${PENTEST_DIR}/pentest_env"
-    "${PENTEST_DIR}/pentest_aliases"
-    "${BASH_DIR}/tgt_aliases"
-    "${BASH_DIR}/screen_aliases"
-    "${BASH_DIR}/tmux_aliases"
+    "${BASH_DIR}/tgt.aliases.sh"
+    "${BASH_DIR}/screen.aliases.sh"
+    "${BASH_DIR}/tmux.aliases.sh"
 
     # Scripts or extra configuration
     "${BASH_DIR}/logging.sh"
@@ -88,6 +84,18 @@ secondary_config_files=(
 )
 
 # Source additional configurations
-for file in "${secondary_config_files[@]}"; do
+for file in "${secondary_bash_files[@]}"; do
+    [[ -f "${file}" ]] && source "${file}"
+done
+
+pentest_files=(
+    # Other environment or alias files
+    "${BASH_DIR}/pentest.path.sh"
+    "${BASH_DIR}/pentest.env.sh"
+    "${BASH_DIR}/pentest.aliases.sh"
+)
+
+# Source additional configurations
+for file in "${pentest_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done
