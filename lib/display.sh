@@ -119,17 +119,4 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
         local debug_message="CALLER: ${file_name}:${line_number} (${function_name}) - ${message}"
         log_message "debug" "${debug_message}" "${context}"
     }
-
-    function _Pause() {
-        echo
-        echo "-----------------------------------"
-        read -n 1 -s -r -p "Press any key to continue..."
-        echo  # Move to the next line after key press
-
-        # Use ANSI escape codes to move the cursor up and clear lines
-        tput cuu 3   # Move the cursor up 3 lines
-        tput el      # Clear the current line
-        tput el      # Clear the next line
-        tput el      # Clear the third line
-    }
 fi
