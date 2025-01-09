@@ -677,6 +677,7 @@ function _Process_Start_Menu() {
     elif [[ "${choice}" == "Test Tool Installs" ]]; then
         _Test_Tool_Installs
     elif [[ "${choice}" == "Pentest Menu" ]]; then
+        source "${SCRIPT_DIR}/pentest_menu/pentest_menu.sh"
         _Pentest_Menu
     else
         warn "Invalid option: ${choice}" # Log warning for invalid start menu option
