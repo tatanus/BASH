@@ -16,14 +16,14 @@ set -uo pipefail
 function install_webclientservicesscanner() {
     _Git_Clone https://github.com/Hackndo/WebclientServiceScanner.git
     _Pushd "${TOOLS_DIR}"/WebclientServiceScanner
-    _PipInstall "."
+    _Pip_Install "."
     _Popd
 }
 
 # Test function for webclientservicesscanner
 function test_webclientservicesscanner() {
-    local TOOL_NAME="webclientservicesscanner"
-    local TOOL_COMMAND="webclientservicesscanner -h"
+    local TOOL_NAME="webclientservicescanner"
+    local TOOL_COMMAND="webclientservicescanner -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

@@ -80,6 +80,8 @@ The **BASH_SETUP Environment** is designed to:
   - `bash` (>=4.0)
   - `fzf` (for interactive menus)
   - Standard Linux utilities (`curl`, `git`, `tmux`, etc.)
+  -
+  - Misc tools that make your life easier: ncat eza bat/batcat proxychains4
 
 ---
 

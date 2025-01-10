@@ -25,21 +25,21 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
     function _Add_Alias() {
         local alias_entry="$*"
 
-        # Verify that ALIAS_FILE is set and writable
-        if [[ -z "${ALIAS_FILE}" ]]; then
+        # Verify that PENTEST_ALIAS_FILE is set and writable
+        if [[ -z "${PENTEST_ALIAS_FILE}" ]]; then
             info "${alias_entry}"
-            fail "ALIAS_FILE is not set. Cannot add alias."
+            fail "PENTEST_ALIAS_FILE is not set. Cannot add alias."
             return "${_FAIL}"
         fi
 
-        if [[ ! -w "${ALIAS_FILE}" ]]; then
+        if [[ ! -w "${PENTEST_ALIAS_FILE}" ]]; then
             info "${alias_entry}"
-            fail "ALIAS_FILE (${ALIAS_FILE}) is not writable."
+            fail "ALIAS_FILE (${PENTEST_ALIAS_FILE}) is not writable."
             return "${_FAIL}"
         fi
 
         # Append the alias entry to the alias file
-        echo "${alias_entry}" >> "${ALIAS_FILE}"
+        echo "${alias_entry}" >> "${PENTEST_ALIAS_FILE}"
         pass "Added alias: ${alias_entry}"
         return "${_PASS}"
     }
@@ -49,7 +49,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         local alias_name="$1"
 
         # Validate inputs
-        if [[ -z "${alias_name}" ]] || [[ -z "${ALIAS_FILE}" ]]; then
+        if [[ -z "${alias_name}" ]] || [[ -z "${PENTEST_ALIAS_FILE}" ]]; then
             fail "Usage: _DelAlias <alias_name>"
             return "${_FAIL}"
         fi
@@ -64,10 +64,10 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         unalias "${alias_name}" 2> /dev/null
 
         # Remove lines containing the alias from the alias file
-        sed -i "/^alias ${alias_name}=/d" "${ALIAS_FILE}"
+        sed -i "/^alias ${alias_name}=/d" "${PENTEST_ALIAS_FILE}"
 
         # Verify the alias has been removed
-        if grep -q "^alias ${alias_name}=" "${ALIAS_FILE}"; then
+        if grep -q "^alias ${alias_name}=" "${PENTEST_ALIAS_FILE}"; then
             fail "Failed to remove alias ${alias_name}."
             return "${_FAIL}"
         else
@@ -118,7 +118,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Install Impacket if the flag is set
         if [[ "${INSTALL_IMPACKET}" = "true" ]]; then
-            InstallImpacket || {
+            Install_Impacket || {
                 fail "Failed to install Impacket."
                 deactivate
                 _Popd
@@ -160,8 +160,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         done
 
         deactivate
-        _Add_Alias "alias ${TOOL_NAME}.py='${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py'"
-        _Add_Alias "alias ${TOOL_NAME}='${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py'"
+        _Add_Alias "alias ${TOOL_NAME}.py='pushd ${TOOLS_DIR}/${DIRECTORY_NAME}/  >/dev/null && ${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py && popd >/dev/null'"
+        _Add_Alias "alias ${TOOL_NAME}='pushd ${TOOLS_DIR}/${DIRECTORY_NAME}/  >/dev/null && ${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py && popd >/dev/null'"
 
         _Popd
         pass "${DIRECTORY_NAME} installed and virtual environment set up successfully."
@@ -194,7 +194,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
     function _Test_Tool_Installs()  {
         # Ensure all of the aliases are loaded
-        source "${ALIAS_FILE}"
+        source "${PENTEST_ALIAS_FILE}"
 
         # Initialize counters
         local total_tests=0
@@ -247,6 +247,9 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Print summary of results
         warning "Test Summary: ${total_tests} tests ran, ${failed_tests} failed."
+
+        # Pause so the user can read the output
+        _Pause
     }
 
 fi

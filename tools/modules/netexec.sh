@@ -14,10 +14,12 @@ set -uo pipefail
 # =============================================================================
 
 function install_netexec() {
-    _Git_Clone https://github.com/Pennyw0rth/NetExec.git
-    _Pushd "${TOOLS_DIR}"/NetExec
-    _Pipx_Install .
-    _Popd
+    info "netexec is installed via pipx"
+    return
+    # _Git_Clone https://github.com/Pennyw0rth/NetExec.git
+    # _Pushd "${TOOLS_DIR}"/NetExec
+    # _Pipx_Install .
+    # _Popd
 }
 
 # Test function for netexec

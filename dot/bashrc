@@ -73,29 +73,17 @@ secondary_bash_files=(
     "${BASH_DIR}/bash.prompt.sh"
     "${BASH_DIR}/bash.aliases.sh"
 
-    "${BASH_DIR}/tgt.aliases.sh"
     "${BASH_DIR}/screen.aliases.sh"
     "${BASH_DIR}/tmux.aliases.sh"
 
     # Scripts or extra configuration
     "${BASH_DIR}/logging.sh"
-    "${BASH_DIR}/screenshot.sh"
-    "${BASH_DIR}/capture_traffic.sh"
+
+    #pentest environment if present
+    "${BASH_DIR}/pentest.sh"
 )
 
 # Source additional configurations
 for file in "${secondary_bash_files[@]}"; do
-    [[ -f "${file}" ]] && source "${file}"
-done
-
-pentest_files=(
-    # Other environment or alias files
-    "${BASH_DIR}/pentest.path.sh"
-    "${BASH_DIR}/pentest.env.sh"
-    "${BASH_DIR}/pentest.aliases.sh"
-)
-
-# Source additional configurations
-for file in "${pentest_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done

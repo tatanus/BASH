@@ -29,7 +29,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
     ## WHICH PYTHON VERSION TO USE
     # shellcheck disable=SC2153
-    PYTHON="python${PYTHON_VERSION} "
+    PYTHON="python${PYTHON_VERSION}"
     export PYTHON
 
     ## WHAT IS THE PIP COMMAND
@@ -92,15 +92,16 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         fi
         _Wait_Pid
 
-        # Install Pip for python2.7
-        if _Install_Pip "python2.7"; then
-            pass "pip was installed successfully."
-        else
-            fail "Failed to install pip."
-            ERROR_FLAG=true
-            #return "$_FAIL"
+        # Only install pip for Python 2.7 if needed
+        if command -v python2.7 > /dev/null 2>&1; then
+            if _Install_Pip "python2.7"; then
+                pass "pip was installed successfully."
+            else
+                fail "Failed to install pip for python2.7."
+                ERROR_FLAG=true
+            fi
+            _Wait_Pid
         fi
-        _Wait_Pid
 
         # Install Pipx python3.x
         if _Install_Pipx "${PYTHON}"; then
@@ -122,8 +123,8 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     # Function to install Python 3
     function _Install_Python3() {
         _Pushd "${TOOLS_DIR}" || {
-                                   fail "Failed to change directory to ${TOOLS_DIR}."
-                                                                                       return "${_FAIL}"
+            fail "Failed to change directory to ${TOOLS_DIR}."
+            return "${_FAIL}"
         }
 
         UBUNTU_VER=$(_Get_Ubuntu_Version)
@@ -131,8 +132,8 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         # Install Python if requested
         if ${INSTALL_PYTHON}; then
             case "${UBUNTU_VER}" in
-                "22.04" | "24.04i" | "24.10")
-                    if ! _Apt_Install "python${PYTHON_VERSION}"; then
+                "22.04" | "24.04" | "24.10")
+                    if ! _Apt_Install "${PYTHON}"; then
                         fail "Failed to install Python ${PYTHON_VERSION}."
                         _Popd
                         return "${_FAIL}"
@@ -179,9 +180,9 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
             fi
 
             cd "Python-${LATEST_VER}" || {
-                                           fail "Failed to change directory to Python-${LATEST_VER}."
-                                                                                                       _Popd
-                                                                                                              return "${_FAIL}"
+                fail "Failed to change directory to Python-${LATEST_VER}."
+                _Popd
+                return "${_FAIL}"
             }
             if ! ./configure --enable-optimizations; then
                 fail "Configuration of Python ${LATEST_VER} failed."
@@ -379,7 +380,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     function _Pip_Install_Ver() {
         local python_version="$1"
         local lib="$2"
-        local PIP_ARGS="$3"
+        local local_PIP_ARGS="$3"
 
         # Verify that both parameters are provided
         if [[ -z "${python_version}" ]] || [[ -z "${lib}" ]]; then
@@ -390,15 +391,18 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         info "Installing ${lib} using python${python_version}..."
 
         # Attempt to install the library using pip
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip "${PIP_ARGS}" "${lib}" --break-system-packages > /dev/null 2>&1; then
+        # shellcheck disable=SC2086 # this breaks if you put quotes around ${local_PIP_ARGS}
+        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip ${local_PIP_ARGS} "${lib}" --break-system-packages > /dev/null 2>&1; then
             fail "Failed to install ${lib} using python${python_version} -m pip."
             return "${_FAIL}"
         fi
 
-        # Verify that the package is installed
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${lib}" > /dev/null 2>&1; then
-            fail "${lib} is not installed for python${python_version}. Verification failed."
-            return "${_FAIL}"
+        # Skip verification if $lib ends with '/.'
+        if [[ ! "${lib}" =~ /.$ ]]; then
+            if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${lib}" > /dev/null 2>&1; then
+                fail "${lib} is not installed for python${python_version}. Verification failed."
+                return "${_FAIL}"
+            fi
         fi
 
         pass "Successfully installed ${lib} using python${python_version}."
@@ -485,7 +489,8 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         fi
 
         # Call _PipInstallRequirementsVer with the global python version
-        _Pip_Install_Requirements_Ver "${PYTHON_VERSION}" "${file}" "${tmp_PIP_ARGS}"
+        # shellcheck disable=SC2086 # this breaks if you put quotes around ${tmp_PIP_ARGS}
+        _Pip_Install_Requirements_Ver "${PYTHON_VERSION}" "${file}" ${tmp_PIP_ARGS}
         return "${_PASS}"
     }
 
@@ -502,12 +507,6 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         info "Installing ${package} using pipx..."
         if ! ${PROXY} pipx install "${package}" --force > /dev/null 2>&1; then
             fail "Failed to install ${package} with pipx."
-            return "${_FAIL}"
-        fi
-
-        # Verify installation
-        if ! pipx list | grep -q "${package}"; then
-            fail "${package} was not found in the pipx list. Installation might have failed."
             return "${_FAIL}"
         fi
 

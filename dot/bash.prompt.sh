@@ -27,7 +27,7 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     blue=$(tput setaf 4)
     light_red=$(tput setaf 1)
     yellow=$(tput setaf 3)
-    orange=$(tput setaf 214 2>/dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
+    orange=$(tput setaf 214 2> /dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
     white=$(tput setaf 7)
     reset=$(tput sgr0)
 
@@ -50,16 +50,16 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     # Generate the dynamic prompt
     function gen_prompt() {
         # Get the active session name
-        session_name=$(get_session_name 2>/dev/null)
+        session_name=$(get_session_name 2> /dev/null)
 
         # Construct the prompt
         PS1="\n"
         # SCREEN SESSION STATUS
-        PS1+="$(check_session 2>/dev/null)"
+        PS1+="$(check_session 2> /dev/null)"
         # KERBEROS CREDENTIAL CACHE
-        PS1+="$(check_kerb_ccache 2>/dev/null)"
+        PS1+="$(check_kerb_ccache 2> /dev/null)"
         # PYTHON VENV
-        PS1+="$(check_venv 2>/dev/null)"
+        PS1+="$(check_venv 2> /dev/null)"
         # DATE TIME
         PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
         # INTERNAL IP
@@ -90,7 +90,8 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     fi
 
     preexec() {
-        local date_time_stamp=$(date +"[%D %T]")
+        local date_time_stamp
+        date_time_stamp=$(date +"[%D %T]")
         echo
         echo "${date_time_stamp} # $1"
         echo

@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_spoofy() {
     # Define the arguments
-    TOOL_NAME="Spoofy"
+    TOOL_NAME="spoofy"
     GIT_URL="https://github.com/MattKeeley/Spoofy.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()

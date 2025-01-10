@@ -69,24 +69,27 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "bash.path.sh"
         "bash.env.sh"
         "path.env.sh"
+        "bash.funcs.sh"
         "bash.aliases.sh"
         "screen.aliases.sh"
         "tmux.aliases.sh"
-        "tgt.aliases.sh"
         "bash.prompt.sh"
         "bash.prompt_funcs.sh"
         "bash-preexec.sh"
         "logging.sh"
-        "screenshot.sh"
-        "capture_traffic.sh"
+
     )
 
     ## DOT FILES
     PENTEST_FILES=(
+        "pentest.sh"
         "pentest.alias.sh"
         "pentest.env.sh"
         "pentest.keys"
         "pentest.path.sh"
+        "tgt.aliases.sh"
+        "screenshot.sh"
+        "capture_traffic.sh"
     )
 
     # Define the list of configuration files to copy
@@ -186,6 +189,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "net-tools"
         "nmap"
         "phantomjs"
+        "pkg-config"
         "postgresql"
         "postgresql-contrib"
         "proxychains4"
@@ -231,16 +235,16 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## PIPX PACKAGES
     PIPX_PACKAGES=(
-        "git+https://github.com/dirkjanm/adidnsdump#egg=adidnsdump"
-        "git+https://github.com/zer1t0/certi"
-        "git+https://github.com/ly4k/Certipy"
+        "git+https://github.com/dirkjanm/adidnsdump#egg=adidnsdump" # error
+        "git+https://github.com/zer1t0/certi" # error
+        "git+https://github.com/ly4k/Certipy" # error
         "coercer"
         "lsassy"
-        "git+https://github.com/blacklanternsecurity/MANSPIDER"
+        "git+https://github.com/blacklanternsecurity/MANSPIDER" # error
         "mitm6"
-        "git+https://github.com/Pennyw0rth/NetExec"
+        "git+https://github.com/Pennyw0rth/NetExec" # error
         "pypykatz"
-        "https://github.com/ShawnDEvans/smbmap"
+        "https://github.com/ShawnDEvans/smbmap" # error
     )
 
     ## GO TOOLS
@@ -262,20 +266,20 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ## TOOLS to APP TEST
     ## The command should return an exit status of 0 if the application is installed
     declare -A APP_TESTS=(
-             ["bettercap"]="bettercap -h"
-             ["certi"]="certi.py -h"
-             ["certipy"]="certipy -h"
-             ["GoogleChrome"]="google-chrome --version"
-             ["gowitness"]="gowitness -h"
-             ["ldapdomaindump"]="ldapdomaindump -h"
-             ["ldapnomnom"]="ldapnomnom -h"
-             ["lsassy"]="lsassy -h"
-             ["masscan"]="masscan --ping 127.0.0.1"
-             ["mitm6"]="mitm6 -h"
-             ["nmap"]="nmap --version"
-             ["pypykatz"]="pypykatz -h"
-             ["secretsdump"]="secretsdump.py -h"
-             ["tshark"]="tshark -h"
+                   ["bettercap"]="bettercap -h"
+                   ["certi"]="certi.py -h"
+                   ["certipy"]="certipy -h"
+                   ["GoogleChrome"]="google-chrome --version"
+                   ["gowitness"]="gowitness -h"
+                   ["ldapdomaindump"]="ldapdomaindump -h"
+                   ["ldapnomnom"]="ldapnomnom -h"
+                   ["lsassy"]="lsassy -h"
+                   ["masscan"]="masscan --ping 127.0.0.1"
+                   ["mitm6"]="mitm6 -h"
+                   ["nmap"]="nmap --version"
+                   ["pypykatz"]="pypykatz -h"
+                   ["secretsdump"]="secretsdump.py -h"
+                   ["tshark"]="tshark -h"
     )
 
     ###################################################################
@@ -326,16 +330,10 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Array for Install_Tools functions
     INSTALL_TOOLS_MENU_ITEMS=(
-        # INSTALL ANY IN-HOUSE TOOLS
+        "_Install_All_Tools"
         "_Install_Inhouse_Tools"
-
-        # INSTALL PIPX TOOLS FROM LIST
         "_Install_Pipx_Tools"
-
-        # INSTALL GO TOOLS FROM LIST
         "_Install_Go_Tools"
-
-        # INSTALL RUBY GEMS
         "_Install_Ruby_Gems"
     )
 

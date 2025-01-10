@@ -59,12 +59,49 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     # MENU Files
     export CONFIG_FILE="${SCRIPT_DIR}/config/config.sh"
     export MENU_FILE="${SCRIPT_DIR}/lib/menu.sh"
-    export SETUP_LOG_FILE="${SCRIPT_DIR}/setup.log"
+    export LOG_FILE="${SCRIPT_DIR}/setup.log"
+    export MENU_TIMESTAMP_FILE="${SCRIPT_DIR}/menu_timestamps"
 
     # Ensure the timestamp file exists
     if [[ ! -f "${MENU_TIMESTAMP_FILE}" ]]; then
         touch "${MENU_TIMESTAMP_FILE}"
     fi
+
+    export DATA_DIR="${HOME}/DATA"
+    export TOOLS_DIR="${DATA_DIR}/TOOLS"
+    export LOGS_DIR="${DATA_DIR}/LOGS"
+
+    # ###########################################
+    # PENTEST PATHS
+    # ###########################################
+
+    # PENTEST CONFIG FILES
+    export PENTEST_ENV_FILE="${BASH_DIR}/pentest.env.sh"
+    export PENTEST_ALIAS_FILE="${BASH_DIR}/pentest.alias.sh"
+    export PENTEST_KEYS_FILE="${BASH_DIR}/pentest.keys"
+    export PENTEST_LOG_FILE="${BASH_DIR}/pentest.log"
+    export PENTEST_MENU_TIMESTAMP_FILE="${BASH_DIR}/pentest_menu_timestamps"
+
+    # Ensure the timestamp file exists
+    if [[ ! -f "${PENTEST_MENU_TIMESTAMP_FILE}" ]]; then
+        touch "${PENTEST_MENU_TIMESTAMP_FILE}"
+    fi
+
+    # DATA_DIR
+    export DATA_DIR="${HOME}/DATA"
+    export TOOLS_DIR="${DATA_DIR}/TOOLS"
+    #export PENTEST_SCRIPTS_DIR="${DATA_DIR}/TOOLS/SCRIPTS"
+    export LOGS_DIR="${DATA_DIR}/LOGS"
+    export BACKUP_DIR="${DATA_DIR}/BACKUP"
+
+    # LOOT_DIR
+    export LOOT_DIR="${DATA_DIR}/LOOT"
+    export CREDS_DIR="${DATA_DIR}/LOOT/CREDENTIALS"
+
+    # OUTPUT_DIR
+    export OUTPUT_DIR="${DATA_DIR}/OUTPUT"
+    export PORTSCAN_DIR="${OUTPUT_DIR}/PORTSCAN"
+    export SHARES_DIR="${OUTPUT_DIR}/SHARES"
 
     # -----------------------------
     # Extra Installation Configuration

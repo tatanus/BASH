@@ -17,26 +17,12 @@ set -uo pipefail
 if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     declare -g BASH_PROMPT_FUNCS_SH_LOADED=true
 
-    # Function to determine the operating system
-    function get_os_type() {
-        uname_output=$(uname -s)
-
-        case "${uname_output}" in
-        Linux*)
-            echo "Linux"
-            ;;
-        Darwin*)
-            echo "macOS"
-            ;;
-        CYGWIN* | MINGW32* | MSYS* | MINGW*)
-            echo "Windows"
-            ;;
-        *)
-            echo "Unknown"
-            ;;
-        esac
-    }
-
+    # ----------------------------------------------------------------------
+    # check_venv
+    # ----------------------------------------------------------------------
+    # - Checks if the user is in a Python virtual environment ($VIRTUAL_ENV).
+    # - If so, prints the environment path.
+    # ----------------------------------------------------------------------
     function check_venv() {
         if [[ -n "${VIRTUAL_ENV}" ]]; then
             echo "${white}[${light_blue}Python VENV = ${light_blue}${VIRTUAL_ENV}${white}]"
@@ -44,6 +30,12 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
+    # ----------------------------------------------------------------------
+    # check_kerb_ccache
+    # ----------------------------------------------------------------------
+    # - Checks if a Kerberos credential cache ($KRB5CCNAME) is set.
+    # - If so, prints the cache name.
+    # ----------------------------------------------------------------------
     function check_kerb_ccache() {
         if [[ -n "${KRB5CCNAME}" ]]; then
             echo "${white}[${light_red}KRB5CCNAME = ${light_red}${KRB5CCNAME}${white}]"
@@ -51,7 +43,12 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # Function to check session
+    # ----------------------------------------------------------------------
+    # check_session
+    # ----------------------------------------------------------------------
+    # - Checks for a TMUX or SCREEN session.
+    # - If found, prints the session(s) name in the prompt.
+    # ----------------------------------------------------------------------
     function check_session() {
         SESSION_STATUS="${white}┏━"
 
@@ -75,14 +72,27 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         echo -e "${SESSION_STATUS}"
     }
 
-    # Refresh cached IPs periodically
+    # ----------------------------------------------------------------------
+    # update_ip_cache
+    # ----------------------------------------------------------------------
+    # - Refreshes cached local and external IP addresses.
+    # - Calls get_local_ip and get_external_ip, storing results in
+    #   PROMPT_LOCAL_IP and PROMPT_EXTERNAL_IP. Also records LAST_IP_CHECK.
+    # ----------------------------------------------------------------------
     function update_ip_cache() {
-        PROMPT_LOCAL_IP=$(get_local_ip 2>/dev/null || echo "Unavailable")
-        PROMPT_EXTERNAL_IP=$(get_external_ip 2>/dev/null || echo "Unavailable")
+        PROMPT_LOCAL_IP=$(get_local_ip 2> /dev/null || echo "Unavailable")
+        PROMPT_EXTERNAL_IP=$(get_external_ip 2> /dev/null || echo "Unavailable")
         LAST_IP_CHECK=$(date +%s)
     }
 
-    # Function to determine if a network interface is configured as DHCP or Static
+    # ----------------------------------------------------------------------
+    # is_dhcp_static
+    # ----------------------------------------------------------------------
+    # - Determines if a given network interface is configured for DHCP or Static.
+    # - Supports various configurations on Linux or macOS, including NetworkManager,
+    #   systemd-networkd, netplan, /etc/network/interfaces, and networksetup (macOS).
+    # - Prints "DHCP" or "Static" if detected, otherwise "Unknown" or an error message.
+    # ----------------------------------------------------------------------
     function is_dhcp_static() {
         # Ensure the interface is provided
         local interface=$1
@@ -93,40 +103,43 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
         # Detect OS type
         local os_type
-        os_type=$(get_os_type)
+        os_type=$(_get_os)
 
         # Handle Linux systems
-        if [[ "${os_type}" == "Linux" ]]; then
+        if [[ "${os_type}" == "linux" ]]; then
             # Check if nmcli is available and NetworkManager is active
-            if command -v nmcli &>/dev/null && systemctl is-active NetworkManager &>/dev/null; then
+            if command -v nmcli &> /dev/null && systemctl is-active NetworkManager &> /dev/null; then
                 local connection_profile
-                connection_profile=$(nmcli -g GENERAL.CONNECTION device show "${interface}" 2>/dev/null)
+                connection_profile=$(nmcli -g GENERAL.CONNECTION device show "${interface}" 2> /dev/null)
 
                 if [[ "${connection_profile}" != "--" && -n "${connection_profile}" ]]; then
                     local ip_method
-                    ip_method=$(nmcli -g ipv4.method connection show "${connection_profile}" 2>/dev/null)
+                    ip_method=$(nmcli -g ipv4.method connection show "${connection_profile}" 2> /dev/null)
 
                     case "${ip_method}" in
-                    auto)
-                        echo "DHCP"
-                        return 0
-                        ;;
-                    manual)
-                        echo "Static"
-                        return 0
-                        ;;
+                        auto)
+                            echo "DHCP"
+                            return 0
+                            ;;
+                        manual)
+                            echo "Static"
+                            return 0
+                            ;;
+                        *)
+                            : # do nothing
+                            ;;
                     esac
                 fi
             fi
 
             # Check if systemd-networkd is active
-            if systemctl is-active systemd-networkd &>/dev/null; then
+            if systemctl is-active systemd-networkd &> /dev/null; then
                 local config_file
                 config_file=$(find /etc/netplan/ -name "*.yaml" -print -quit)
 
                 if [[ -n "${config_file}" ]]; then
                     local config
-                    config=$(grep -A3 "${interface}:" "${config_file}" 2>/dev/null)
+                    config=$(grep -A3 "${interface}:" "${config_file}" 2> /dev/null)
 
                     if echo "${config}" | grep -q "dhcp4: true"; then
                         echo "DHCP"
@@ -141,7 +154,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             # Fall back to /etc/network/interfaces
             if [[ -f /etc/network/interfaces ]]; then
                 local config
-                config=$(grep -A3 "iface ${interface}" /etc/network/interfaces 2>/dev/null)
+                config=$(grep -A3 "iface ${interface}" /etc/network/interfaces 2> /dev/null)
 
                 if echo "${config}" | grep -q "dhcp"; then
                     echo "DHCP"
@@ -156,9 +169,9 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             return 1
 
         # Handle macOS systems
-        elif [[ "${os_type}" == "macOS" ]]; then
+        elif [[ "${os_type}" == "macos" ]]; then
             # Check if the 'networksetup' command is available
-            if ! command -v networksetup &>/dev/null; then
+            if ! command -v networksetup &> /dev/null; then
                 echo "Error: 'networksetup' command is not available." >&2
                 exit 1
             fi
@@ -183,7 +196,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                 if [[ "${interface}" == "${device}" ]]; then
                     # Get network configuration for the matching port
                     local config
-                    config=$(networksetup -getinfo "${port_name}" 2>/dev/null)
+                    config=$(networksetup -getinfo "${port_name}" 2> /dev/null)
 
                     if [[ $? -ne 0 ]]; then
                         echo "Error: Failed to get network information for '${port_name}' (${device})." >&2
@@ -201,7 +214,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                         return 1
                     fi
                 fi
-            done <<<"${resulting_list}"
+            done <<< "${resulting_list}"
 
             echo "Unknown"
             return 1
@@ -211,7 +224,15 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # Function to get local IP with caching, excluding certain interfaces
+    # ----------------------------------------------------------------------
+    # get_local_ip
+    # ----------------------------------------------------------------------
+    # - Retrieves local IP addresses from available interfaces, excluding
+    #   loopback and virtual interfaces (lo*, docker*, etc.).
+    # - Optionally calls is_dhcp_static to label each interface as DHCP/Static.
+    # - Exports the combined info in PROMPT_LOCAL_IP and prints it to stdout.
+    # - Returns 1 if no valid interfaces are found.
+    # ----------------------------------------------------------------------
     function get_local_ip() {
         # Define interfaces to exclude
         local excluded_interfaces=("lo*" "docker*" "virbr*" "vnet*" "tun*" "tap*" "br-*" "ip6tnl*" "sit*")
@@ -220,10 +241,10 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         local iface ip dhcp
 
         # Check for required commands
-        if command -v ip &>/dev/null; then
+        if command -v ip &> /dev/null; then
             # Get network interfaces and IPs using 'ip'
             interfaces=$(ip -o addr show | awk '$3 == "inet" && $4 != "127.0.0.1/8" {print $2,$4}')
-        elif command -v ifconfig &>/dev/null; then
+        elif command -v ifconfig &> /dev/null; then
             # Get network interfaces and IPs using 'ifconfig'
             interfaces=$(ifconfig | awk '/^[a-zA-Z0-9]+:/ { iface=$1; next } /inet / && $2 != "127.0.0.1" { print iface,$2 }' | sed 's/://')
         else
@@ -243,13 +264,13 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
             # Skip excluded interfaces using glob matching
             for pattern in "${excluded_interfaces[@]}"; do
-                if [[ ${iface} == ${pattern} ]]; then
+                if [[ "${iface}" == "${pattern}" ]]; then
                     continue 2 # Skip to the next line in the parent loop
                 fi
             done
 
             # Determine if the interface is using DHCP or static
-            if command -v is_dhcp_static &>/dev/null; then
+            if command -v is_dhcp_static &> /dev/null; then
                 dhcp=$(is_dhcp_static "${iface}")
             else
                 dhcp="unknown" # Fallback if is_dhcp_static is not defined
@@ -257,7 +278,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
             # Append result (color variables should be defined elsewhere in the script)
             result+="${light_blue}${iface}${yellow}(${dhcp})${white}:${blue}${ip}${white}, "
-        done <<<"${interfaces}"
+        done <<< "${interfaces}"
 
         # Remove trailing comma and space
         export PROMPT_LOCAL_IP="${result%, }"
@@ -271,40 +292,71 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         echo "${PROMPT_LOCAL_IP}"
     }
 
-    # Function to get external IP with caching
+    # ----------------------------------------------------------------------
+    # get_external_ip
+    # ----------------------------------------------------------------------
+    # - Checks if a cached IP (in /tmp/external_ip.cache) is still fresh (< 10 mins).
+    # - If fresh and valid, reuses it.
+    # - Otherwise tries to fetch a new IP from ifconfig.me using curl or wget.
+    # - Exports the IP to PROMPT_EXTERNAL_IP and prints it to stdout on success.
+    # - Returns non-zero on any failure or invalid IP.
+    # ----------------------------------------------------------------------
     function get_external_ip() {
-        # Define a cache file location
         local cache_file="/tmp/external_ip.cache"
         local external_ip=""
+        local now
+        local last_modified
+        local age_sec
 
-        # Attempt to use the cached IP if the file exists and is recent
-        if [[ -f "${cache_file}" && -n $(find "${cache_file}" -mmin -10) ]]; then
-            external_ip=$(<"${cache_file}")
-            # Validate the cached IP
-            if [[ "${external_ip}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                echo "${external_ip}"
-                return 0
-            else
-                rm -f "${cache_file}" # Remove invalid cache
+        # If the cache file exists, check its age
+        if [[ -f "${cache_file}" ]]; then
+            now=$(date +%s)
+            # Using 'stat' to get the last modification time in epoch seconds
+            last_modified=$(stat -c '%Y' "${cache_file}" 2> /dev/null || echo 0)
+            age_sec=$((now - last_modified))
+
+            # If the cache file is younger than 600 seconds (10 minutes), try to use it
+            if ((age_sec < 600)); then
+                external_ip="$(< "${cache_file}")"
+                # Validate the cached IP
+                if [[ "${external_ip}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                    export PROMPT_EXTERNAL_IP="${external_ip}"
+                    echo "${PROMPT_EXTERNAL_IP}"
+                    return 0
+                else
+                    # Cache is invalid; remove it so we can attempt a fresh fetch
+                    rm -f "${cache_file}"
+                fi
             fi
         fi
 
-        # Fetch the external IP using curl or wget
-        if command -v curl &>/dev/null; then
-            external_ip=$(${PROXY} curl -4 -s --max-time 5 https://ifconfig.me/ip)
-        elif command -v wget &>/dev/null; then
-            external_ip=$(${PROXY} wget -4 -qO- --timeout=5 https://ifconfig.me/ip)
+        # --------------------------------------------------------------------
+        # Cache is missing, stale, or invalid — fetch a new IP
+        # --------------------------------------------------------------------
+        if command -v curl &> /dev/null; then
+            external_ip="$(curl -4 -s --max-time 5 https://ifconfig.me/ip || true)"
+        elif command -v wget &> /dev/null; then
+            external_ip="$(wget -4 -qO- --timeout=5 https://ifconfig.me/ip || true)"
         else
+            echo "Error: Neither curl nor wget is installed or available." >&2
             return 1
         fi
 
         # Validate the fetched IP
-        if [[ -z "${external_ip}" || ! "${external_ip}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        if [[ -z "${external_ip}" ]]; then
+            echo "Error: Empty response fetching external IP." >&2
             return 1
         fi
 
+        if [[ ! "${external_ip}" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Invalid IPv4 address format: '${external_ip}'" >&2
+            return 1
+        fi
+
+        # --------------------------------------------------------------------
         # Cache the valid IP
-        echo "${external_ip}" >"${cache_file}"
+        # --------------------------------------------------------------------
+        echo "${external_ip}" > "${cache_file}"
 
         # Export and print the result
         export PROMPT_EXTERNAL_IP="${external_ip}"

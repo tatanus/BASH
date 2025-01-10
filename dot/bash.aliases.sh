@@ -17,96 +17,25 @@ set -uo pipefail
 if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
     declare -g BASH_ALIAS_SH_LOADED=true
 
-    # Helper function: Check command availability
-    function check_command() {
-        if ! command -v "$1" &>/dev/null; then
-            echo "$1 is not installed. Some functionality may not work."
-            return 1
-        fi
-    }
+    # Source the bash.funcs.sh script if it exists
+    [[ -f "${BASH_DIR}/bash.funcs.sh" ]] && source "${BASH_DIR}/bash.funcs.sh"
 
     # Alias for ncat
     check_command "ncat" && alias nc="ncat"
 
     # Alias for gsed
-    check_command "gsed" && alias sed="gsed"
-
-    # Alias and function for eza
-    if check_command "eza"; then
-        # Function to convert ls commands to eza commands
-        function convert_ls_to_eza() {
-            local cmd=("$@")                             # Capture all arguments as an array
-            local eza_cmd=("eza" "--git" "-F" "-h" "-B") # Default eza command options
-
-            # Separate options and arguments
-            local options=()
-            local arguments=()
-
-            # Parse all arguments
-            for arg in "${cmd[@]}"; do
-                if [[ ${arg} == --* ]]; then
-                    # Long option (e.g., --tree, --group)
-                    options+=("${arg}")
-                elif [[ ${arg} == -* ]]; then
-                    # Split combined short options into individual flags
-                    for ((i = 1; i < ${#arg}; i++)); do
-                        options+=("-${arg:i:1}")
-                    done
-                else
-                    # Non-option argument (e.g., file/directory)
-                    arguments+=("${arg}")
-                fi
-            done
-
-            # Flags to track
-            local has_t_flag=false
-            local has_r_flag=false
-
-            # Parse options to convert to eza equivalents
-            for opt in "${options[@]}"; do
-                case "${opt}" in
-                -l) eza_cmd+=("-l" "--group") ;; # Long format with group info
-                -t)
-                    eza_cmd+=("--sort=modified")
-                    has_t_flag=true
-                    ;;                          # Sort by modification time
-                -S) eza_cmd+=("--sort=size") ;; # Sort by file size
-                -F) eza_cmd+=("--classify") ;;  # Append indicator to entries
-                -r) has_r_flag=true ;;          # Track -r flag
-                *)
-                    # Pass through unrecognized options (e.g., -Z, -U)
-                    eza_cmd+=("${opt}")
-                    ;;
-                esac
-            done
-
-            # Handle -r and -t combinations
-            if [[ "$has_t_flag" == true && "$has_r_flag" == true ]]; then
-                # Drop -r if both -t and -r are present
-                eza_cmd=("${eza_cmd[@]/--reverse/}") # Remove --reverse equivalent if already added
-            elif [[ "$has_t_flag" == true && "$has_r_flag" == false ]]; then
-                # Add -r if -t is present and -r is not
-                eza_cmd+=("--reverse")
-            elif [[ "$has_r_flag" == true ]]; then
-                # Add --reverse only if -r is used alone
-                eza_cmd+=("--reverse")
-            fi
-
-            # Append non-option arguments to the command
-            eza_cmd+=("${arguments[@]}")
-
-            # Safely execute the final command
-            "${eza_cmd[@]}"
-        }
-
-        # Alias for ls
-        alias ls="convert_ls_to_eza"
+    # shellcheck disable=SC2262
+    if [[ "$(_get_os)" == "macos" ]]; then
+        check_command "gsed" && alias sed="gsed"
     fi
 
+    # Alias and function for eza
+    check_command "eza" && alias ls="convert_ls_to_eza"
+
     # Check and set alias for bat or batcat
-    if command -v bat &>/dev/null; then
+    if command -v bat &> /dev/null; then
         alias cat='bat --paging=never --style=plain --theme=ansi-dark'
-    elif command -v batcat &>/dev/null; then
+    elif command -v batcat &> /dev/null; then
         alias cat='batcat --paging=never --style=plain --theme=ansi-dark'
     else
         echo "Neither 'bat' nor 'batcat' is installed. Defauting back to the base 'cat' functionality." >&2
@@ -117,7 +46,7 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
 
     # Alias to get public IP address using proxychains4 and curl
     if check_command "curl"; then
-        alias myip="${PROXY} curl ifconfig.me/ip"
+        alias myip="\${PROXY} curl ifconfig.me/ip"
 
         # Alias to run 'curl' with a specific user agent string
         alias curl='curl -A "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36" -k'
@@ -131,76 +60,4 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
 
     # Alias for wget with resume support
     alias wget='wget -c'
-
-    # Function to pause execution and clear pause message
-    function _Pause() {
-        echo
-        echo "-----------------------------------"
-        read -n 1 -s -r -p "Press any key to continue..."
-        echo # Move to the next line after key press
-
-        # Clear pause message from terminal
-        if command -v tput &>/dev/null; then
-            tput cuu 3
-            tput el
-            tput el
-            tput el
-        fi
-    }
-
-    # Function to display the current session name (TMUX or SCREEN)
-    function get_session_name() {
-        local session_names=()
-
-        # Check if we are in a TMUX session
-        if [[ -n "${TMUX:-}" ]]; then
-            local tmux_session
-            tmux_session=$(tmux display-message -p '#S')
-            session_names+=("TMUX:${tmux_session}")
-        fi
-
-        # Check if we are in a SCREEN session
-        if [[ -n "${STY:-}" ]]; then
-            local session_names
-            screen_session=$(echo "${STY:-}" | awk -F '.' '{print $2}')
-            session_names+=("SCREEN:${screen_session}")
-        fi
-
-        # Return session names, comma-separated if multiple
-        if [[ ${#session_names[@]} -gt 0 ]]; then
-            echo "${session_names[*]}" | sed 's/ /, /g' # Replace spaces with commas
-        fi
-    }
-
-    # Function to sort Responder style hashes in a file
-    function sort_first() {
-        sort -u -V "$@" | sort -t: -k1,3 -u
-    }
-
-    # Function to strip ANSI escape sequences, control characters, and non-printable characters
-    function strip_color() {
-        # Check if an argument was provided
-        if [[ -z "$1" ]]; then
-            echo "Error: No input provided. Please pass a string or file."
-            return 1
-        fi
-
-        # Corrected pattern to match ANSI escape codes and control characters
-        local ansi_pattern=$'\x1B\\[[0-9;]*[mK]'  # ANSI color codes
-        local control_pattern=$'[[:cntrl:]]'      # Control characters, including carriage return, etc.
-        local nonprintable_pattern=$'[\x80-\xFF]' # Non-printable multibyte characters (like �)
-
-        # Check if the input is a file
-        if [[ -f "$1" ]]; then
-            # Read file and clean non-printable characters and escape sequences
-            LANG=C sed -E -e "s/${ansi_pattern}//g" \
-                -e "s/${control_pattern}//g" \
-                -e "s/${nonprintable_pattern}//g" "$1"
-        else
-            # Treat input as a string and clean non-printable characters and escape sequences
-            echo -e "$1" | LANG=C sed -E -e "s/${ansi_pattern}//g" \
-                -e "s/${control_pattern}//g" \
-                -e "s/${nonprintable_pattern}//g"
-        fi
-    }
 fi

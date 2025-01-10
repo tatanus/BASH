@@ -72,7 +72,7 @@ if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
 
         # Add Golang binary path to the current session's PATH
         #export PATH=$PATH:/usr/local/go/bin
-        source ~/.bash_path
+        source "${BASH_DIR}/bash.path.sh"
 
         # Verify that the Go command is available and print its version
         if command -v go > /dev/null 2>&1; then
@@ -100,12 +100,12 @@ if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
                 fail "go_tools array is not defined."
                 return "${_FAIL}"
             fi
-            tools=("${go_tools[@]}")
+            tools=("${GO_TOOLS[@]}")
         fi
 
         # Install each tool in the list
         for tool in "${tools[@]}"; do
-            info "Installing ${tool}..."
+            info "Installing ${tool}...May take a while, be patient."
 
             # Install the package using Go
             if ${PROXY} go install "${tool}" > /dev/null 2>&1; then

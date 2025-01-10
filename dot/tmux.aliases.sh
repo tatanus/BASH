@@ -24,8 +24,7 @@ if [[ -z "${TMUX_ALIAS_SH_LOADED:-}" ]]; then
     # ------------------------------------------- #
 
     function tmux() {
-        # Debug output to verify arguments
-        echo "DEBUG: \$@=$@"
+        echo "DEBUG: \$@=" "$@"
 
         # Initialize variables
         local session_name=""
@@ -34,22 +33,22 @@ if [[ -z "${TMUX_ALIAS_SH_LOADED:-}" ]]; then
         # Parse arguments to find "new -s <session_name>"
         while [[ $# -gt 0 ]]; do
             case "$1" in
-            new)
-                args+=("$1")
-                shift
-                if [[ "$1" == "-s" && -n "$2" ]]; then
-                    session_name="$2"
-                    args+=("$1" "$2")
-                    shift 2
-                else
-                    echo "Error: 'new' requires '-s <session_name>'" >&2
-                    return 1
-                fi
-                ;;
-            *)
-                args+=("$1")
-                shift
-                ;;
+                new)
+                    args+=("$1")
+                    shift
+                    if [[ "$1" == "-s" && -n "$2" ]]; then
+                        session_name="$2"
+                        args+=("$1" "$2")
+                        shift 2
+                    else
+                        echo "Error: 'new' requires '-s <session_name>'" >&2
+                        return 1
+                    fi
+                    ;;
+                *)
+                    args+=("$1")
+                    shift
+                    ;;
             esac
         done
 

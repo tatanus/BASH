@@ -36,11 +36,13 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         repo_name=${repo_name%.git}
 
         # Determine the destination directory name
+        # Safely reference $2
+        local dest="${2:-}"
         local dname
-        if [[ -z "$2" ]]; then
+        if [[ -z "${dest}" ]]; then
             dname="${repo_name}"
         else
-            dname="$2"
+            dname="${dest}"
         fi
 
         # Create the directory if it does not exist

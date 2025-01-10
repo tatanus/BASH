@@ -38,19 +38,19 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
         # Parse arguments to find "-S <session_name>"
         while [[ $# -gt 0 ]]; do
             case "$1" in
-            -S)
-                if [[ -n "$2" ]]; then
-                    session_name="$2"
-                    shift 2
-                else
-                    echo "Error: -S flag requires a session name" >&2
-                    return 1
-                fi
-                ;;
-            *)
-                args+=("$1")
-                shift
-                ;;
+                -S)
+                    if [[ -n "$2" ]]; then
+                        session_name="$2"
+                        shift 2
+                    else
+                        echo "Error: -S flag requires a session name" >&2
+                        return 1
+                    fi
+                    ;;
+                *)
+                    args+=("$1")
+                    shift
+                    ;;
             esac
         done
 
@@ -138,7 +138,8 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
         local pid="$1"
 
         # Validate input PID and check if the process exists
-        if [[ -z "${pid}" || ! -n $(ps -p "${pid}") ]]; then
+        #if [[ -z "${pid}" || ! -n $(ps -p "${pid}") ]]; then
+        if [[ -z "${pid}" ]] || ! ps -p "${pid}" &> /dev/null; then
             echo "Usage: get_commands <pid>" && return 1
             return 1
         fi
@@ -149,11 +150,13 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
         # Recursive function to find the leaf processes and capture their commands
         function find_leaves() {
             local p="$1"
-            local children=($(pgrep -P "${p}"))
+            local children=()
+            mapfile -t children < <(pgrep -P "${p}")
 
             # If no children, it's a leaf process, so capture its command
             if [[ ${#children[@]} -eq 0 ]]; then
-                local command=$(ps -p "${p}" -o args= 2>/dev/null)
+                local command
+                command=$(ps -p "${p}" -o args= 2> /dev/null)
                 [[ -n "${command}" ]] && commands+=("${command}")
             else
                 # Recursively find leaves of child processes
@@ -164,7 +167,9 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
         }
 
         # Get all child processes of the input PID
-        local children=($(pgrep -P "${pid}"))
+        local children=()
+        mapfile -t children < <(pgrep -P "${pid}")
+
         if [[ ${#children[@]} -eq 0 ]]; then
             echo "No child processes found for PID ${pid}."
             return 0
@@ -213,14 +218,23 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
         echo "Current Screen Sessions:"
 
         # Use fzf to select a session with a preview of commands
-        local selected_session=$(printf "%s\n" "${session_list[@]}" | fzf --prompt="Select a screen session: " --no-clear \
-            --preview 'echo "== Commands for Screen Session -- $(echo {1}) ==" && echo && _get_pid_commands $(echo {1} | cut -d . -f 1)' \
-            --preview-window=down:10:wrap:sharp)
+        local selected_session
+        # shellcheck disable=SC2016
+        selected_session=$(
+            printf "%s\n" "${session_list[@]}" |
+                fzf \
+                    --prompt="Select a screen session: " \
+                    --no-clear \
+                    --preview 'bash -c "echo \"== Commands for Screen Session -- $(echo {1}) ==\"; echo; _get_pid_commands $(echo {1} | cut -d . -f 1)"' \
+                    --preview-window=down:10:wrap:sharp
+        )
+        #            --preview 'echo "== Commands for Screen Session -- $(echo {1}) ==" && echo && _get_pid_commands $(echo {1} | cut -d . -f 1)' \
 
         # Handle the case where no session was selected
         if [[ -n "${selected_session}" ]]; then
             # Extract the session name (before the dot) and attach to it
-            local selected_session_name=$(echo "${selected_session}" | cut -d '.' -f 1)
+            local selected_session_name
+            selected_session_name=$(echo "${selected_session}" | cut -d '.' -f 1)
             screen -r "${selected_session_name}"
         else
             echo "No session selected. Exiting."

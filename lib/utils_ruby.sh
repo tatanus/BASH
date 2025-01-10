@@ -31,15 +31,16 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
                 fail "ruby_gems array is not defined."
                 return "${_FAIL}"
             fi
-            gems=("${ruby_gems[@]}")
+            gems=("${RUBY_GEMS[@]}")
         fi
 
         # Install each gem in the list
         for gem in "${gems[@]}"; do
-            info "Installing ${gem}..."
+            info "Installing ${gem}...May take a while, be patient."
 
             # Install the package using Ruby Gem
-            if ${PROXY} gem install "${gem}" > /dev/null 2>&1; then
+            # shellcheck disable=SC2086 # this breaks if you put quotes around ${gem}
+            if ${PROXY} gem install ${gem} > /dev/null 2>&1; then
                 pass "Successfully installed ${gem}."
             else
                 fail "Failed to install ${gem}."
@@ -47,7 +48,8 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
             fi
 
             # Verify installation
-            if ! gem list -i "${gem}" > /dev/null 2>&1; then
+            # shellcheck disable=SC2086 # this breaks if you put quotes around ${gem}
+            if ! gem list -i ${gem} > /dev/null 2>&1; then
                 fail "Verification failed: ${gem} is not installed."
             fi
         done

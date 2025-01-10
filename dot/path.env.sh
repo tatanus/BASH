@@ -38,10 +38,4 @@ if [[ -z "${PATH_ENV_LOADED:-}" ]]; then
         }
         info "Created directory: ${BASH_LOG_DIR}"
     fi
-
-    if [[ -f "${BASH_DIR}/pentest.path.sh" ]]; then
-        source "${BASH_DIR}/pentest.path.sh"
-    else
-        echo "File not found: ${BASH_DIR}/pentest.path.sh. Skipping sourcing."
-    fi
 fi

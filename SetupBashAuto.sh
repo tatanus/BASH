@@ -308,7 +308,7 @@ function Setup_Cron_Jobs() {
     fi
 
     # Copy the renew.tgt.sh script
-    if cp dot/renew_tgt.sh "${BASH_DIR}/.renew_tgt.sh"; then
+    if cp dot/renew_tgt.sh "${BASH_DIR}/renew_tgt.sh"; then
         chmod +x "${BASH_DIR}/renew_tgt.sh"
         pass "Copied and set executable permissions for ${HOME}/renew_tgt.sh."
     else
@@ -360,20 +360,20 @@ function Setup_Msf_Scripts() {
     fi
 
     # Ensure the target directory exists
-    if [[ ! -d "${PENTEST_SCRIPTS_DIR}/MSF" ]]; then
-        mkdir -p "${PENTEST_SCRIPTS_DIR}/MSF" || {
-            fail "Failed to create target directory ${PENTEST_SCRIPTS_DIR}/MSF."
+    if [[ ! -d "${TOOLS_DIR}/SCRIPTS/MSF" ]]; then
+        mkdir -p "${TOOLS_DIR}/SCRIPTS/MSF" || {
+            fail "Failed to create target directory ${TOOLS_DIR}/SCRIPTS/MSF."
             return "${_FAIL}"
         }
-        pass "Created target directory ${PENTEST_SCRIPTS_DIR}/MSF."
+        pass "Created target directory ${TOOLS_DIR}/SCRIPTS/MSF."
     fi
 
     # Copy MSF RC files
-    if cp tools/extra/msf/*.rc "${PENTEST_SCRIPTS_DIR}/MSF/"; then
-        pass "Copied MSF RC files to ${PENTEST_SCRIPTS_DIR}/MSF/"
+    if cp tools/extra/msf/*.rc "${TOOLS_DIR}/SCRIPTS/MSF/"; then
+        pass "Copied MSF RC files to ${TOOLS_DIR}/SCRIPTS/MSF/"
         return "${_PASS}"
     else
-        fail "Failed to copy MSF RC files to ${PENTEST_SCRIPTS_DIR}/MSF/"
+        fail "Failed to copy MSF RC files to ${TOOLS_DIR}/SCRIPTS/MSF/"
         return "${_FAIL}"
     fi
 }
@@ -390,11 +390,11 @@ function Setup_Support_Scripts() {
 
     # Ensure the source directory exists
     # Copy support scripts
-    if cp tools/extra/scripts/* "${DATA_DIR}/TOOLS/SCRIPTS/"; then
-        pass "Copied support scripts to ${DATA_DIR}/TOOLS/SCRIPTS"
+    if cp tools/extra/scripts/* "${TOOLS_DIR}/SCRIPTS/"; then
+        pass "Copied support scripts to ${TOOLS_DIR}/SCRIPTS"
         return "${_PASS}"
     else
-        fail "Failed to copy support scripts to ${DATA_DIR}/TOOLS/SCRIPTS"
+        fail "Failed to copy support scripts to ${TOOLS_DIR}/SCRIPTS"
         return "${_FAIL}"
     fi
 }
@@ -467,67 +467,13 @@ function Install_Impacket() {
 # This function moves and sets up various custom tools into the appropriate directories.
 function _Install_Inhouse_Tools() {
     # Ensure the source directory exists
-    local src_dir="${SCRIPT_DIR}/tools/extra"
-    if [[ ! -d "${src_dir}" ]]; then
-        fail "Directory [${src_dir}] does not exist."
+    if [[ ! -d "${SCRIPT_DIR}/tools/extra" ]]; then
+        fail "Directory [${SCRIPT_DIR}/tools/extra] does not exist."
         return "${_FAIL}"
     fi
 
-    # Move autoTGT tool
-    if [[ -d "${src_dir}/autoTGT" ]]; then
-        if mv "${src_dir}/autoTGT" "${TOOLS_DIR}/"; then
-            pass "Moved autoTGT to ${TOOLS_DIR}/"
-        else
-            fail "Failed to move autoTGT to ${TOOLS_DIR}/"
-        fi
-    else
-        fail "Source directory [${src_dir}/autoTGT] does not exist. Skipping."
-    fi
-
-    # Move and set up Impacket tool
-    if [[ -d "${src_dir}/impacket" ]]; then
-        if mv "${src_dir}/impacket" "${TOOLS_DIR}/"; then
-            pass "Moved impacket to ${TOOLS_DIR}/"
-            Install_Impacket
-        else
-            fail "Failed to move impacket to ${TOOLS_DIR}/"
-        fi
-    else
-        fail "Source directory [${src_dir}/impacket] does not exist. Skipping."
-    fi
-
-    # Move packedcollection tool
-    if [[ -d "${src_dir}/packedcollection" ]]; then
-        if mv "${src_dir}/packedcollection" "${TOOLS_DIR}/"; then
-            pass "Moved packedcollection to ${TOOLS_DIR}/"
-        else
-            fail "Failed to move packedcollection to ${TOOLS_DIR}/"
-        fi
-    else
-        fail "Source directory [${src_dir}/packedcollection] does not exist. Skipping."
-    fi
-
-    # Move precompiled-offensive-bins tool
-    if [[ -d "${src_dir}/precompiled-offensive-bins" ]]; then
-        if mv "${src_dir}/precompiled-offensive-bins" "${TOOLS_DIR}/"; then
-            pass "Moved precompiled-offensive-bins to ${TOOLS_DIR}/"
-        else
-            fail "Failed to move precompiled-offensive-bins to ${TOOLS_DIR}/"
-        fi
-    else
-        fail "Source directory [${src_dir}/precompiled-offensive-bins] does not exist. Skipping."
-    fi
-
-    # Move orpheus tool
-    if [[ -d "${src_dir}/orpheus" ]]; then
-        if mv "${src_dir}/orpheus" "${TOOLS_DIR}/"; then
-            pass "Moved orpheus to ${TOOLS_DIR}/"
-        else
-            fail "Failed to move orpheus to ${TOOLS_DIR}/"
-        fi
-    else
-        fail "Source directory [${src_dir}/orpheus] does not exist. Skipping."
-    fi
+    # Source the bash.funcs.sh script if it exists
+    [[ -f "${SCRIPT_DIR}/inhouse.sh" ]] && source "${SCRIPT_DIR}/install.sh"
 }
 
 # -----------------------------------------------------------------------------
@@ -583,6 +529,79 @@ function _Edit_And_Reload_File() {
     fi
 
     pass "Reloaded configuration from ${file}."
+}
+
+function _Install_All_Tools() {
+    TOOL_MENU_ITEMS=()
+    MODULES_DIR="tools/modules"
+
+    # ------------------------------------------------------------------------------
+    # Step 1: Dynamically populate TOOL_MENU_ITEMS with script basenames
+    # ------------------------------------------------------------------------------
+    if [[ -d "${MODULES_DIR}" ]]; then
+        for script in "${MODULES_DIR}"/*.sh; do
+            # Skip if the directory is empty and returns "*.sh"
+            [[ -f "${script}" ]] || continue
+
+            tool_name="$(basename "${script}" .sh)" # e.g., "mytool" from "mytool.sh"
+            TOOL_MENU_ITEMS+=("${tool_name}")
+        done
+    else
+        warn "Directory not found: ${MODULES_DIR}"
+    fi
+
+    # ------------------------------------------------------------------------------
+    # Step 2: Call each item in INSTALL_TOOLS_MENU_ITEMS
+    # ------------------------------------------------------------------------------
+    for item in "${INSTALL_TOOLS_MENU_ITEMS[@]}"; do
+        # Skip this function
+        if [[ "${item}" == "_Install_All_Tools" ]]; then
+            continue
+        fi
+
+        info "Executing predefined installation function: ${item}"
+        # This presumably calls a bash function named "${item}"
+        if ! _Exec_Function "${item}"; then
+            fail "Failed to execute predefined installation function: ${item}"
+        fi
+    done
+
+    # ------------------------------------------------------------------------------
+    # Step 3: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
+    # ------------------------------------------------------------------------------
+    for script_file in "${TOOL_MENU_ITEMS[@]}"; do
+        info "Found script for custom tool: ${script_file}"
+
+        # Construct the full path to the script
+        local script_path="${MODULES_DIR}/${script_file}.sh"
+
+        if [[ ! -f "${script_path}" ]]; then
+            fail "Script file not found: ${script_path}"
+            continue
+        fi
+
+        # Source the script so we can access its functions
+        if ! source "${script_path}"; then
+            fail "Failed to source script: ${script_path}"
+            continue
+        fi
+
+        # Build the install function name, e.g. "install_mytool"
+        local install_function="install_${script_file}"
+
+        # Check if that function is actually defined
+        if declare -f "${install_function}" > /dev/null; then
+            info "Executing installation function: ${install_function}"
+            if ! "${install_function}"; then
+                fail "Installation function failed: ${install_function}"
+            fi
+        else
+            fail "Installation function not found in script: ${install_function}"
+        fi
+    done
+
+    # If you want a final success message (assuming non-critical failures are okay)
+    pass "All installation tasks completed."
 }
 
 # Function to process tool installation menu choices
@@ -684,7 +703,7 @@ function _Process_Start_Menu() {
             warn "Directory not found: ${MODULES_DIR}"
         fi
 
-        _Display_Menu "TOOL INSTALLATION MENU" "_Process_Tool_Install_Menu" "${TOOL_MENU_ITEMS[@]}"
+        _Display_Menu "TOOL INSTALLATION MENU" "_Process_Tool_Install_Menu" true "${TOOL_MENU_ITEMS[@]}"
     elif [[ "${choice}" == "Test Tool Installs" ]]; then
         _Test_Tool_Installs
     elif [[ "${choice}" == "Pentest Menu" ]]; then

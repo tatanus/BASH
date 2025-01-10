@@ -14,8 +14,10 @@ set -uo pipefail
 # =============================================================================
 
 function install_evil_winrm() {
-    ${PROXY} gem install nori -v 2.6.0 #temp fix until Ruby is upgraded
-    ${PROXY} gem install evil-winrm
+    info "evil-winrm is installed via ruby"
+    return
+    # ${PROXY} gem install nori -v 2.6.0 #temp fix until Ruby is upgraded
+    # ${PROXY} gem install evil-winrm
 }
 
 # Test function for evil_winrm
