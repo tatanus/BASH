@@ -3,7 +3,8 @@ set -uo pipefail
 
 # =============================================================================
 # NAME        : bash.prompt.sh
-# DESCRIPTION :
+# DESCRIPTION : Customizes the Bash prompt with dynamic information such as
+#               session names, IP addresses, and environment details.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 19:57:22
 # =============================================================================
@@ -40,14 +41,55 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     # Functions
     # =============================================================================
 
-    # Ensure referenced functions are available
+    ###############################################################################
+    # Source Required Function Scripts
+    #
+    # Description:
+    #   Sources additional function scripts if they exist. These scripts provide
+    #   auxiliary functionalities required by the prompt.
+    #
+    #   - bash.prompt_funcs.sh: Contains helper functions for prompt customization.
+    #
+    #   If the scripts are not found, warnings are emitted to stderr.
+    #
+    # Usage:
+    #   Automatically sourced during script initialization.
+    ###############################################################################
     if [[ -f "${BASH_DIR}"/bash.prompt_funcs.sh ]]; then
         source "${BASH_DIR}"/bash.prompt_funcs.sh
     else
         echo "Warning: ${BASH_DIR}/bash.prompt_funcs.sh not found. Some prompt features may be unavailable." >&2
     fi
 
-    # Generate the dynamic prompt
+    ###############################################################################
+    # gen_prompt
+    # Generates and sets the dynamic Bash prompt (PS1) with various system and
+    # environment information.
+    #
+    # Description:
+    #   Constructs the PS1 variable to include:
+    #     - Active session names (TMUX or SCREEN)
+    #     - Kerberos credential cache status
+    #     - Python virtual environment status
+    #     - Current date and time
+    #     - Internal and external IP addresses
+    #     - User and host information
+    #     - Current working directory
+    #
+    #   The prompt is color-coded for better readability.
+    #
+    # Usage:
+    #   Automatically invoked via PROMPT_COMMAND.
+    #
+    # Requirements:
+    #   - Functions `get_session_name`, `check_session`, `check_kerb_ccache`,
+    #     and `check_venv` must be defined and sourced appropriately.
+    #
+    # Environment Variables:
+    #   PROMPT_LOCAL_IP - Stores the internal IP address.
+    #   PROMPT_EXTERNAL_IP - Stores the external IP address.
+    #   LAST_IP_CHECK - Timestamp of the last IP address check.
+    ###############################################################################
     function gen_prompt() {
         # Get the active session name
         session_name=$(get_session_name 2> /dev/null)

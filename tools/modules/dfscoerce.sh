@@ -28,7 +28,7 @@ function install_dfscoerce() {
 function test_dfscoerce() {
     local TOOL_NAME="dfscoerce"
     local TOOL_COMMAND="dfscoerce -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

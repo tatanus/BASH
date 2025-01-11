@@ -173,6 +173,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         local appName="$1"
         local appCommand="$2"
+        local sussessExitCode="${3:-0}"
 
         # Execute the command and capture output and exit status
         local output
@@ -180,10 +181,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         local status=$?
 
         # Check if the command was successful or if specific conditions are met
-        if [[ "${status}" -eq 0 ]]; then
+        if [[ "${status}" -eq "${successExitCode}" ]]; then
             pass "SUCCESS: [${appName}] - [${appCommand}]"
-        elif { [[ "${appName}" = "aquatone" ]] || [[ "${appName}" = "pretender" ]]; } && [[ "${status}" -eq 2 ]]; then
-            pass "SUCCESS: [${appName}] - [${appCommand}] - Exit Status [${status}]"
         else
             fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
         fi

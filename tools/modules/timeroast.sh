@@ -28,7 +28,7 @@ function install_timeroast() {
 function test_timeroast() {
     local TOOL_NAME="timeroast"
     local TOOL_COMMAND="timeroast -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

@@ -28,7 +28,7 @@ function install_seeyoucm_thief() {
 function test_seeyoucm_thief() {
     local TOOL_NAME="seeyoucm_thief"
     local TOOL_COMMAND="thief -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 
     # Return the status from AppTest

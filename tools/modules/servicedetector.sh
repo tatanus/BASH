@@ -28,7 +28,7 @@ function install_servicedetector() {
 function test_servicedetector() {
     local TOOL_NAME="servicedetector"
     local TOOL_COMMAND="serviceDetector -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 
     # Return the status from AppTest

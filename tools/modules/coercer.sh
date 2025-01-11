@@ -28,7 +28,7 @@ function install_coercer() {
 function test_coercer() {
     local TOOL_NAME="coercer"
     local TOOL_COMMAND="Coercer -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

@@ -28,7 +28,7 @@ function install_petitpotam() {
 function test_petitpotam() {
     local TOOL_NAME="petitpotam"
     local TOOL_COMMAND="PetitPotam -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

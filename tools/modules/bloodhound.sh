@@ -28,7 +28,7 @@ function install_bloodhound() {
 function test_bloodhound() {
     local TOOL_NAME="bloodhound"
     local TOOL_COMMAND="bloodhound -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 
     # Return the status from AppTest

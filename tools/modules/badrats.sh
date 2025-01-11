@@ -26,8 +26,8 @@ function install_badrats() {
 
 # Test function for badrats
 function test_badrats() {
-    local TOOL_NAME="badrats"
-    local TOOL_COMMAND="badrats_server -h"
+    local TOOL_NAME="badrat_server"
+    local TOOL_COMMAND="badrat_server -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

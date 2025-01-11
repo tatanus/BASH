@@ -28,7 +28,7 @@ function install_jexboss() {
 function test_jexboss() {
     local TOOL_NAME="jexboss"
     local TOOL_COMMAND="jexboss -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

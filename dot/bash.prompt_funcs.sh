@@ -17,12 +17,26 @@ set -uo pipefail
 if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     declare -g BASH_PROMPT_FUNCS_SH_LOADED=true
 
-    # ----------------------------------------------------------------------
+    ###############################################################################
     # check_venv
-    # ----------------------------------------------------------------------
-    # - Checks if the user is in a Python virtual environment ($VIRTUAL_ENV).
-    # - If so, prints the environment path.
-    # ----------------------------------------------------------------------
+    # Checks if the user is in a Python virtual environment.
+    #
+    # Description:
+    #   Determines if the `VIRTUAL_ENV` environment variable is set, indicating an
+    #   active Python virtual environment. If active, it prints the environment path
+    #   formatted with color codes for inclusion in the Bash prompt.
+    #
+    # Requirements:
+    #   - Color variables (e.g., `${white}`, `${light_blue}`) must be defined in the
+    #     environment where this function is sourced.
+    #
+    # Usage:
+    #   check_venv
+    #
+    # Returns:
+    #   - Prints the virtual environment information if active.
+    #   - No output if not in a virtual environment.
+    ###############################################################################
     function check_venv() {
         if [[ -n "${VIRTUAL_ENV}" ]]; then
             echo "${white}[${light_blue}Python VENV = ${light_blue}${VIRTUAL_ENV}${white}]"
@@ -30,12 +44,26 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # ----------------------------------------------------------------------
+    ###############################################################################
     # check_kerb_ccache
-    # ----------------------------------------------------------------------
-    # - Checks if a Kerberos credential cache ($KRB5CCNAME) is set.
-    # - If so, prints the cache name.
-    # ----------------------------------------------------------------------
+    # Checks if a Kerberos credential cache is set.
+    #
+    # Description:
+    #   Determines if the `KRB5CCNAME` environment variable is set, indicating an
+    #   active Kerberos credential cache. If set, it prints the cache name formatted
+    #   with color codes for inclusion in the Bash prompt.
+    #
+    # Requirements:
+    #   - Color variables (e.g., `${white}`, `${light_red}`) must be defined in the
+    #     environment where this function is sourced.
+    #
+    # Usage:
+    #   check_kerb_ccache
+    #
+    # Returns:
+    #   - Prints the Kerberos credential cache information if set.
+    #   - No output if not set.
+    ###############################################################################
     function check_kerb_ccache() {
         if [[ -n "${KRB5CCNAME}" ]]; then
             echo "${white}[${light_red}KRB5CCNAME = ${light_red}${KRB5CCNAME}${white}]"
@@ -43,12 +71,27 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # ----------------------------------------------------------------------
+    ###############################################################################
     # check_session
-    # ----------------------------------------------------------------------
-    # - Checks for a TMUX or SCREEN session.
-    # - If found, prints the session(s) name in the prompt.
-    # ----------------------------------------------------------------------
+    # Checks for active TMUX or SCREEN sessions and formats their names for the prompt.
+    #
+    # Description:
+    #   Detects if the user is currently within a TMUX or SCREEN session. If active,
+    #   it retrieves the session names and formats them with color codes for inclusion
+    #   in the Bash prompt.
+    #
+    # Requirements:
+    #   - Color variables (e.g., `${white}`, `${yellow}`) must be defined in the
+    #     environment where this function is sourced.
+    #   - Function `get_session_name` must be defined and sourced appropriately.
+    #
+    # Usage:
+    #   check_session
+    #
+    # Returns:
+    #   - Prints the session information formatted for the prompt if active.
+    #   - Prints an empty string if no sessions are active.
+    ###############################################################################
     function check_session() {
         SESSION_STATUS="${white}┏━"
 
@@ -72,27 +115,58 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         echo -e "${SESSION_STATUS}"
     }
 
-    # ----------------------------------------------------------------------
+    ###############################################################################
     # update_ip_cache
-    # ----------------------------------------------------------------------
-    # - Refreshes cached local and external IP addresses.
-    # - Calls get_local_ip and get_external_ip, storing results in
-    #   PROMPT_LOCAL_IP and PROMPT_EXTERNAL_IP. Also records LAST_IP_CHECK.
-    # ----------------------------------------------------------------------
+    # Refreshes cached local and external IP addresses.
+    #
+    # Description:
+    #   Calls `get_local_ip` and `get_external_ip` functions to retrieve the current
+    #   internal and external IP addresses. Updates the environment variables
+    #   `PROMPT_LOCAL_IP` and `PROMPT_EXTERNAL_IP` with the retrieved values.
+    #   Also records the current timestamp in `LAST_IP_CHECK` to manage cache freshness.
+    #
+    # Requirements:
+    #   - Functions `get_local_ip` and `get_external_ip` must be defined and sourced
+    #     appropriately.
+    #
+    # Usage:
+    #   update_ip_cache
+    #
+    # Returns:
+    #   - Updates the environment variables with the latest IP addresses.
+    #   - No output.
+    ###############################################################################
     function update_ip_cache() {
         PROMPT_LOCAL_IP=$(get_local_ip 2> /dev/null || echo "Unavailable")
         PROMPT_EXTERNAL_IP=$(get_external_ip 2> /dev/null || echo "Unavailable")
         LAST_IP_CHECK=$(date +%s)
     }
 
-    # ----------------------------------------------------------------------
+    ###############################################################################
     # is_dhcp_static
-    # ----------------------------------------------------------------------
-    # - Determines if a given network interface is configured for DHCP or Static.
-    # - Supports various configurations on Linux or macOS, including NetworkManager,
-    #   systemd-networkd, netplan, /etc/network/interfaces, and networksetup (macOS).
-    # - Prints "DHCP" or "Static" if detected, otherwise "Unknown" or an error message.
-    # ----------------------------------------------------------------------
+    # Determines if a network interface is configured for DHCP or Static IP.
+    #
+    # Description:
+    #   Analyzes the network configuration of a specified interface to determine
+    #   whether it is using DHCP or has a static IP assignment. Supports various
+    #   configurations on Linux (NetworkManager, systemd-networkd, netplan, /etc/network/interfaces)
+    #   and macOS (networksetup).
+    #
+    # Parameters:
+    #   $1 - The name of the network interface to check (e.g., "eth0", "en0").
+    #
+    # Requirements:
+    #   - Function `_get_os` must be defined and sourced appropriately.
+    #   - On macOS, the `networksetup` command must be available.
+    #
+    # Usage:
+    #   ip_type=$(is_dhcp_static "eth0")
+    #   echo "Interface eth0 is using: ${ip_type}"
+    #
+    # Returns:
+    #   - Prints "DHCP" or "Static" based on the interface configuration.
+    #   - Prints an error message and exits with status `1` if unable to determine.
+    ###############################################################################
     function is_dhcp_static() {
         # Ensure the interface is provided
         local interface=$1

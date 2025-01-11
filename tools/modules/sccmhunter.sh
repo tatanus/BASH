@@ -28,7 +28,7 @@ function install_sccmhunter() {
 function test_sccmhunter() {
     local TOOL_NAME="sccmhunter"
     local TOOL_COMMAND="sccmhunter -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

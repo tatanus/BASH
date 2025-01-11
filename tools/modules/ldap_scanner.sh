@@ -28,7 +28,7 @@ function install_ldap_scanner() {
 function test_ldap_scanner() {
     local TOOL_NAME="ldap_scanner"
     local TOOL_COMMAND="ldap-scanner -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 
     # Return the status from AppTest

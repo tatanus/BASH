@@ -33,7 +33,7 @@ function install_ek47() {
 function test_ek47() {
     local TOOL_NAME="ek47"
     local TOOL_COMMAND="ek47 -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

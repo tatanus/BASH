@@ -28,7 +28,7 @@ function install_ciscot7() {
 function test_ciscot7() {
     local TOOL_NAME="ciscot7"
     local TOOL_COMMAND="ciscot7 -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest

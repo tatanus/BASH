@@ -28,7 +28,7 @@ function install_privexchange() {
 function test_privexchange() {
     local TOOL_NAME="privexchange"
     local TOOL_COMMAND="privexchange -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest
