@@ -22,9 +22,9 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     # -----------------------------------------------------------------------------
 
     if ! { [[ "${COMPILE_PYTHON}" = false ]] && [[ "${INSTALL_PYTHON}" = false ]]; } && [[ "${COMPILE_PYTHON}" = "${INSTALL_PYTHON}" ]]; then
-
-        fail "Both COMPILE_PYTHON and INSTALL_PYTHON can not be 'true'"
-        exit 1
+        warn "As both COMPILE_PYTHON and INSTALL_PYTHON are 'true',"
+        warn "     I will try to install then if that fails, I will"
+        warn "     compile python${PYTON_VERSION}"
     fi
 
     ## WHICH PYTHON VERSION TO USE
@@ -136,13 +136,13 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
                     if ! _Apt_Install "${PYTHON}"; then
                         fail "Failed to install Python ${PYTHON_VERSION}."
                         _Popd
-                        return "${_FAIL}"
+                        break
                     fi
                     ;;
                 *)
                     fail "Unsupported Ubuntu version: ${UBUNTU_VER}."
                     _Popd
-                    return "${_FAIL}"
+                    break
                     ;;
             esac
             _Popd

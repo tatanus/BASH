@@ -173,7 +173,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         local appName="$1"
         local appCommand="$2"
-        local sussessExitCode="${3:-0}"
+        local successExitCode="${3:-0}"
 
         # Execute the command and capture output and exit status
         local output

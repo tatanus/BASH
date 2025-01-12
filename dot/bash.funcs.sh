@@ -78,9 +78,9 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
 
     ###############################################################################
     # _get_macos_version
-    # Gets the macOS version string (e.g., "13.2.1") using `sw_vers -productVersion`.
+    # Retrieves the macOS version string (e.g., "13.2.1") using `sw_vers -productVersion`.
     #
-    # Outputs the version string on success. If `sw_vers` is not found,
+    # Outputs the version string on success. If `sw_vers` is not found or not on macOS,
     # prints an error message and exits with _FAIL.
     #
     # Usage:
@@ -112,7 +112,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
 
     ###############################################################################
     # _get_ubuntu_version
-    # Gets the Ubuntu version (e.g., "20.04") from /etc/os-release or lsb_release.
+    # Retrieves the Ubuntu version (e.g., "20.04") from /etc/os-release or lsb_release.
     #
     # Outputs the version string on success. If not on Ubuntu or cannot parse,
     # prints an error message and exits with _FAIL.
@@ -147,7 +147,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
 
     ###############################################################################
     # _get_windows_version
-    # Gets the Windows version string (e.g., "10.0.19045") by calling `cmd.exe /c ver`
+    # Retrieves the Windows version string (e.g., "10.0.19045") by calling `cmd.exe /c ver`
     # in Cygwin/Mingw/MSYS environments.
     #
     # Outputs the version string on success. If not on Windows or cannot parse,
@@ -188,7 +188,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
 
     ###############################################################################
     # _get_linux_version
-    # Gets a generic Linux version from /etc/os-release if not on Ubuntu or WSL.
+    # Retrieves a generic Linux version from /etc/os-release if not on Ubuntu or WSL.
     # Returns an empty string if /etc/os-release doesn't exist or no version is found.
     #
     # Usage:
@@ -221,6 +221,22 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         echo "${linux_version}"
     }
 
+    ###############################################################################
+    # check_command
+    # Checks for the availability of a specified command. If the command is not found,
+    # outputs an error message with an OS-specific installation suggestion.
+    #
+    # Parameters:
+    #   $1 - The name of the command to check (e.g., "ncat", "gsed").
+    #
+    # Returns:
+    #   0 if the command exists.
+    #   1 if the command does not exist.
+    #
+    # Usage:
+    #   check_command "ncat" && alias nc="ncat"
+    #   check_command "gsed" && alias sed="gsed"
+    ###############################################################################
     function check_command() {
         local cmd="$1"
 
@@ -251,6 +267,21 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
+    ###############################################################################
+    # convert_ls_to_eza
+    # Converts standard `ls` commands to `eza` commands with equivalent options.
+    #
+    # Parameters:
+    #   Any arguments passed to `ls` (e.g., -la, --tree).
+    #
+    # Description:
+    #   This function parses the provided `ls` arguments, translates them to `eza` equivalents,
+    #   and executes the resulting `eza` command. It handles options like sorting and formatting.
+    #
+    # Usage:
+    #   ls -la
+    #   # Internally calls: convert_ls_to_eza -l -a
+    ###############################################################################
     # Function to convert ls commands to eza commands
     function convert_ls_to_eza() {
         local cmd=("$@")                             # Capture all arguments as an array
@@ -317,7 +348,18 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         "${eza_cmd[@]}"
     }
 
-    # Function to pause execution and clear pause message
+    ###############################################################################
+    # _Pause
+    # Pauses the execution of the script until the user presses any key.
+    # Optionally clears the pause message from the terminal after the key press.
+    #
+    # Description:
+    #   Displays a prompt message and waits for the user to press any key.
+    #   After the key press, it clears the pause message from the terminal.
+    #
+    # Usage:
+    #   _Pause
+    ###############################################################################
     function _Pause() {
         echo
         echo "-----------------------------------"
@@ -333,7 +375,18 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # Function to display the current session name (TMUX or SCREEN)
+    ###############################################################################
+    # get_session_name
+    # Retrieves the current session names for TMUX or SCREEN environments.
+    #
+    # Returns:
+    #   A comma-separated list of session names if in TMUX or SCREEN sessions.
+    #   An empty string if not in any session.
+    #
+    # Usage:
+    #   session_names="$(get_session_name)"
+    #   echo "Current Sessions: ${session_names}"
+    ###############################################################################
     function get_session_name() {
         local session_names=()
 
@@ -357,12 +410,39 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # Function to sort Responder style hashes in a file
+    ###############################################################################
+    # sort_first
+    # Sorts Responder-style hashes in a file.
+    #
+    # Parameters:
+    #   $@ - One or more file paths to sort.
+    #
+    # Description:
+    #   Sorts the contents of the provided files uniquely and numerically.
+    #
+    # Usage:
+    #   sort_first "hashes.txt"
+    ###############################################################################
     function sort_first() {
         sort -u -V "$@" | sort -t: -k1,3 -u
     }
 
-    # Function to strip ANSI escape sequences, control characters, and non-printable characters
+    ###############################################################################
+    # strip_color
+    # Removes ANSI escape sequences, control characters, and non-printable characters
+    # from input strings or files.
+    #
+    # Parameters:
+    #   $1 - A string or file path to process.
+    #
+    # Description:
+    #   If the input is a file, it cleans the file's contents. Otherwise, it treats
+    #   the input as a string and cleans it.
+    #
+    # Usage:
+    #   strip_color "Colored Text"
+    #   strip_color "/path/to/file.txt"
+    ###############################################################################
     function strip_color() {
         # Check if an argument was provided
         if [[ -z "$1" ]]; then
