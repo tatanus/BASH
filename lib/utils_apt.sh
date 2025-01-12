@@ -71,7 +71,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         done
 
         # Install all valid packages
-        if ! ${PROXY} apt -qq -y install "${apt_packages_valid[@]}" > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} apt -qq -y install "${apt_packages_valid[@]}" > /dev/null 2>&1"; then
             fail "Failed to install one or more packages."
             return "${_FAIL}"
         fi
@@ -93,7 +93,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
     # Perform a full apt update, autoremove, clean, and upgrade
     function _Apt_Update() {
         # Update package list
-        if ! ${PROXY} apt -qq -y update --fix-missing > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} apt -qq -y update --fix-missing > /dev/null 2>&1"; then
             fail "Failed to update package list."
             return "${_FAIL}"
         fi
@@ -101,7 +101,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         pass "Package list updated successfully."
 
         # Remove unnecessary packages
-        if ! ${PROXY} apt -qq -y autoremove > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} apt -qq -y autoremove > /dev/null 2>&1"; then
             fail "Failed to remove unnecessary packages."
             return "${_FAIL}"
         fi
@@ -109,7 +109,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         pass "Unnecessary packages removed successfully."
 
         # Clean up the package cache
-        if ! ${PROXY} apt -qq -y clean > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} apt -qq -y clean > /dev/null 2>&1"; then
             fail "Failed to clean package cache."
             return "${_FAIL}"
         fi
@@ -117,7 +117,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         pass "Package cache cleaned successfully."
 
         # Upgrade installed packages
-        if ! ${PROXY} apt -qq -y upgrade > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} apt -qq -y upgrade > /dev/null 2>&1"; then
             fail "Failed to upgrade packages."
             return "${_FAIL}"
         fi

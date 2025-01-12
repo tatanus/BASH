@@ -468,4 +468,58 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
                 -e "s/${nonprintable_pattern}//g"
         fi
     }
+
+    # Function to show a spinning wheel and elapsed time
+    # Usage:
+    #   show_spinner "$!"
+    #   or
+    #   show_spinner "long running command"
+    # Function to show a spinner for a command or a running process
+    function show_spinner() {
+        local arg="$1"       # First argument, either a PID or a command
+        local delay=0.1      # Delay between spinner updates
+        local spin='|/-\'
+        local start_time=$(date +%s) # Record the start time
+        local pid             # PID to monitor
+        local is_command=0    # Flag to determine if arg is a command
+
+        # Determine if the argument is a PID or a command
+        if [[ "$arg" =~ ^[0-9]+$ ]]; then
+            pid="$arg" # Use the provided PID
+        else
+            is_command=1
+            # Run the command in the same shell and get its PID
+            eval "$arg &"
+            pid=$!
+        fi
+
+        printf "Processing... (0s) "
+
+        i=0
+        while kill -0 "$pid" 2> /dev/null; do
+            i=$(((i + 1) % 4))
+            local current_time=$(date +%s)
+            local elapsed=$((current_time - start_time))   # Calculate elapsed time
+
+            # Update spinner and elapsed time
+            printf "\rProcessing... ${spin:$i:1} (${elapsed}s) "
+            sleep "$delay"
+        done
+
+        # Wait for the command (if applicable) and capture its exit code
+        if [[ $is_command -eq 1 ]]; then
+            wait "$pid"
+        fi
+        local exit_code=$?
+
+        # Overwrite spinner with "Done!" or "Failed" and total elapsed time
+        local total_time=$(($( date +%s) - start_time))
+        if [[ $exit_code -eq 0 ]]; then
+            printf "\rProcessing... Done! (Total time: ${total_time}s)\n"
+        else
+            printf "\rProcessing... Failed! (Total time: ${total_time}s)\n"
+        fi
+
+        return $exit_code
+    }
 fi
