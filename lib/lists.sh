@@ -17,42 +17,39 @@ set -uo pipefail
 if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     declare -g LISTS_SH_LOADED=true
 
-    ## DIRECTORIES
-    REQUIRED_DIRECTORIES=(
-        "${DATA_DIR}"
-        "${TOOLS_DIR}"
-        "${LOGS_DIR}"
-    )
-
     # List of directories
-    REQUIRED_DIRECTORIES=(
+    PENTEST_REQUIRED_DIRECTORIES=(
         "${DATA_DIR}/TOOLS"
         "${DATA_DIR}/TOOLS/SCRIPTS"
         "${DATA_DIR}/LOGS"
-        "${DATA_DIR}/BACKUP"
-        "${DATA_DIR}/LOOT/CREDENTIALS"
-        "${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"
-        "${DATA_DIR}/LOOT/SCREENSHOTS"
-        "${DATA_DIR}/LOOT/FILES"
-        "${DATA_DIR}/RECON"
-        "${DATA_DIR}/OUTPUT"
-        "${DATA_DIR}/OUTPUT/PCAP"
-        "${DATA_DIR}/OUTPUT/PORTSCAN"
-        "${DATA_DIR}/OUTPUT/SHARES"
-        "${DATA_DIR}/OUTPUT/MITM"
-        "${DATA_DIR}/OUTPUT/ADCS"
-        "${DATA_DIR}/OUTPUT/COERCION"
-        "${DATA_DIR}/OUTPUT/LDAP"
-        "${DATA_DIR}/OUTPUT/WEB"
-        "${DATA_DIR}/OUTPUT/SMB"
-        "${DATA_DIR}/OUTPUT/CISCO"
-        "${DATA_DIR}/OUTPUT/BLOODHOUND"
-        "${DATA_DIR}/OUTPUT/MSF"
+    )
+
+    # List of directories
+    ENGAGEMENT_REQUIRED_DIRECTORIES=(
+        "${ENGAGEMENT_DIR}/BACKUP"
+        "${ENGAGEMENT_DIR}/LOOT/CREDENTIALS"
+        "${ENGAGEMENT_DIR}/LOOT/CREDENTIALS/CCACHE"
+        "${ENGAGEMENT_DIR}/LOOT/SCREENSHOTS"
+        "${ENGAGEMENT_DIR}/LOOT/FILES"
+        "${ENGAGEMENT_DIR}/RECON"
+        "${ENGAGEMENT_DIR}/OUTPUT"
+        "${ENGAGEMENT_DIR}/OUTPUT/PCAP"
+        "${ENGAGEMENT_DIR}/OUTPUT/PORTSCAN"
+        "${ENGAGEMENT_DIR}/OUTPUT/SHARES"
+        "${ENGAGEMENT_DIR}/OUTPUT/MITM"
+        "${ENGAGEMENT_DIR}/OUTPUT/ADCS"
+        "${ENGAGEMENT_DIR}/OUTPUT/COERCION"
+        "${ENGAGEMENT_DIR}/OUTPUT/LDAP"
+        "${ENGAGEMENT_DIR}/OUTPUT/WEB"
+        "${ENGAGEMENT_DIR}/OUTPUT/SMB"
+        "${ENGAGEMENT_DIR}/OUTPUT/CISCO"
+        "${ENGAGEMENT_DIR}/OUTPUT/BLOODHOUND"
+        "${ENGAGEMENT_DIR}/OUTPUT/MSF"
     )
 
     NECESSARY_ENGAGEMENT_FILES=(
-        "${DATA_DIR}/targets.txt"
-        "${DATA_DIR}/excludes.txt"
+        "${ENGAGEMENT_DIR}/targets.txt"
+        "${ENGAGEMENT_DIR}/excludes.txt"
     )
 
     ## DOT FILES
@@ -266,20 +263,20 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     ## TOOLS to APP TEST
     ## The command should return an exit status of 0 if the application is installed
     declare -A APP_TESTS=(
-                   ["bettercap"]="bettercap -h"
-                   ["certi"]="certi.py -h"
-                   ["certipy"]="certipy -h"
-                   ["GoogleChrome"]="google-chrome --version"
-                   ["gowitness"]="gowitness -h"
-                   ["ldapdomaindump"]="ldapdomaindump -h"
-                   ["ldapnomnom"]="ldapnomnom -h"
-                   ["lsassy"]="lsassy -h"
-                   ["masscan"]="masscan --ping 127.0.0.1"
-                   ["mitm6"]="mitm6 -h"
-                   ["nmap"]="nmap --version"
-                   ["pypykatz"]="pypykatz -h"
-                   ["secretsdump"]="secretsdump.py -h"
-                   ["tshark"]="tshark -h"
+                    ["bettercap"]="bettercap -h"
+                    ["certi"]="certi.py -h"
+                    ["certipy"]="certipy -h"
+                    ["GoogleChrome"]="google-chrome --version"
+                    ["gowitness"]="gowitness -h"
+                    ["ldapdomaindump"]="ldapdomaindump -h"
+                    ["ldapnomnom"]="ldapnomnom -h"
+                    ["lsassy"]="lsassy -h"
+                    ["masscan"]="masscan --ping 127.0.0.1"
+                    ["mitm6"]="mitm6 -h"
+                    ["nmap"]="nmap --version"
+                    ["pypykatz"]="pypykatz -h"
+                    ["secretsdump"]="secretsdump.py -h"
+                    ["tshark"]="tshark -h"
     )
 
     ###################################################################

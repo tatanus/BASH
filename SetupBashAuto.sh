@@ -281,14 +281,40 @@ function Setup_Necessary_Files() {
 # Function to create required directories
 # This function ensures that all directories listed in the REQUIRED_DIRECTORIES array are created.
 function Setup_Directories() {
+    Setup_Pentest_Directories
+    Setup_Engagement_Directories
+}
+
+# Function to create required directories
+# This function ensures that all directories listed in the REQUIRED_DIRECTORIES array are created.
+function Setup_Pentest_Directories() {
     # Ensure the directories array is defined
-    if [[ -z "${REQUIRED_DIRECTORIES+x}" ]]; then
+    if [[ -z "${PENTEST_REQUIRED_DIRECTORIES+x}" ]]; then
         fail "Directories array is not defined."
         return "${_FAIL}"
     fi
 
     # Create directories
-    for directory in "${REQUIRED_DIRECTORIES[@]}"; do
+    for directory in "${PENTEST_REQUIRED_DIRECTORIES[@]}"; do
+        if mkdir -p "${directory}"; then
+            pass "Created directory ${directory}."
+        else
+            fail "Failed to create directory ${directory}."
+        fi
+    done
+}
+
+# Function to create required directories
+# This function ensures that all directories listed in the REQUIRED_DIRECTORIES array are created.
+function Setup_Engagement_Directories() {
+    # Ensure the directories array is defined
+    if [[ -z "${ENGAGEMENT_REQUIRED_DIRECTORIES+x}" ]]; then
+        fail "Directories array is not defined."
+        return "${_FAIL}"
+    fi
+
+    # Create directories
+    for directory in "${ENGAGEMENT_REQUIRED_DIRECTORIES[@]}"; do
         if mkdir -p "${directory}"; then
             pass "Created directory ${directory}."
         else

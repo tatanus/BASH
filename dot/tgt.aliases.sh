@@ -18,7 +18,7 @@ if [[ -z "${TGT_ALIAS_SH_LOADED:-}" ]]; then
     declare -g TGT_ALIAS_SH_LOADED=true
 
     # Default directory for TGT files
-    TGT_DIR="${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"
+    TGT_DIR="${ENGAGEMENT_DIR}/LOOT/CREDENTIALS/CCACHE"
 
     # Ensure the TGT directory exists
     if [[ ! -d "${TGT_DIR}" ]]; then

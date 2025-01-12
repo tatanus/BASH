@@ -66,12 +66,12 @@ if [[ -z "${RENEW_TGT_LOADED:-}" ]]; then
     # Function: renewAllTGT
     # Description:
     #   Renews all Kerberos Ticket Granting Tickets (TGTs) in the
-    #   $DATA_DIR/LOOT/CREDENTIALS/CCACHE directory.
+    #   $ENGAGEMENT_DIR/LOOT/CREDENTIALS/CCACHE directory.
     # Returns:
     #   0 on success, 1 if no ccache files are found or an error occurs.
     # =============================================================================
     renewAllTGT() {
-        local tgt_dir="${DATA_DIR}/LOOT/CREDENTIALS/CCACHE"
+        local tgt_dir="${ENGAGEMENT_DIR}/LOOT/CREDENTIALS/CCACHE"
 
         # Verify that the TGT directory exists
         if [[ ! -d "${tgt_dir}" ]]; then
