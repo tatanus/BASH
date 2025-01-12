@@ -123,7 +123,6 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
             # 2. Strips out any trailing "(Last: ...)" text.
             # 3. Removes any extra leading or trailing whitespace.
             # The result is stored in the variable `actual_choice`.
-            local actual_choice
             choice=$(echo "${choice}" | sed 's/^[[:space:]]*[0-9]*)[[:space:]]*//' | sed 's/[[:space:]]*(Last:.*)//' | sed 's/^[[:space:]]*//; s/[[:space:]]*$//')
 
             # Handle choice

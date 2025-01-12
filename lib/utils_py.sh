@@ -133,20 +133,18 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         if ${INSTALL_PYTHON}; then
             case "${UBUNTU_VER}" in
                 "22.04" | "24.04" | "24.10")
-                    if ! _Apt_Install "${PYTHON}"; then
-                        fail "Failed to install Python ${PYTHON_VERSION}."
+                    if _Apt_Install "${PYTHON}"; then
+                        echo "[INFO] Python ${PYTHON_VERSION} installed successfully."
                         _Popd
-                        break
+                        return "${_PASS}"
+                    else
+                        fail "Failed to install Python ${PYTHON_VERSION} via apt install."
                     fi
                     ;;
                 *)
-                    fail "Unsupported Ubuntu version: ${UBUNTU_VER}."
-                    _Popd
-                    break
+                    fail "Unsupported Ubuntu version: ${UBUNTU_VER} fot apt install."
                     ;;
             esac
-            _Popd
-            return "${_PASS}"
         fi
 
         if ${COMPILE_PYTHON}; then
