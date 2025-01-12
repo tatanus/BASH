@@ -473,7 +473,7 @@ function _Install_Inhouse_Tools() {
     fi
 
     # Source the bash.funcs.sh script if it exists
-    [[ -f "${SCRIPT_DIR}/inhouse.sh" ]] && source "${SCRIPT_DIR}/install.sh"
+    [[ -f "${SCRIPT_DIR}/tools/extra/inhouse.sh" ]] && source "${SCRIPT_DIR}/tools/extra/install.sh"
 }
 
 # -----------------------------------------------------------------------------

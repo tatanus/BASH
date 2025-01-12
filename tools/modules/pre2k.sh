@@ -33,7 +33,7 @@ function install_pre2k() {
 function test_pre2k() {
     local TOOL_NAME="pre2k"
     local TOOL_COMMAND="pre2k -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 
     # Return the status from AppTest

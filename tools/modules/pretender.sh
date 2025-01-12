@@ -26,7 +26,7 @@ function install_pretender() {
 function test_pretender() {
     local TOOL_NAME="pretender"
     local TOOL_COMMAND="pretender -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
     # Return the status from AppTest
