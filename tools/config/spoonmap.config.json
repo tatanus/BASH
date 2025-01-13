@@ -4,7 +4,7 @@
     "banner_scan" : "True",
     "target_scan" : "Internal",
     "max_rate" : "2000",
-    "target_file" : "$ENGAGEMENT_DIR/targets.txt",
-    "exclusions_file" : "$ENGAGEMENT_DIR/excludes.txt",
-    "output_path" : "$TASKS_DIR/RECON/SPOONMAP/"
+    "target_file" : "/targets.txt",
+    "exclusions_file" : "/excludes.txt",
+    "output_path" : "/RECON/SPOONMAP/"
 }

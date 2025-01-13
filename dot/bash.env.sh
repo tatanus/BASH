@@ -38,7 +38,6 @@ if [[ -z "${BASH_ENV_SH_LOADED:-}" ]]; then
 
     # Helper function: Check command availability
     function check_command() {
-        #which "$1" &>/dev/null 2>&1
         command -v "$1" &> /dev/null
         if [[ $? -ne 0 ]]; then
             echo "$1 is not installed or not functional. Some functionality may not work."

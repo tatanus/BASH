@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : utils_py.sh
+# NAME        : utils_python.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-09 20:51:59
@@ -14,18 +14,12 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
-    declare -g UTILS_PY_SH_LOADED=true
+if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
+    declare -g UTILS_PYTHON_SH_LOADED=true
 
     # -----------------------------------------------------------------------------
     # ---------------------------------- PYTHON CHECKS--- -------------------------
     # -----------------------------------------------------------------------------
-
-    if ! { [[ "${COMPILE_PYTHON}" = false ]] && [[ "${INSTALL_PYTHON}" = false ]]; } && [[ "${COMPILE_PYTHON}" = "${INSTALL_PYTHON}" ]]; then
-        warn "As both COMPILE_PYTHON and INSTALL_PYTHON are 'true',"
-        warn "     I will try to install then if that fails, I will"
-        warn "     compile python${PYTON_VERSION}"
-    fi
 
     ## WHICH PYTHON VERSION TO USE
     # shellcheck disable=SC2153
@@ -34,20 +28,35 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
     ## WHAT IS THE PIP COMMAND
     PIP_ARGS="install --quiet --upgrade "
-
-    # Add a check to ensure we are on Ubuntu
-    if [[ "${OS_NAME}" == "Linux" && -n "${UBUNTU_VER:-}" ]]; then
-        if [[ "${UBUNTU_VER}" == "24.04" ]]; then
-            PIP_ARGS="install --quiet --upgrade --break-system-packages "
-        fi
-    fi
-
-    PIP="${PYTHON} -m pip ${PIP_ARGS}"
-    export PIP
+    export PIP_ARGS
 
     # -----------------------------------------------------------------------------
     # ---------------------------------- PYTHON FUNCTIONS -------------------------
     # -----------------------------------------------------------------------------
+
+    ###############################################################################
+    # check_pip_break_system_packages
+    #==============================
+    # Checks if pip supports the --break-system-packages option.
+    #————————————————————
+    # Usage:
+    # option=$(check_pip_break_system_packages)
+    # if [[ -n "$option" ]]; then
+    #     echo "Supported: $option"
+    # else
+    #     echo "Not supported"
+    # fi
+    #
+    # Return Values:
+    # Returns "--break-system-packages" if supported, otherwise "".
+    ###############################################################################
+    function check_pip_break_system_packages() {
+        if python"${PYTHON_VERSION}" -m pip help install 2>&1 | grep "break-system-packages"; then
+            echo "--break-system-packages"
+        else
+            echo ""
+        fi
+    }
 
     # Function to fix old Python issues
     function _Fix_Old_Python() {
@@ -66,6 +75,12 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     }
 
     function _Install_Python() {
+        if ! { [[ "${COMPILE_PYTHON}" = false ]] && [[ "${INSTALL_PYTHON}" = false ]]; } && [[ "${COMPILE_PYTHON}" = "${INSTALL_PYTHON}" ]]; then
+            warn "As both COMPILE_PYTHON and INSTALL_PYTHON are 'true',"
+            warn "     I will try to install then if that fails, I will"
+            warn "     compile python${PYTON_VERSION}"
+        fi
+
          # Ensure version variable is set
          if [[ -z "${PYTHON}" ]]; then
             fail "Python version (${PYTHON_VERSION}) is not specified."
@@ -390,7 +405,8 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
 
         # Attempt to install the library using pip
         # shellcheck disable=SC2086 # this breaks if you put quotes around ${local_PIP_ARGS}
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip ${local_PIP_ARGS} "${lib}" --break-system-packages > /dev/null 2>&1; then
+        # TODO FIX
+        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip ${local_PIP_ARGS} "${lib}" > /dev/null 2>&1; then
             fail "Failed to install ${lib} using python${python_version} -m pip."
             return "${_FAIL}"
         fi
@@ -413,9 +429,9 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         local USE_PIP_ARGS="${2:-"true"}"
 
         if [[ "${USE_PIP_ARGS}" = "true" ]]; then
-            tmp_PIP_ARGS=${PIP_ARGS}
+            tmp_PIP_ARGS="${PIP_ARGS} ${break_system_packages_option} "
         else
-            tmp_PIP_ARGS="install "
+            tmp_PIP_ARGS="install ${break_system_packages_option} "
         fi
 
         # Verify that the library name is provided
@@ -433,7 +449,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
     function _Pip_Install_Requirements_Ver() {
         local python_version="$1"
         local file="$2"
-        local PIP_ARGS="$3"
+        local local_PIP_ARGS="$3"
 
         # Verify that both parameters are provided
         if [[ -z "${python_version}" ]] || [[ -z "${file}" ]]; then
@@ -444,7 +460,7 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         info "Installing Python packages from ${file} using python${python_version}..."
 
         # Attempt to install the libraries using pip
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip "${PIP_ARGS}" -r "${file}" > /dev/null 2>&1; then
+        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip "${local_PIP_ARGS}" -r "${file}" > /dev/null 2>&1; then
             fail "Failed to install packages from ${file} using python${python_version} -m pip."
             return "${_FAIL}"
         fi
@@ -475,9 +491,9 @@ if [[ -z "${UTILS_PY_SH_LOADED:-}" ]]; then
         local USE_PIP_ARGS="${2:-"true"}"
 
         if [[ "${USE_PIP_ARGS}" = "true" ]]; then
-            tmp_PIP_ARGS=${PIP_ARGS}
+            tmp_PIP_ARGS="${PIP_ARGS} ${break_system_packages_option} "
         else
-            tmp_PIP_ARGS="install "
+            tmp_PIP_ARGS="install ${break_system_packages_option} "
         fi
 
         # Verify that a file name is provided

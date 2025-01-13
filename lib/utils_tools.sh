@@ -251,4 +251,39 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         _Pause
     }
 
+    # Generalized package installation function
+    function _install_package() {
+        local package_name="$1"
+
+        if [[ -z "${package_name}" ]]; then
+            fail "Package name is required for installation."
+            return "${_FAIL}"
+        fi
+
+        info "Installing ${package_name} for ${OS_NAME}..."
+
+        case "${OS_NAME}" in
+            Linux)
+                if [[ -n "${UBUNTU_VER}" ]]; then
+                    _Apt_Install "${package_name}"
+                    return $?
+                else
+                    fail "Unsupported Linux distribution. Please install ${package_name} manually."
+                    return "${_FAIL}"
+                fi
+                ;;
+            Darwin)
+                _brew_install "${package_name}"
+                return $?
+                ;;
+            CYGWIN* | MINGW* | MSYS* | Windows_NT)
+                fail "Automatic installation for ${package_name} on Windows is not supported. Please install it manually."
+                return "${_FAIL}"
+                ;;
+            *)
+                fail "Unsupported operating system: ${OS_NAME}. Please install ${package_name} manually."
+                return "${_FAIL}"
+                ;;
+        esac
+    }
 fi

@@ -25,7 +25,7 @@ if [[ -z "${UTILS_BREW_SH_LOADED:-}" ]]; then
     function _brew_install() {
         local package="$1"
 
-        # Verify that package name is provided
+        # Verify that package name is provide
         if [[ -z "${package}" ]]; then
             fail "Package name cannot be empty."
             return "${_FAIL}"

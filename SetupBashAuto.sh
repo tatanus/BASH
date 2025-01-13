@@ -499,7 +499,7 @@ function _Install_Inhouse_Tools() {
     fi
 
     # Source the bash.funcs.sh script if it exists
-    [[ -f "${SCRIPT_DIR}/tools/extra/inhouse.sh" ]] && source "${SCRIPT_DIR}/tools/extra/install.sh"
+    [[ -f "${SCRIPT_DIR}/tools/extra/inhouse.sh" ]] && source "${SCRIPT_DIR}/tools/extra/inhouse.sh"
 }
 
 # -----------------------------------------------------------------------------
@@ -741,7 +741,25 @@ function _Process_Start_Menu() {
 }
 
 # Ensure fzf is installed and working
-_check_fzf
+if ! check_command "fzf"; then
+    read -r -p "Do you want to install fzf? (Y/n): " answer
+
+    # Set default answer to "Y" if no input is provided
+    answer=${answer:-Y}
+    case ${answer} in
+        [Yy]*)
+            _install_package "fzf"
+            ;;
+        [Nn]*)
+            warning "fzf will not be installed. Exiting."
+            exit "${_FAIL}"
+            ;;
+        *)
+            fail "Invalid response. Exiting."
+            exit "${_FAIL}"
+            ;;
+    esac
+fi
 
 # Display the main setup menu
 _Display_Menu "BASH SETUP" "_Process_Start_Menu" false "${SETUP_MENU_ITEMS[@]}"

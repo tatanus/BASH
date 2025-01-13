@@ -3,7 +3,7 @@ set -uo pipefail
 
 # =============================================================================
 # NAME        : utils_files.sh
-# DESCRIPTION : Utility functions for validating files, directories, and environment variables
+# DESCRIPTION : Utility functions for validating files
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-15 21:16:38
 # =============================================================================
@@ -16,50 +16,6 @@ set -uo pipefail
 # Guard to prevent multiple sourcing
 if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     declare -g UTILS_FILES_SH_LOADED=true
-
-    #   This function checks if an environment variable with the provided name exists and is set.
-    #   If the variable is set, it prints the value and returns success.
-    #   If the variable is unset or undefined, it prints an error and returns failure.
-    function check_env_var() {
-        local var_name="$1"
-
-        if [[ -z "${var_name}" ]]; then
-            fail "No variable name provided."
-            return 1
-        fi
-
-        # Use indirect expansion to check if the variable is set and retrieve its value
-        if [[ -n "${!var_name+x}" ]]; then
-            pass "Environment variable ${var_name} exists and is set."
-            return 0
-        else
-            fail "Environment variable ${var_name} is not set."
-            return 1
-        fi
-    }
-
-    # =============================================================================
-    # FUNCTION: _check_tool
-    # DESCRIPTION: Verifies that a required tool is installed and executable.
-    # =============================================================================
-    # Usage:
-    # _check_tool TOOL
-    # - TOOL: Name of the command-line tool to check.
-    # - Outputs an error message if the tool is not found or not executable.
-    # - Returns:
-    #   - 0: Tool is installed and executable.
-    #   - 1: Tool is missing or not executable.
-    # =============================================================================
-    function check_tool() {
-        local tool="$1"
-
-        if ! command -v "${tool}" > /dev/null 2>&1; then
-            fail "Tool '${tool}' is not installed or not found in PATH."
-            return 1
-        else
-            return 0
-        fi
-    }
 
     # Generate a unique, sanitized filename based on toolname and optional special tag
     # Usage: generate_filename "toolname" "optional_special"
@@ -114,12 +70,12 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     function check_file_readable() {
         local file_path="$1"
 
-        if [[ -r "${file_path}" ]]; then
+        if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
             return 1
         fi
 
-        if [[ -f "${file_path}" ]]; then
+        if [[ -f "${file_path}" && -r "${file_path}" ]]; then
             pass "File ${file_path} is readable."
             return 0
         else
@@ -133,12 +89,12 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     function check_file_writable() {
         local file_path="$1"
 
-        if [[ -w "${file_path}" ]]; then
+        if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
             return 1
         fi
 
-        if [[ -f "${file_path}" ]]; then
+        if [[ -f "${file_path}" && -w "${file_path}" ]]; then
             pass "File ${file_path} is writable."
             return 0
         else
@@ -152,12 +108,12 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     function check_file_executable() {
         local file_path="$1"
 
-        if [[ -x "${file_path}" ]]; then
+        if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
             return 1
         fi
 
-        if [[ -f "${file_path}" ]]; then
+        if [[ -f "${file_path}" && -x "${file_path}" ]]; then
             pass "File ${file_path} is executable."
             return 0
         else
@@ -249,63 +205,6 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
         else
             fail "Failed to restore ${highest_backup} to ${filename}"
             return "${_FAIL}"
-        fi
-    }
-
-    # Check if a directory exists
-    # Usage: check_dir_exists "dir_path"
-    function check_dir_exists() {
-        local dir_path="$1"
-
-        if [[ -z "${dir_path}" ]]; then
-            fail "No directory path provided."
-            return 1
-        fi
-
-        if [[ -d "${dir_path}" ]]; then
-            pass "Directory ${dir_path} exists."
-            return 0
-        else
-            fail "Directory ${dir_path} does not exist."
-            return 1
-        fi
-    }
-
-    # Check if a directory is readable
-    # Usage: check_dir_readable "dir_path"
-    function check_dir_readable() {
-        local dir_path="$1"
-
-        if [[ -r "${dir_path}" ]]; then
-            fail "No directory path provided."
-            return 1
-        fi
-
-        if [[ -d "${dir_path}" ]]; then
-            pass "Directory ${dir_path} is readable."
-            return 0
-        else
-            fail "Directory ${dir_path} is not readable."
-            return 1
-        fi
-    }
-
-    # Check if a directory is writable
-    # Usage: check_dir_writable "dir_path"
-    function check_dir_writable() {
-        local dir_path="$1"
-
-        if [[ -w "${dir_path}" ]]; then
-            fail "No directory path provided."
-            return 1
-        fi
-
-        if [[ -d "${dir_path}" ]]; then
-            pass "Directory ${dir_path} is writable."
-            return 0
-        else
-            fail "Directory ${dir_path} is not writable."
-            return 1
         fi
     }
 fi

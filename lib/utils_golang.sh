@@ -2,7 +2,7 @@
 set -uo pipefail
 
 # =============================================================================
-# NAME        : utils_go.sh
+# NAME        : utils_golang.sh
 # DESCRIPTION :
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-09 20:28:40
@@ -14,8 +14,8 @@ set -uo pipefail
 # =============================================================================
 
 # Guard to prevent multiple sourcing
-if [[ -z "${UTILS_GO_SH_LOADED:-}" ]]; then
-    declare -g UTILS_GO_SH_LOADED=true
+if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
+    declare -g UTILS_GOLANG_SH_LOADED=true
 
     # -----------------------------------------------------------------------------
     # ---------------------------------- GO FUNCTIONS -----------------------------
