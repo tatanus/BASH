@@ -41,31 +41,31 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
         local delimiter="|"
 
         # Validate inputs
-        if [[ -z "$file_path" || -z "$replacement" ]]; then
+        if [[ -z "${file_path}" || -z "${replacement}" ]]; then
             echo "Error: Missing required arguments."
             echo "Usage: replace_in_file <file_path> <replacement_value> [search_value]"
             return 1
         fi
 
-        if [[ ! -f "$file_path" ]]; then
-            echo "Error: File '$file_path' does not exist."
+        if [[ ! -f "${file_path}" ]]; then
+            echo "Error: File '${file_path}' does not exist."
             return 1
         fi
 
         # Escape special characters in replacement and search values
         local escaped_replacement
         local escaped_search_value
-        escaped_replacement=$(printf '%s' "$replacement" | sed -e 's/[\/&]/\\&/g')
-        escaped_search_value=$(printf '%s' "$search_value" | sed -e 's/[\/&]/\\&/g')
+        escaped_replacement=$(printf '%s' "${replacement}" | sed -e 's/[\/&]/\\&/g')
+        escaped_search_value=$(printf '%s' "${search_value}" | sed -e 's/[\/&]/\\&/g')
 
         # Check if the search value exists in the file
-        if ! grep -q "$escaped_search_value" "$file_path"; then
+        if ! grep -q "${escaped_search_value}" "${file_path}"; then
             echo "Warning: Search value '${search_value}' not found in file '${file_path}'."
             return 1
         fi
 
         # Perform in-place replacement using sed
-        if sed -i.bak "s${delimiter}${escaped_search_value}${delimiter}${escaped_replacement}${delimiter}g" "$file_path"; then
+        if sed -i.bak "s${delimiter}${escaped_search_value}${delimiter}${escaped_replacement}${delimiter}g" "${file_path}"; then
             echo "Replaced '${search_value}' with '${replacement}' in '${file_path}'."
             # Optionally remove backup file (comment out the following line if backup is desired)
             rm -f "${file_path}.bak"
@@ -84,49 +84,52 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
     function show_spinner() {
         local arg="$1"       # First argument, either a PID or a command
         local delay=0.1      # Delay between spinner updates
-        local spin='|/-\'
-        local start_time=$(date +%s) # Record the start time
+        # shellcheck disable=SC1003
+        local spin='|/-\\'
+        local start_time
+        start_time=$(date +%s) # Record the start time
         local pid             # PID to monitor
         local is_command=0    # Flag to determine if arg is a command
 
         # Determine if the argument is a PID or a command
-        if [[ "$arg" =~ ^[0-9]+$ ]]; then
-            pid="$arg" # Use the provided PID
+        if [[ "${arg}" =~ ^[0-9]+$ ]]; then
+            pid="${arg}" # Use the provided PID
         else
             is_command=1
             # Run the command in the same shell and get its PID
-            eval "$arg &"
+            eval "${arg} &"
             pid=$!
         fi
 
         printf "Processing... (0s) "
 
         i=0
-        while kill -0 "$pid" 2> /dev/null; do
+        while kill -0 "${pid}" 2> /dev/null; do
             i=$(((i + 1) % 4))
-            local current_time=$(date +%s)
+            local current_time
+            current_time=$(date +%s)
             local elapsed=$((current_time - start_time))   # Calculate elapsed time
 
             # Update spinner and elapsed time
-            printf "\rProcessing... ${spin:$i:1} (${elapsed}s) "
-            sleep "$delay"
+            printf "\rProcessing... %s (%s seconds) " "${spin:${i}:1}" "${elapsed}"
+            sleep "${delay}"
         done
 
         # Wait for the command (if applicable) and capture its exit code
-        if [[ $is_command -eq 1 ]]; then
-            wait "$pid"
+        if [[ ${is_command} -eq 1 ]]; then
+            wait "${pid}"
         fi
         local exit_code=$?
 
         # Overwrite spinner with "Done!" or "Failed" and total elapsed time
         local total_time=$(($( date +%s) - start_time))
-        if [[ $exit_code -eq 0 ]]; then
-            printf "\rProcessing... Done! (Total time: ${total_time}s)\n"
+        if [[ ${exit_code} -eq 0 ]]; then
+            printf "\rProcessing... Done! (Total time: %s seconds)\n" "${total_time}"
         else
-            printf "\rProcessing... Failed! (Total time: ${total_time}s)\n"
+            printf "\rProcessing... Failed! (Total time: %s seconds)\n" "${total_time}"
         fi
 
-        return $exit_code
+        return "${exit_code}"
     }
 
     # Check and set proxy if required

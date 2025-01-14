@@ -25,7 +25,7 @@ if [[ -z "${UTILS_ENV_SH_LOADED:-}" ]]; then
 
         if [[ -z "${var_name}" ]]; then
             fail "No variable name provided."
-            return 1
+            return 0
         fi
 
         # Use indirect expansion to check if the variable is set and retrieve its value

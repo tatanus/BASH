@@ -3,7 +3,7 @@ set -uo pipefail
 
 # =============================================================================
 # NAME        : aquatone.sh
-# DESCRIPTION :
+# DESCRIPTION : Installs and tests Aquatone
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-09 13:49:51
 # =============================================================================
@@ -14,34 +14,16 @@ set -uo pipefail
 # =============================================================================
 
 function install_aquatone() {
-    # Install Chrome
-    if ! _Curl "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb" /tmp/google-chrome-stable_current_amd64.deb; then
-        fail "Failed to download Google Chrome."
+    _Git_Clone https://github.com/shelld3v/aquatone.git
+
+    # Build Aquatone binary
+    _Pushd "${TOOLS_DIR}/aquatone" || return 1
+    if ! GOOS=linux GOARCH=amd64 go build -o aquatone; then
+        fail "Failed to build Aquatone."
+        _Popd
         return "${_FAIL}"
     fi
-
-    if ! gdebi --non-interactive /tmp/google-chrome-stable_current_amd64.deb; then
-        fail "Failed to install Google Chrome."
-        rm /tmp/google-chrome-stable_current_amd64.deb
-        return "${_FAIL}"
-    fi
-
-    rm /tmp/google-chrome-stable_current_amd64.deb
-
-    # Create directory for Aquatone
-    mkdir -p "${TOOLS_DIR}/aquatone"
-
-    # Download and install Aquatone
-    if _Git_Release "michenriksen/aquatone" "linux_amd64" "${TOOLS_DIR}/aquatone"; then
-        if ! unzip "${TOOLS_DIR}/aquatone/aquatone_linux_amd64_*.zip" -d "${TOOLS_DIR}/aquatone/"; then
-            fail "Failed to unzip Aquatone package."
-            return "${_FAIL}"
-        fi
-        rm "${TOOLS_DIR}/aquatone/aquatone_linux_amd64_*.zip"
-    else
-        fail "Failed to download Aquatone release."
-        return "${_FAIL}"
-    fi
+    _Popd
 
     # Add alias for Aquatone
     _Add_Alias "alias aquatone='${TOOLS_DIR}/aquatone/aquatone'"

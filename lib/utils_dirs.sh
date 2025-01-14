@@ -43,7 +43,7 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 1
+            return 0
         fi
 
         if [[ -d "${dir_path}" ]]; then
@@ -62,7 +62,7 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 1
+            return 0
         fi
 
         if [[ -d "${dir_path}" && -r "${dir_path}" ]]; then
@@ -81,7 +81,7 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 1
+            return 0
         fi
 
         if [[ -d "${dir_path}" && -w "${dir_path}" ]]; then

@@ -516,6 +516,7 @@ function _Process_Config_Menu() {
             _Edit_And_Reload_File "${CONFIG_FILE}"
             ;;
         "Edit pentest.env")
+            # shellcheck disable=SC2153
             _Edit_And_Reload_File "${ENV_FILE}"
             ;;
         "Edit pentest.keys")

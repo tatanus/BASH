@@ -53,7 +53,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 1
+            return 0
         fi
 
         if [[ -f "${file_path}" ]]; then
@@ -72,7 +72,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 1
+            return 0
         fi
 
         if [[ -f "${file_path}" && -r "${file_path}" ]]; then
@@ -91,7 +91,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 1
+            return 0
         fi
 
         if [[ -f "${file_path}" && -w "${file_path}" ]]; then
@@ -110,7 +110,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 1
+            return 0
         fi
 
         if [[ -f "${file_path}" && -x "${file_path}" ]]; then
