@@ -24,10 +24,12 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
     # Function to install and verify installation of Golang
     function _Install_Go() {
         # Navigate to /tmp directory for temporary file operations
-        _Pushd /tmp || {
-                         fail "Failed to change directory to /tmp."
-                                                                     return "${_FAIL}"
-        }
+        if _Pushd /tmp; then
+            echo "Successfully changed directory to /tmp."
+        else
+            fail "Failed to change directory to /tmp."
+            return "${_FAIL}"
+        fi
 
         # Check if Golang is already installed and purge it if present
         if apt list --installed 2> /dev/null | grep -q '^golang/'; then

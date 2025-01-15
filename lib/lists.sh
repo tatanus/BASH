@@ -272,22 +272,21 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## TOOLS to APP TEST
     ## The command should return an exit status of 0 if the application is installed
-    declare -A APP_TESTS=(
-                      ["bettercap"]="bettercap -h"
-                      ["certi"]="certi.py -h"
-                      ["certipy"]="certipy -h"
-                      ["GoogleChrome"]="google-chrome --version"
-                      ["gowitness"]="gowitness -h"
-                      ["ldapdomaindump"]="ldapdomaindump -h"
-                      ["ldapnomnom"]="ldapnomnom -h"
-                      ["lsassy"]="lsassy -h"
-                      ["masscan"]="masscan --ping 127.0.0.1"
-                      ["mitm6"]="mitm6 -h"
-                      ["nmap"]="nmap --version"
-                      ["pypykatz"]="pypykatz -h"
-                      ["secretsdump"]="secretsdump.py -h"
-                      ["tshark"]="tshark -h"
-    )
+    declare -A APP_TESTS
+    APP_TESTS["bettercap"]="bettercap -h"
+    APP_TESTS["certi"]="certi.py -h"
+    APP_TESTS["certipy"]="certipy -h"
+    APP_TESTS["GoogleChrome"]="google-chrome --version"
+    APP_TESTS["gowitness"]="gowitness -h"
+    APP_TESTS["ldapdomaindump"]="ldapdomaindump -h"
+    APP_TESTS["ldapnomnom"]="ldapnomnom -h"
+    APP_TESTS["lsassy"]="lsassy -h"
+    APP_TESTS["masscan"]="masscan --ping 127.0.0.1"
+    APP_TESTS["mitm6"]="mitm6 -h"
+    APP_TESTS["nmap"]="nmap --version"
+    APP_TESTS["pypykatz"]="pypykatz -h"
+    APP_TESTS["secretsdump"]="secretsdump.py -h"
+    APP_TESTS["tshark"]="tshark -h"
 
     ###################################################################
     # MENUS

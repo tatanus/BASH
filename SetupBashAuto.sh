@@ -343,10 +343,10 @@ function Setup_Cron_Jobs() {
     fi
 
     # Create or update the cron job
-    if (
+    if {
         crontab -l 2> /dev/null | grep -v "${BASH_DIR}/renew_tgt.sh"
-                                                                     echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1"
-    )                                                                                                                                                   | crontab -; then
+        echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1"
+    } | crontab -; then
         pass "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
         return "${_PASS}"
     else
