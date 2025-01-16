@@ -14,6 +14,24 @@ set -uo pipefail
 # =============================================================================
 
 function install_nessus() {
+    # Check required environment variables
+    check_env_var "INSTALL_NESSUS" || return "${_FAIL}"
+    check_env_var "SETUP_NESSUS" || return "${_FAIL}"
+    check_env_var "TOOLS_DIR" || return "${_FAIL}"
+    check_env_var "PROXY" || return "${_FAIL}"
+    check_env_var "NESSUS_LICENSE" || return "${_FAIL}"
+
+    # Default values for NESSUS_USER and NESSUS_PASSWORD
+    if ! check_env_var "NESSUS_USER"; then
+        NESSUS_USER="pentest"
+        warn "Setting default for NESSUS_USER: ${NESSUS_USER}"
+    fi
+
+    if ! check_env_var "NESSUS_PASSWORD"; then
+        NESSUS_PASSWORD="S3cur!ty"
+        warn "Setting default for NESSUS_PASSWORD: ${NESSUS_PASSWORD}"
+    fi
+
     if ${INSTALL_NESSUS}; then
         mkdir -p "${TOOLS_DIR}"/nessus
         # Download Nessus
@@ -23,8 +41,14 @@ function install_nessus() {
         dpkg -i "${TOOLS_DIR}"/nessus/nessus.deb
     fi
     if ${SETUP_NESSUS}; then
-        # Add a new user (requires user interaction)
-        /opt/nessus/sbin/nessuscli adduser pentest
+                # Add a new user (automated user addition)
+        /opt/nessus/sbin/nessuscli adduser "${NESSUS_USER}" << EOF
+${NESSUS_PASSWORD}
+${NESSUS_PASSWORD}
+y
+
+y
+EOF
         # Make Nessus listen only on 127.0.0.1
         /opt/nessus/sbin/nessuscli fix --set listen_address=127.0.0.1
         # Register Nessus
