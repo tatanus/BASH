@@ -64,4 +64,7 @@ dist/
 build/
 
 # Specify filepatterns you want git to ignore.
-
+setup.log
+BASH_ENV.tar
+tools/modules/_example.sh
+pentest_menu/modules/run_example.sh

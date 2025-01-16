@@ -20,6 +20,7 @@ TAR_FILE="BASH_ENV.tar"
 TOOLS_EXTRA_DIR="${DEPLOY_DIR}/tools/extra"
 DOT_DIR="${DEPLOY_DIR}/dot"
 KEYS_FILE="../pentest.keys"
+INHOUSE_FILE="../inhouse.sh"
 
 # Source configuration file
 DEPLOY_CONF="../deploy.conf"
@@ -78,11 +79,27 @@ rsync -av --exclude "${DEPLOY_DIR}" \
 # =============================================================================
 # Step 4: Copy pentest.keys to deploy/dot
 log_info "Copying '${KEYS_FILE}' to '${DOT_DIR}/pentest.keys'..."
-mkdir -p "${DOT_DIR}"
+if [[ ! -f "${KEYS_FILE}" ]]; then
+    log_fail "File '${KEYS_FILE}' does not exist. Exiting."
+    exit 1
+fi
+
 cp "${KEYS_FILE}" "${DOT_DIR}/pentest.keys"
+log_success "'${KEYS_FILE}' successfully copied to '${TOOLS_EXTRA_DIR}/pentest.keys'."
+
+# ==============================================================================
+# Step 5: Copy inhouse.sh to deploy/tools/extra/inhouse.sh
+log_info "Copying '${INHOUSE_FILE}' to '${TOOLS_EXTRA_DIR}/inhouse.sh'..."
+if [[ ! -f "${INHOUSE_FILE}" ]]; then
+    log_fail "File '${INHOUSE_FILE}' does not exist. Exiting."
+    exit 1
+fi
+
+cp "${INHOUSE_FILE}" "${TOOLS_EXTRA_DIR}/inhouse.sh"
+log_success "${INHOUSE_FILE} successfully copied to '${TOOLS_EXTRA_DIR}/inhouse.sh'."
 
 # =============================================================================
-# Step 5: Clone private repositories into deploy/tools/extra
+# Step 6: Clone private repositories into deploy/tools/extra
 log_info "Cloning private repositories into '${TOOLS_EXTRA_DIR}'..."
 mkdir -p "${TOOLS_EXTRA_DIR}"
 
@@ -96,7 +113,7 @@ for repo in "${REPOS[@]}"; do
 done
 
 # =============================================================================
-# Step 6: Clone specific subdirectories
+# Step 7: Clone specific subdirectories
 for entry in "${SUBDIRS[@]}"; do
     IFS="|" read -r repo path dest <<< "${entry}"
     log_info "Cloning repository '${repo}' to extract '${path}' into '${dest}'..."
@@ -122,12 +139,12 @@ for entry in "${SUBDIRS[@]}"; do
 done
 
 # =============================================================================
-# Step 7: Package the deploy directory as a tar file
+# Step 8: Package the deploy directory as a tar file
 log_info "Packaging '${DEPLOY_DIR}' as '${TAR_FILE}'..."
 tar -cf "${TAR_FILE}" "${DEPLOY_DIR}"
 
 # =============================================================================
-# Step 8: Clean up deploy directory
+# Step 9: Clean up deploy directory
 if [[ -d "${DEPLOY_DIR}" ]]; then
     log_info "Removing existing '${DEPLOY_DIR}' directory..."
     rm -rf "${DEPLOY_DIR}"
