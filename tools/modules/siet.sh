@@ -16,7 +16,8 @@ set -uo pipefail
 function install_siet() {
     _Git_Clone https://github.com/Sab0tag3d/SIET.git
 
-    _Add_Alias "function siet { (cd ${TOOLS_DIR}/SIET && python2.7 ${TOOLS_DIR}/SIET/siet.py \"\$@\") }"
+    _add_tool_function "siet.py" "SIET/siet.py"
+
 }
 
 # Test function for siet

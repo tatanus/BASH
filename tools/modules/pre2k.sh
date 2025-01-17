@@ -22,11 +22,6 @@ function install_pre2k() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-
-    _Del_Alias "pre2k.py"
-    _Del_Alias "pre2k"
-    _Add_Alias "function pre2k.py { (cd ${TOOLS_DIR}/pre2k-TS && ${TOOLS_DIR}/pre2k-TS/venv/bin/${PYTHON} ${TOOLS_DIR}/pre2k-TS/pre2k.py) }"
-    _Add_Alias "function pre2k { (cd ${TOOLS_DIR}/pre2k-TS && ${TOOLS_DIR}/pre2k-TS/venv/bin/${PYTHON} ${TOOLS_DIR}/pre2k-TS/pre2k.py) }"
 }
 
 # Test function for pre2k

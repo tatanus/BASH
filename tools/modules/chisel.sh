@@ -37,7 +37,7 @@ function install_chisel() {
     fi
 
     # Add alias for chisel
-    _Add_Alias "alias chisel='${TOOLS_DIR}/chisel/chisel_*_linux_amd64'"
+    _add_tool_function "chisel" "chisel/chisel_*_linux_amd64"
     pass "chisel installed and alias added successfully."
 }
 

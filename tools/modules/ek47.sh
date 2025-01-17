@@ -22,11 +22,6 @@ function install_ek47() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-
-    _Del_Alias "ek47.py"
-    _Del_Alias "ek47"
-    _Add_Alias "function ek47.py { (cd ${TOOLS_DIR}/ek47 && ${TOOLS_DIR}/ek47/venv/bin/${PYTHON} ${TOOLS_DIR}/ek47/ek47.py) }"
-    _Add_Alias "function ek47 { (cd ${TOOLS_DIR}/ek47 && ${TOOLS_DIR}/ek47/venv/bin/${PYTHON} ${TOOLS_DIR}/ek47/ek47.py) }"
 }
 
 # Test function for ek47

@@ -22,10 +22,6 @@ function install_pcredz() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-
-    _Del_Alias "Pcredz"
-    _Del_Alias "Pcredz.py"
-    _Add_Alias "alias Pcredz='${TOOLS_DIR}/PCredz/venv/bin/${PYTHON} ${TOOLS_DIR}/PCredz/Pcredz'"
 }
 
 # Test function for pcredz

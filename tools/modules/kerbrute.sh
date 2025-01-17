@@ -17,7 +17,7 @@ function install_kerbrute() {
     if _Git_Release "ropnop/kerbrute" "linux_amd64" "${TOOLS_DIR}/kerbrute"; then
         chmod +x "${TOOLS_DIR}"/kerbrute/kerbrute_linux_amd64
 
-        _Add_Alias "alias kerbrute='${TOOLS_DIR}/kerbrute/kerbrute_linux_amd64'"
+        _add_tool_function "kerbrute" "kerbrute/kerbrute_linux_amd64"
     fi
 }
 

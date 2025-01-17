@@ -21,7 +21,7 @@ function install_responder() {
     chmod +x Report.py
     _Popd
 
-    _Add_Alias "function Responder { (cd ${TOOLS_DIR}/Responder && ${PYTHON} ${TOOLS_DIR}/Responder/Responder.py \"\$@\") }"
+    _add_tool_function "Responder.py" "Responder/Responder.py"
 }
 
 # Test function for responder

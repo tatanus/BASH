@@ -18,8 +18,8 @@ function install_enum4linux() {
     _Curl "https://raw.githubusercontent.com/Wh1t3Fox/polenum/master/polenum.py" "/usr/local/bin/polenum"
     chmod +x /usr/local/bin/polenum
 
-    _Add_Alias "alias enum4linux.pl='${TOOLS_DIR}/enum4linux/enum4linux.pl'"
-    _Add_Alias "alias enum4linux='${TOOLS_DIR}/enum4linux/enum4linux.pl'"
+    _add_tool_function "enum4linux.pl" "enum4linux/enum4linux.pl"
+    pass "enum4linux.pl installed and aliases added successfully."
 }
 
 # Test function for enum4linux

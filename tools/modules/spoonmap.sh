@@ -16,7 +16,7 @@ set -uo pipefail
 function install_spoonmap() {
     _Git_Clone https://github.com/trustedsec/spoonmap.git
 
-    _Add_Alias "function spoonmap { (cd ${TOOLS_DIR}/spoonmap && ${PYTHON} ${TOOLS_DIR}/spoonmap/spoonmap.py \"\$@\") }"
+    _add_tool_function "spoonmap.py" "spoonmap/spoonmap.py"
 }
 
 # Test function for spoonmap

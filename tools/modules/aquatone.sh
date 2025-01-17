@@ -26,7 +26,7 @@ function install_aquatone() {
     _Popd
 
     # Add alias for Aquatone
-    _Add_Alias "alias aquatone='${TOOLS_DIR}/aquatone/aquatone'"
+    _add_tool_function "aquatone" "aquatone/aquatone"
     pass "Aquatone installed and alias added successfully."
 }
 

@@ -24,10 +24,7 @@ function install_krbrelayx() {
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
 
     # Add additional aliases
-    _Del_Alias "dnstool.py"
-    _Del_Alias "dnstool"
-    _Add_Alias "alias dnstool.py='${TOOLS_DIR}/krbrelayx/venv/bin/${PYTHON} ${TOOLS_DIR}/krbrelayx/dnstool.py'"
-    _Add_Alias "alias dnstool='${TOOLS_DIR}/krbrelayx/venv/bin/${PYTHON} ${TOOLS_DIR}/krbrelayx/dnstool.py'"
+    _add_tool_function "dnstool.py" "krbrelayx/dnstool.py"
 }
 
 # Test function for krbrelayx

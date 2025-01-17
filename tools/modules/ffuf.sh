@@ -18,7 +18,7 @@ function install_ffuf() {
         tar -C "${TOOLS_DIR}"/ffuf -xzvf "${TOOLS_DIR}"/ffuf/ffuf_*linux_amd64.tar.gz
         rm "${TOOLS_DIR}"/ffuf/ffuf_*linux_amd64.tar.gz
 
-        _Add_Alias "alias ffuf='${TOOLS_DIR}/ffuf/ffuf'"
+        _add_tool_function "ffuf" "ffuf/ffuf"
     fi
 }
 

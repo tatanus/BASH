@@ -19,7 +19,7 @@ function install_pretender() {
     go build
     _Popd
 
-    _Add_Alias "alias pretender='${TOOLS_DIR}/pretender/pretender'"
+    _add_tool_function "pretender" "pretender/pretender"
 }
 
 # Test function for pretender

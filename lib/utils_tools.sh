@@ -21,59 +21,94 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
     # ---------------------------------- INSTALL TOOLS FUNCTIONS ------------------
     # -----------------------------------------------------------------------------
 
-    # Add an alias to the alias file
-    function _Add_Alias() {
-        local alias_entry="$*"
+    # add a new function to pentest.alias.sh
+    function _add_tool_function() {
+        local function_name="$1"
+        local tool_path="$2"
 
         # Verify that PENTEST_ALIAS_FILE is set and writable
         if [[ -z "${PENTEST_ALIAS_FILE}" ]]; then
-            info "${alias_entry}"
             fail "PENTEST_ALIAS_FILE is not set. Cannot add alias."
             return "${_FAIL}"
         fi
 
         if [[ ! -w "${PENTEST_ALIAS_FILE}" ]]; then
-            info "${alias_entry}"
             fail "ALIAS_FILE (${PENTEST_ALIAS_FILE}) is not writable."
             return "${_FAIL}"
         fi
 
-        # Append the alias entry to the alias file
-        echo "${alias_entry}" >> "${PENTEST_ALIAS_FILE}"
-        pass "Added alias: ${alias_entry}"
-        return "${_PASS}"
+        # Validate inputs
+        if [[ -z "${function_name}" || -z "${tool_path}" ]]; then
+            fail "Usage: _add_tool_function <function_name> <tool_path>" >&2
+            return "${_FAIL}"
+        fi
+
+        # Check if the function already exists in the alias file
+        if grep -qE "^function ${function_name}\s*\(\)\s*{" "${PENTEST_ALIAS_FILE}"; then
+            fail "Function '${function_name}' already exists in ${PENTEST_ALIAS_FILE}." >&2
+            return "${_FAIL}"
+        fi
+
+        # Append the function to the alias file
+        {
+            echo "function ${function_name}() {"
+            echo "    run_venv_command \"\${TOOLS_DIR}/${tool_path}\" \"\$@\";"
+            echo "}"
+        } >> "${PENTEST_ALIAS_FILE}"
+
+        # Confirm the function was added
+        if grep -qE "^function ${function_name}\s*\(\)\s*{" "${PENTEST_ALIAS_FILE}"; then
+            pass "Added alias: ${function_name}"
+            return "${_PASS}"
+        else
+            fail "Failed to add alias: ${function_name}" >&2
+            return "${_FAIL}"
+        fi
     }
 
-    # Delete an alias from the alias file
-    function _Del_Alias() {
-        local alias_name="$1"
+    # Add a new function to the pentest.alias.sh file
+    _del_tool_function() {
+        local function_name="$1"
 
         # Validate inputs
-        if [[ -z "${alias_name}" ]] || [[ -z "${PENTEST_ALIAS_FILE}" ]]; then
-            fail "Usage: _DelAlias <alias_name>"
+        if [[ -z "${function_name}" || -z "${file_path}" ]]; then
+            fail " Usage: remove_function <function_name> <file_path>" >&2
             return "${_FAIL}"
         fi
 
-        # Check if the alias exists
-        if ! alias "${alias_name}" &> /dev/null; then
-            info "Alias ${alias_name} does not exist."
+        # Verify that PENTEST_ALIAS_FILE is set and writable
+        if [[ -z "${PENTEST_ALIAS_FILE}" ]]; then
+            fail "PENTEST_ALIAS_FILE is not set. Cannot add alias."
             return "${_FAIL}"
         fi
 
-        # Unalias the alias
-        unalias "${alias_name}" 2> /dev/null
-
-        # Remove lines containing the alias from the alias file
-        sed -i "/^alias ${alias_name}=/d" "${PENTEST_ALIAS_FILE}"
-
-        # Verify the alias has been removed
-        if grep -q "^alias ${alias_name}=" "${PENTEST_ALIAS_FILE}"; then
-            fail "Failed to remove alias ${alias_name}."
+        if [[ ! -w "${PENTEST_ALIAS_FILE}" ]]; then
+            fail "ALIAS_FILE (${PENTEST_ALIAS_FILE}) is not writable."
             return "${_FAIL}"
-        else
-            pass "Alias ${alias_name} removed successfully."
-            return "${_PASS}"
         fi
+
+        # Check if the function exists in the file
+        if ! grep -qE "^${function_name}\s*\(\)\s*{" "${PENTEST_ALIAS_FILE}"; then
+            fail "Function '${function_name}' not found in '${PENTEST_ALIAS_FILE}'." >&2
+            return "${_FAIL}"
+        fi
+
+        # Use sed to remove the exact function definition
+        sed -i.bak -E "/^${function_name}\s*\(\)\s*{/ {
+            N
+            :loop
+            /\}/! {N; b loop}
+            d
+        }" "${file_path}"
+
+        # Check if the removal was successful
+        if grep -qE "^${function_name}\s*\(\)\s*{" "${PENTEST_ALIAS_FILE}"; then
+            fail "Failed to remove function '${function_name}' from '${PENTEST_ALIAS_FILE}'." >&2
+            return "${_FAIL}"
+        fi
+
+        info "Function '${function_name}' successfully removed from '${PENTEST_ALIAS_FILE}'."
+        return "${_PASS}"
     }
 
     function _Install_Git_Python_Tool() {
@@ -160,8 +195,8 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         done
 
         deactivate
-        _Add_Alias "alias ${TOOL_NAME}.py='pushd ${TOOLS_DIR}/${DIRECTORY_NAME}/  >/dev/null && ${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py && popd >/dev/null'"
-        _Add_Alias "alias ${TOOL_NAME}='pushd ${TOOLS_DIR}/${DIRECTORY_NAME}/  >/dev/null && ${TOOLS_DIR}/${DIRECTORY_NAME}/venv/bin/${PYTHON} ${TOOLS_DIR}/${DIRECTORY_NAME}/${TOOL_NAME}.py && popd >/dev/null'"
+
+        _add_tool_function "${TOOL_NAME}" "${DIRECTORY_NAME}/${TOOL_NAME}"
 
         _Popd
         pass "${DIRECTORY_NAME} installed and virtual environment set up successfully."
