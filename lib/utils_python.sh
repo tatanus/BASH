@@ -540,7 +540,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             ERROR_FLAG=true
         fi
 
-        source
+        source "${HOME}/.bashrc"
 
         ERROR_FLAG=false
         # Install each library
