@@ -597,7 +597,7 @@ function _Install_All_Tools() {
     # Step 3: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
     # ------------------------------------------------------------------------------
     for script_file in "${TOOL_MENU_ITEMS[@]}"; do
-        info "Found script for custom tool: ${script_file}"
+        info "Found script for tool: ${script_file}"
 
         # Construct the full path to the script
         local script_path="${MODULES_DIR}/${script_file}.sh"
@@ -663,7 +663,7 @@ function _Process_Tool_Install_Menu() {
 
         # Check if the script file exists
         if [[ -f "${script_file}" ]]; then
-            info "Found script for custom tool: ${script_file}"
+            info "Found script for tool: ${script_file}"
 
             # Source the script and execute the install function
             source "${script_file}" || {
