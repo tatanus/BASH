@@ -8,6 +8,9 @@ external-sources=true
 # Suggest adding a default case in `case` statements
 enable=add-default-case
 
+# https://github.com/koalaman/shellcheck/wiki/SC2244
+enable=avoid-nullary-conditions
+
 # Suggest explicitly using -n in `[ $var ]`
 enable=avoid-nullary-conditions
 

@@ -52,7 +52,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Append the function to the alias file
         {
             echo "function ${function_name}() {"
-            echo "    run_venv_command \"\${TOOLS_DIR}/${tool_path}\" \"\$@\";"
+            echo "    run_tools_command \"\${TOOLS_DIR}/${tool_path}\" \"\$@\";"
             echo "}"
         } >> "${PENTEST_ALIAS_FILE}"
 

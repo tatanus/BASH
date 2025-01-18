@@ -22,14 +22,17 @@ DOT_DIR="${DEPLOY_DIR}/dot"
 KEYS_FILE="../pentest.keys"
 INHOUSE_FILE="../inhouse.sh"
 
+REPOS=()
+SUBDIRS=()
+
 # Source configuration file
 DEPLOY_CONF="../deploy.conf"
 if [[ ! -f "${DEPLOY_CONF}" ]]; then
     echo "Error: Configuration file '${DEPLOY_CONF}' not found."
-    exit 1
+else
+    # Source the deploy.conf file
+    source "${DEPLOY_CONF}"
 fi
-# Source the deploy.conf file
-source "${DEPLOY_CONF}"
 
 # =============================================================================
 # Functions
@@ -81,22 +84,20 @@ rsync -av --exclude "${DEPLOY_DIR}" \
 log_info "Copying '${KEYS_FILE}' to '${DOT_DIR}/pentest.keys'..."
 if [[ ! -f "${KEYS_FILE}" ]]; then
     log_fail "File '${KEYS_FILE}' does not exist. Exiting."
-    exit 1
+else
+    cp "${KEYS_FILE}" "${DOT_DIR}/pentest.keys"
+    log_success "'${KEYS_FILE}' successfully copied to '${TOOLS_EXTRA_DIR}/pentest.keys'."
 fi
-
-cp "${KEYS_FILE}" "${DOT_DIR}/pentest.keys"
-log_success "'${KEYS_FILE}' successfully copied to '${TOOLS_EXTRA_DIR}/pentest.keys'."
 
 # ==============================================================================
 # Step 5: Copy inhouse.sh to deploy/tools/extra/inhouse.sh
 log_info "Copying '${INHOUSE_FILE}' to '${TOOLS_EXTRA_DIR}/inhouse.sh'..."
 if [[ ! -f "${INHOUSE_FILE}" ]]; then
     log_fail "File '${INHOUSE_FILE}' does not exist. Exiting."
-    exit 1
+else
+    cp "${INHOUSE_FILE}" "${TOOLS_EXTRA_DIR}/inhouse.sh"
+    log_success "${INHOUSE_FILE} successfully copied to '${TOOLS_EXTRA_DIR}/inhouse.sh'."
 fi
-
-cp "${INHOUSE_FILE}" "${TOOLS_EXTRA_DIR}/inhouse.sh"
-log_success "${INHOUSE_FILE} successfully copied to '${TOOLS_EXTRA_DIR}/inhouse.sh'."
 
 # =============================================================================
 # Step 6: Clone private repositories into deploy/tools/extra

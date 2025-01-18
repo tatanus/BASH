@@ -36,9 +36,6 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         local repo_name="${url##*/}"
         repo_name=${repo_name%.git}
 
-        # Create the directory if it does not exist
-        mkdir -p "${TOOLS_DIR}/${dname}"
-
         # Determine the destination directory name
         local dname="${dest:-${repo_name}}"  # Use custom name if provided, otherwise repo name
 

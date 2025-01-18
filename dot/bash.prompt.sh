@@ -35,7 +35,8 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     # Variables for IPs
     PROMPT_LOCAL_IP="${PROMPT_LOCAL_IP:-Unavailable}"
     PROMPT_EXTERNAL_IP="${PROMPT_EXTERNAL_IP:-Unavailable}"
-    LAST_IP_CHECK=0
+    LAST_LOCAL_IP_CHECK=0
+    LAST_EXT_IP_CHECK=0
 
     # =============================================================================
     # Functions
@@ -116,9 +117,16 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         export PS1="${PS1}"
     }
 
-    # Call update_ip_cache if it's been more than 5 minutes
-    if (($(date +%s) - LAST_IP_CHECK > 300)); then
-        update_ip_cache
+    # Call get_local_ip if it's been more than 5 minutes
+    if (($(date +%s) - LAST_LOCAL_IP_CHECK > 300)); then
+        PROMPT_LOCAL_IP=$(get_local_ip 2> /dev/null || echo "Unavailable")
+        LAST_LOCAL_IP_CHECK=$(date +%s)
+    fi
+
+    # Call get_external_ip if it's been more than 60 minutes
+    if (($(date +%s) - LAST_EXT_IP_CHECK > 3600)); then
+        PROMPT_EXTERNAL_IP=$(get_external_ip 2> /dev/null || echo "Unavailable")
+        LAST_EXT_IP_CHECK=$(date +%s)
     fi
 
     # Append to PROMPT_COMMAND to avoid overwriting

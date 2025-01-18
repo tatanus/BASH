@@ -51,12 +51,15 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
     # Returns "--break-system-packages" if supported, otherwise "".
     ###############################################################################
     function check_pip_break_system_packages() {
-        if python"${PYTHON_VERSION}" -m pip help install 2>&1 | grep "break-system-packages"; then
+        if python"${PYTHON_VERSION}" -m pip help install 2>&1 | grep "break-system-packages" > /dev/null 2>&1; then
             echo "--break-system-packages"
         else
             echo ""
         fi
     }
+
+    break_system_packages_option=$(check_pip_break_system_packages)
+    export break_system_packages_option
 
     # Function to fix old Python issues
     function _Fix_Old_Python() {
@@ -337,7 +340,6 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
                     fail "Failed to ensure pipx's PATH. Check your installation."
                 fi
 
-                pipx completions bash >> ~/.bashrc
                 eval "$(register-python-argcomplete pipx)"
 
                 # Verify pipx installation

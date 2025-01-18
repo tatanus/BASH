@@ -116,33 +116,6 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
-    # update_ip_cache
-    # Refreshes cached local and external IP addresses.
-    #
-    # Description:
-    #   Calls `get_local_ip` and `get_external_ip` functions to retrieve the current
-    #   internal and external IP addresses. Updates the environment variables
-    #   `PROMPT_LOCAL_IP` and `PROMPT_EXTERNAL_IP` with the retrieved values.
-    #   Also records the current timestamp in `LAST_IP_CHECK` to manage cache freshness.
-    #
-    # Requirements:
-    #   - Functions `get_local_ip` and `get_external_ip` must be defined and sourced
-    #     appropriately.
-    #
-    # Usage:
-    #   update_ip_cache
-    #
-    # Returns:
-    #   - Updates the environment variables with the latest IP addresses.
-    #   - No output.
-    ###############################################################################
-    function update_ip_cache() {
-        PROMPT_LOCAL_IP=$(get_local_ip 2> /dev/null || echo "Unavailable")
-        PROMPT_EXTERNAL_IP=$(get_external_ip 2> /dev/null || echo "Unavailable")
-        LAST_IP_CHECK=$(date +%s)
-    }
-
-    ###############################################################################
     # is_dhcp_static
     # Determines if a network interface is configured for DHCP or Static IP.
     #
@@ -180,7 +153,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         os_type=$(_get_os)
 
         # Handle Linux systems
-        if [[ "${os_type}" == "linux" ]]; then
+        if [[ "${os_type}" == "linux" || "${os_type}" == "ubuntu" ]]; then
             # Check if nmcli is available and NetworkManager is active
             if command -v nmcli &> /dev/null && systemctl is-active NetworkManager &> /dev/null; then
                 local connection_profile

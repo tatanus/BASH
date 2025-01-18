@@ -70,8 +70,8 @@ done
 
 secondary_bash_files=(
     # Now that variables are set, load bash_path
-    "${BASH_DIR}/bash.prompt.sh"
     "${BASH_DIR}/bash.aliases.sh"
+    "${BASH_DIR}/bash.prompt.sh"
 
     "${BASH_DIR}/screen.aliases.sh"
     "${BASH_DIR}/tmux.aliases.sh"
