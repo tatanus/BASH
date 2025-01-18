@@ -594,9 +594,48 @@ function _Install_All_Tools() {
     done
 
     # ------------------------------------------------------------------------------
-    # Step 3: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
+    # Step 3: Install impacket
+    # ------------------------------------------------------------------------------
+    script_file}="impacket"
+    info "Found script for tool: ${script_file}"
+
+    # Construct the full path to the script
+    local script_path="${MODULES_DIR}/${script_file}.sh"
+
+    if [[ ! -f "${script_path}" ]]; then
+        fail "Script file not found: ${script_path}"
+        continue
+    fi
+
+    # Source the script so we can access its functions
+    if ! source "${script_path}"; then
+        fail "Failed to source script: ${script_path}"
+        continue
+    fi
+
+    # Build the install function name, e.g. "install_mytool"
+    local install_function="install_${script_file}"
+
+    # Check if that function is actually defined
+    if declare -f "${install_function}" > /dev/null; then
+        info "Executing installation function: ${install_function}"
+        if ! "${install_function}"; then
+            fail "Installation function failed: ${install_function}"
+        fi
+    else
+        fail "Installation function not found in script: ${install_function}"
+    fi
+
+    # ------------------------------------------------------------------------------
+    # Step 4: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
     # ------------------------------------------------------------------------------
     for script_file in "${TOOL_MENU_ITEMS[@]}"; do
+
+        # Check if the script_file is "impacket" and skip if it is
+        if [[ "${script_file}" == "impacket" ]]; then
+            continue
+        fi
+
         info "Found script for tool: ${script_file}"
 
         # Construct the full path to the script
