@@ -153,8 +153,8 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
             --wait \
             --format ID,Name,PublicIPv4 \
                 --user-data '#!/bin/bash
-cd /root/ ; git clone https://github.com/tatanus/BASH.git
 apt-get -y install ncat eza bat fzf proxychains4
+cd /root/ ; git clone https://github.com/tatanus/BASH.git ; cd BASH ; ./SetupBashAuto.sh -bash
 ' \
             --wait; then
             echo "[ERROR] Failed to create droplet."

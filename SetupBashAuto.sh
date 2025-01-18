@@ -780,26 +780,57 @@ function _Process_Start_Menu() {
     fi
 }
 
+function main() {
+    # Check if any arguments are passed
+    if [[ $# -eq 0 ]]; then
+        # No arguments, display the menu
+        _Display_Menu "BASH SETUP" "_Process_Start_Menu" false "${SETUP_MENU_ITEMS[@]}"
+        return
+    fi
+
+    # Process arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -bash)
+                # Bypass menu and run Setup_Dot_Files directly
+                Setup_Dot_Files
+                return
+                ;;
+            *)
+                # Handle invalid arguments
+                echo "[ERROR] Invalid argument: $1" >&2
+                echo "Usage: $0 [-bash]" >&2
+                return 1
+                ;;
+        esac
+    done
+}
+
 # Ensure fzf is installed and working
-if ! check_command "fzf"; then
-    read -r -p "Do you want to install fzf? (Y/n): " answer
+function ensure_fzf() {
+    if ! check_command "fzf"; then
+        read -r -p "Do you want to install fzf? (Y/n): " answer
 
-    # Set default answer to "Y" if no input is provided
-    answer=${answer:-Y}
-    case ${answer} in
-        [Yy]*)
-            _install_package "fzf"
-            ;;
-        [Nn]*)
-            warning "fzf will not be installed. Exiting."
-            exit "${_FAIL}"
-            ;;
-        *)
-            fail "Invalid response. Exiting."
-            exit "${_FAIL}"
-            ;;
-    esac
-fi
+        # Set default answer to "Y" if no input is provided
+        answer=${answer:-Y}
+        case ${answer} in
+            [Yy]*)
+                _install_package "fzf"
+                ;;
+            [Nn]*)
+                warning "fzf will not be installed. Exiting."
+                exit "${_FAIL}"
+                ;;
+            *)
+                fail "Invalid response. Exiting."
+                exit "${_FAIL}"
+                ;;
+        esac
+    fi
+}
 
-# Display the main setup menu
-_Display_Menu "BASH SETUP" "_Process_Start_Menu" false "${SETUP_MENU_ITEMS[@]}"
+# Run the ensure_fzf function to check fzf installation
+ensure_fzf
+
+# Call the main function, passing all script arguments
+main "$@"
