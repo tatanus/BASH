@@ -129,7 +129,7 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
         done
 
         echo -e "\nSummary:\n    Region:  ${region}\n    OS:      ${os}\n    Version: ${os_version}\n    Size:    ${size}\n    SSH Key: ${ssh_key}\n    Name:    ${droplet_name}\n"
-        echo -e "\n    Cloning: https://github.com/tatanus/BASH.git to /root/BASH"
+        echo -e "    Cloning: https://github.com/tatanus/BASH.git to /root/BASH\n"
 
         # Loop until a valid confirmation is provided
         while true; do
@@ -152,9 +152,12 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
             --ssh-keys "${ssh_key}" \
             --wait \
             --format ID,Name,PublicIPv4 \
-                --user-data '#!/bin/bash
-apt-get -y install ncat eza bat fzf proxychains4
-cd /root/ ; git clone https://github.com/tatanus/BASH.git ; cd BASH ; ./SetupBashAuto.sh -bash
+            --user-data '#!/bin/bash
+apt-get update && apt-get install -y ncat eza bat fzf proxychains4
+cd /root/
+git clone https://github.com/tatanus/BASH.git
+cd BASH
+./SetupBashAuto.sh -bash
 ' \
             --wait; then
             echo "[ERROR] Failed to create droplet."
