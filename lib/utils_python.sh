@@ -521,7 +521,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         fi
 
         info "Installing ${package} using pipx..."
-        if ! ${PROXY} pipx install "${package}" --force > /dev/null 2>&1; then
+        if ! show_spinner "${PROXY} pipx install ${package} --force > /dev/null 2>&1"; then
             fail "Failed to install ${package} with pipx."
             return "${_FAIL}"
         fi
@@ -582,7 +582,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         ERROR_FLAG=false
         # Install each package listed
         for package in "${packages[@]}"; do
-            if ! show_spinner "_Pipx_Install ${package}"; then
+            if !  _Pipx_Install "${package}"; then
                 fail "Failed to install ${package} with pipx."
                 ERROR_FLAG=true
             fi

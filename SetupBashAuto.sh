@@ -596,7 +596,7 @@ function _Install_All_Tools() {
     # ------------------------------------------------------------------------------
     # Step 3: Install impacket
     # ------------------------------------------------------------------------------
-    script_file}="impacket"
+    script_file="impacket"
     info "Found script for tool: ${script_file}"
 
     # Construct the full path to the script

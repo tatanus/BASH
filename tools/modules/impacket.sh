@@ -25,7 +25,7 @@ function install_impacket() {
     fi
 
     # Clone the Git repository
-    if ! _Git_Clone "${GIT_URL}" "${TOOLS_DIR}/${PACKAGE_NAME}"; then
+    if ! _Git_Clone "${GIT_URL}"; then
         fail "Failed to clone repository from ${GIT_URL}."
         return "${_FAIL}"
     else
