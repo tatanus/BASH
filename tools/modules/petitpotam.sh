@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_petitpotam() {
     # Define the arguments
-    TOOL_NAME="PetitPotam"
+    TOOL_NAME="PetitPotam.py"
     GIT_URL="https://github.com/topotam/PetitPotam.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_petitpotam() {
 
 # Test function for petitpotam
 function test_petitpotam() {
-    local TOOL_NAME="petitpotam"
-    local TOOL_COMMAND="PetitPotam -h"
+    local TOOL_NAME="PetitPotam.py"
+    local TOOL_COMMAND="PetitPotam.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

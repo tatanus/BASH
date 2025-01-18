@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ciscot7() {
     # Define the arguments
-    TOOL_NAME="ciscot7"
+    TOOL_NAME="ciscot7.py"
     GIT_URL="https://github.com/theevilbit/ciscot7.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_ciscot7() {
 
 # Test function for ciscot7
 function test_ciscot7() {
-    local TOOL_NAME="ciscot7"
-    local TOOL_COMMAND="ciscot7 -h"
+    local TOOL_NAME="ciscot7.py"
+    local TOOL_COMMAND="ciscot7.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

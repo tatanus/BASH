@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_sccmhunter() {
     # Define the arguments
-    TOOL_NAME="sccmhunter"
+    TOOL_NAME="sccmhunter.py"
     GIT_URL="https://github.com/garrettfoster13/sccmhunter.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_sccmhunter() {
 
 # Test function for sccmhunter
 function test_sccmhunter() {
-    local TOOL_NAME="sccmhunter"
-    local TOOL_COMMAND="sccmhunter -h"
+    local TOOL_NAME="sccmhunter.py"
+    local TOOL_COMMAND="sccmhunter.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ek47() {
     # Define the arguments
-    TOOL_NAME="ek47"
+    TOOL_NAME="ek47.py"
     GIT_URL="https://gitlab.com/KevinJClark/ek47.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_ek47() {
 
 # Test function for ek47
 function test_ek47() {
-    local TOOL_NAME="ek47"
-    local TOOL_COMMAND="ek47 -h"
+    local TOOL_NAME="ek47.py"
+    local TOOL_COMMAND="ek47.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

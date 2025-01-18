@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_privexchange() {
     # Define the arguments
-    TOOL_NAME="privexchange"
+    TOOL_NAME="privexchange.py"
     GIT_URL="https://github.com/dirkjanm/PrivExchange"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_privexchange() {
 
 # Test function for privexchange
 function test_privexchange() {
-    local TOOL_NAME="privexchange"
-    local TOOL_COMMAND="privexchange -h"
+    local TOOL_NAME="privexchange.py"
+    local TOOL_COMMAND="privexchange.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

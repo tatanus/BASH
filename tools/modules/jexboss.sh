@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_jexboss() {
     # Define the arguments
-    TOOL_NAME="jexboss"
+    TOOL_NAME="jexboss.py"
     GIT_URL="https://github.com/joaomatosf/jexboss.git"
     REQUIREMENTS_FILE="requires.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_jexboss() {
 
 # Test function for jexboss
 function test_jexboss() {
-    local TOOL_NAME="jexboss"
-    local TOOL_COMMAND="jexboss -h"
+    local TOOL_NAME="jexboss.py"
+    local TOOL_COMMAND="jexboss.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

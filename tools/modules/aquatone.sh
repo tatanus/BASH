@@ -34,7 +34,7 @@ function install_aquatone() {
 function test_aquatone() {
     local TOOL_NAME="aquatone"
     local TOOL_COMMAND="aquatone -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

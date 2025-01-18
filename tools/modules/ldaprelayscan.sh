@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ldaprelayscan() {
     # Define the arguments
-    TOOL_NAME="LdapRelayScan"
+    TOOL_NAME="LdapRelayScan.py"
     GIT_URL="https://github.com/zyn3rgy/LdapRelayScan"
     REQUIREMENTS_FILE="requirements_exact.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_ldaprelayscan() {
 
 # Test function for ldaprelayscan
 function test_ldaprelayscan() {
-    local TOOL_NAME="ldapRelayscan"
-    local TOOL_COMMAND="LdapRelayScan -h"
+    local TOOL_NAME="ldapRelayscan.py"
+    local TOOL_COMMAND="LdapRelayScan.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

@@ -23,8 +23,8 @@ function install_rdp_sec_check() {
 
 # Test function for rdp_sec_check
 function test_rdp_sec_check() {
-    local TOOL_NAME="rdp_sec_check"
-    local TOOL_COMMAND="rdp-sec-check -h"
+    local TOOL_NAME="rdp_sec_check.pl"
+    local TOOL_COMMAND="rdp-sec-check.pl -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

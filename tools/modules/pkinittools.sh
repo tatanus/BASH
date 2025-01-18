@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_pkinittools() {
     # Define the arguments
-    TOOL_NAME="gettgtpkinit"
+    TOOL_NAME="gettgtpkinit.py"
     GIT_URL="https://github.com/dirkjanm/PKINITtools.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=("git+https://github.com/wbond/oscrypto.git" "minikerberos")
@@ -26,8 +26,8 @@ function install_pkinittools() {
 
 # Test function for pkinittools
 function test_pkinittools() {
-    local TOOL_NAME="pkinittools"
-    local TOOL_COMMAND="gettgtpkinit -h"
+    local TOOL_NAME="gettgtpkinit.py"
+    local TOOL_COMMAND="gettgtpkinit.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

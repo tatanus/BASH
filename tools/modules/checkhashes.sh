@@ -30,8 +30,8 @@ function install_checkhashes() {
 
 # Test function for checkhashes
 function test_checkhashes() {
-    local TOOL_NAME="checkhashes"
-    local TOOL_COMMAND="check_hashes -h"
+    local TOOL_NAME="check_hashes.py"
+    local TOOL_COMMAND="check_hashes.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

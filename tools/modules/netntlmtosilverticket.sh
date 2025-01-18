@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_netntlmtosilverticket() {
     # Define the arguments
-    TOOL_NAME="dementor"
+    TOOL_NAME="dementor.py"
     GIT_URL="https://github.com/NotMedic/NetNTLMtoSilverTicket.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_netntlmtosilverticket() {
 
 # Test function for netntlmtosilverticket
 function test_netntlmtosilverticket() {
-    local TOOL_NAME="dementor"
-    local TOOL_COMMAND="dementor -h"
+    local TOOL_NAME="dementor.py"
+    local TOOL_COMMAND="dementor.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

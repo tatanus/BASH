@@ -31,8 +31,8 @@ function install_autoproc() {
 
 # Test function for autoproc
 function test_autoproc() {
-    local TOOL_NAME="autoproc"
-    local TOOL_COMMAND="autoProc -h"
+    local TOOL_NAME="autoProc.py"
+    local TOOL_COMMAND="autoProc.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

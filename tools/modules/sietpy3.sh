@@ -21,8 +21,8 @@ function install_sietpy3() {
 
 # Test function for sietpy3
 function test_sietpy3() {
-    local TOOL_NAME="sietpy3"
-    local TOOL_COMMAND="sietpy3 -h"
+    local TOOL_NAME="SIETpy3.py"
+    local TOOL_COMMAND="SIETpy3.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

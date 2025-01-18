@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_spoofy() {
     # Define the arguments
-    TOOL_NAME="spoofy"
+    TOOL_NAME="spoofy.py"
     GIT_URL="https://github.com/MattKeeley/Spoofy.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -26,7 +26,7 @@ function install_spoofy() {
 
 # Test function for spoofy
 function test_spoofy() {
-    local TOOL_NAME="Spoofy"
+    local TOOL_NAME="Spoofy.py"
     local TOOL_COMMAND="spoofy.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?

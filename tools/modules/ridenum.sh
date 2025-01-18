@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ridenum() {
     # Define the arguments
-    TOOL_NAME="ridenum"
+    TOOL_NAME="ridenum.py"
     GIT_URL="https://github.com/trustedsec/ridenum.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_ridenum() {
 
 # Test function for ridenum
 function test_ridenum() {
-    local TOOL_NAME="ridenum"
-    local TOOL_COMMAND="ridenum -h"
+    local TOOL_NAME="ridenum.py"
+    local TOOL_COMMAND="ridenum.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

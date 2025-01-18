@@ -26,8 +26,8 @@ function install_responder() {
 
 # Test function for responder
 function test_responder() {
-    local TOOL_NAME="responder"
-    local TOOL_COMMAND="Responder -h"
+    local TOOL_NAME="Responder.py"
+    local TOOL_COMMAND="Responder.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_timeroast() {
     # Define the arguments
-    TOOL_NAME="timeroast"
+    TOOL_NAME="timeroast.py"
     GIT_URL="https://github.com/SecuraBV/Timeroast.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_timeroast() {
 
 # Test function for timeroast
 function test_timeroast() {
-    local TOOL_NAME="timeroast"
-    local TOOL_COMMAND="timeroast -h"
+    local TOOL_NAME="timeroast.py"
+    local TOOL_COMMAND="timeroast.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

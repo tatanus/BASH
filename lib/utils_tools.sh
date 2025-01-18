@@ -179,6 +179,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                     deactivate
                     _Popd
                     fail "Failed to install ${DIRECTORY_NAME}"
+                    return "${_FAIL}"
                 else
                     info "Installed package ${PACKAGE}"
                 fi
@@ -188,6 +189,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                     deactivate
                     _Popd
                     fail "Failed to install ${DIRECTORY_NAME}"
+                    return "${_FAIL}"
                 else
                     info "Installed package ${PACKAGE}"
                 fi

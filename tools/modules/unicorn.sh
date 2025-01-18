@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_unicorn() {
     # Define the arguments
-    TOOL_NAME="unicorn"
+    TOOL_NAME="unicorn.py"
     GIT_URL="https://github.com/trustedsec/unicorn.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_unicorn() {
 
 # Test function for unicorn
 function test_unicorn() {
-    local TOOL_NAME="unicorn"
-    local TOOL_COMMAND="unicorn -h"
+    local TOOL_NAME="unicorn.py"
+    local TOOL_COMMAND="unicorn.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

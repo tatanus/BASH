@@ -24,8 +24,8 @@ function install_enum4linux() {
 
 # Test function for enum4linux
 function test_enum4linux() {
-    local TOOL_NAME="enum4linux"
-    local TOOL_COMMAND="enum4linux -h"
+    local TOOL_NAME="enum4linux.pl"
+    local TOOL_COMMAND="enum4linux.pl -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

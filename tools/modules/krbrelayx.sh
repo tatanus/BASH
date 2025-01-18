@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_krbrelayx() {
     # Define the arguments
-    TOOL_NAME="krbrelayx"
+    TOOL_NAME="krbrelayx.py"
     GIT_URL="https://github.com/dirkjanm/krbrelayx.git"
     REQUIREMENTS_FILE="requires.txt"
     PIP_INSTALLS=()
@@ -29,8 +29,8 @@ function install_krbrelayx() {
 
 # Test function for krbrelayx
 function test_krbrelayx() {
-    local TOOL_NAME="krbrelayx"
-    local TOOL_COMMAND="krbrelayx -h"
+    local TOOL_NAME="krbrelayx.py"
+    local TOOL_COMMAND="krbrelayx.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

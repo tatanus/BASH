@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_enum4linux_ng() {
     # Define the arguments
-    TOOL_NAME="enum4linux-ng"
+    TOOL_NAME="enum4linux-ng.py"
     GIT_URL="https://github.com/cddmp/enum4linux-ng"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=(".")
@@ -26,8 +26,8 @@ function install_enum4linux_ng() {
 
 # Test function for enum4linux_ng
 function test_enum4linux_ng() {
-    local TOOL_NAME="enum4linux_ng"
-    local TOOL_COMMAND="enum4linux-ng -h"
+    local TOOL_NAME="enum4linux_ng.py"
+    local TOOL_COMMAND="enum4linux-ng.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

@@ -15,10 +15,11 @@ set -uo pipefail
 
 function install_coercer() {
     # Define the arguments
-    TOOL_NAME="Coercer"
+    TOOL_NAME="Coercer.py"
     GIT_URL="https://github.com/p0dalirius/Coercer.git"
     REQUIREMENTS_FILE="requirements.txt"
-    PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe" ".")
+    PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe")
+    #PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe" ".")
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
@@ -26,8 +27,8 @@ function install_coercer() {
 
 # Test function for coercer
 function test_coercer() {
-    local TOOL_NAME="coercer"
-    local TOOL_COMMAND="Coercer -h"
+    local TOOL_NAME="Coercer.py"
+    local TOOL_COMMAND="Coercer.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

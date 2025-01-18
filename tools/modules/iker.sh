@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_iker() {
     # Define the arguments
-    TOOL_NAME="iker"
+    TOOL_NAME="iker.py"
     GIT_URL="https://github.com/Zamanry/iker.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -28,8 +28,8 @@ function install_iker() {
 
 # Test function for iker
 function test_iker() {
-    local TOOL_NAME="iker"
-    local TOOL_COMMAND="iker -h"
+    local TOOL_NAME="iker.py"
+    local TOOL_COMMAND="iker.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

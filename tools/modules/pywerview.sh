@@ -15,10 +15,11 @@ set -uo pipefail
 
 function install_pywerview() {
     # Define the arguments
-    TOOL_NAME="pywerview"
+    TOOL_NAME="pywerview.py"
     GIT_URL="https://github.com/the-useless-one/pywerview"
     REQUIREMENTS_FILE=""
-    PIP_INSTALLS=(".")
+    PIP_INSTALLS=()
+    #PIP_INSTALLS=(".")
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
@@ -26,8 +27,8 @@ function install_pywerview() {
 
 # Test function for pywerview
 function test_pywerview() {
-    local TOOL_NAME="pywerview"
-    local TOOL_COMMAND="pywerview -h"
+    local TOOL_NAME="pywerview.py"
+    local TOOL_COMMAND="pywerview.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 

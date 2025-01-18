@@ -276,7 +276,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     APP_TESTS["bettercap"]="bettercap -h"
     APP_TESTS["certi"]="certi.py -h"
     APP_TESTS["certipy"]="certipy -h"
-    APP_TESTS["GoogleChrome"]="google-chrome --version"
+    APP_TESTS["Chromium_Browser"]="chromium --version"
     APP_TESTS["gowitness"]="gowitness -h"
     APP_TESTS["ldapdomaindump"]="ldapdomaindump -h"
     APP_TESTS["ldapnomnom"]="ldapnomnom -h"

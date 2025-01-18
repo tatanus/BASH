@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ldapper() {
     # Define the arguments
-    TOOL_NAME="ldapper"
+    TOOL_NAME="ldapper.py"
     GIT_URL="https://github.com/shellster/LDAPPER.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_ldapper() {
 
 # Test function for ldapper
 function test_ldapper() {
-    local TOOL_NAME="ldapper"
-    local TOOL_COMMAND="ldapper -h"
+    local TOOL_NAME="ldapper.py"
+    local TOOL_COMMAND="ldapper.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 255
     local status=$?
 

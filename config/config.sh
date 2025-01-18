@@ -106,6 +106,8 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     export INSTALL_MEATASPLOIT=false
     export INSTALL_NESSUS=false
     export SETUP_NESSUS=false
+    export NESSUS_USER="pentest"
+    export NESSUS_PASSWORD="123abc890XYZ"
     export COMPILE_PYTHON=false
     export INSTALL_PYTHON=true
 

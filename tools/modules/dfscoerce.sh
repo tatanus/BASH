@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_dfscoerce() {
     # Define the arguments
-    TOOL_NAME="dfscoerce"
+    TOOL_NAME="dfscoerce.py"
     GIT_URL="https://github.com/Wh04m1001/DFSCoerce.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_dfscoerce() {
 
 # Test function for dfscoerce
 function test_dfscoerce() {
-    local TOOL_NAME="dfscoerce"
-    local TOOL_COMMAND="dfscoerce -h"
+    local TOOL_NAME="dfscoerce.py"
+    local TOOL_COMMAND="dfscoerce.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
     local status=$?
 
