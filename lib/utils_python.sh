@@ -330,11 +330,11 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             if ! _Apt_Install "pipx"; then
                 fail "Failed to install pipx using apt."
             else
-                # Ensure pipx's binary location is in PATH
-                _Remove_From_PATH "${HOME}/.local/bin"
-                if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
-                    export PATH="${PATH}:${HOME}/.local/bin"
-                fi
+                ### Ensure pipx's binary location is in PATH
+                #_Remove_From_PATH "${HOME}/.local/bin"
+                #if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
+                #    export PATH="${PATH}:${HOME}/.local/bin"
+                #fi
 
                 if ! pipx ensurepath --force; then
                     fail "Failed to ensure pipx's PATH. Check your installation."
@@ -540,6 +540,8 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             ERROR_FLAG=true
         fi
 
+        source
+
         ERROR_FLAG=false
         # Install each library
         for lib in "${libs[@]}"; do
@@ -580,7 +582,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         ERROR_FLAG=false
         # Install each package listed
         for package in "${packages[@]}"; do
-            if ! _Pipx_Install "${package}"; then
+            if ! show_spinner "_Pipx_Install ${package}"; then
                 fail "Failed to install ${package} with pipx."
                 ERROR_FLAG=true
             fi

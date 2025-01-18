@@ -251,7 +251,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "mitm6"
         "git+https://github.com/Pennyw0rth/NetExec" # error
         "pypykatz"
-        "https://github.com/ShawnDEvans/smbmap" # error
+        #"https://github.com/ShawnDEvans/smbmap" # error
     )
 
     ## GO TOOLS

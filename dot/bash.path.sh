@@ -17,8 +17,8 @@ set -uo pipefail
 if [[ -z "${BASH_PATH_SH_LOADED:-}" ]]; then
     declare -g BASH_PATH_SH_LOADED=true
 
-    export GOPATH=${HOME}/go
-    export PATH=${HOME}/go/bin:/usr/local/go/bin:${PATH}:${HOME}/.local/bin
+    export GOPATH="${HOME}/go"
+    export PATH="${HOME}/go/bin:/usr/local/go/bin:${PATH}:${HOME}/.local/bin"
 
     # macOS-specific paths
     # primarily for flock and dircolors

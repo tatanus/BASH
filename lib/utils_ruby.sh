@@ -40,7 +40,7 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
 
             # Install the package using Ruby Gem
             # shellcheck disable=SC2086 # this breaks if you put quotes around ${gem}
-            if ${PROXY} gem install ${gem} > /dev/null 2>&1; then
+            if show_spinner "${PROXY} gem install ${gem} > /dev/null 2>&1"; then
                 pass "Successfully installed ${gem}."
             else
                 fail "Failed to install ${gem}."

@@ -134,6 +134,9 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
                 # Update menu item timestamp persistently
                 _Update_Menu_Timestamp "${title}" "${choice}"
 
+                # Move to the next line
+                echo
+
                 # Perform the action associated with the choice
                 "${action_function}" "${choice}"
 

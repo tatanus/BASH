@@ -110,7 +110,7 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
             info "Installing ${tool}...May take a while, be patient."
 
             # Install the package using Go
-            if ${PROXY} go install "${tool}" > /dev/null 2>&1; then
+            if show_spinner "${PROXY} go install ${tool} > /dev/null 2>&1"; then
                 pass "Successfully installed ${tool}."
             else
                 fail "Failed to install ${tool}."
