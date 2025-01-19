@@ -26,7 +26,7 @@ function install_pcredz() {
 
 # Test function for pcredz
 function test_pcredz() {
-    local TOOL_NAME="pcredz"
+    local TOOL_NAME="Pcredz"
     local TOOL_COMMAND="Pcredz -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?

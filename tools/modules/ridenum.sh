@@ -28,7 +28,7 @@ function install_ridenum() {
 function test_ridenum() {
     local TOOL_NAME="ridenum.py"
     local TOOL_COMMAND="ridenum.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

@@ -28,7 +28,7 @@ function install_ldapper() {
 function test_ldapper() {
     local TOOL_NAME="ldapper.py"
     local TOOL_COMMAND="ldapper.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 255
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

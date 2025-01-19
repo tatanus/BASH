@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_bloodhound() {
     # Define the arguments
-    TOOL_NAME="bloodhound"
+    TOOL_NAME="bloodhound.py"
     GIT_URL="https://github.com/fox-it/BloodHound.py"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=(".")
@@ -26,9 +26,9 @@ function install_bloodhound() {
 
 # Test function for bloodhound
 function test_bloodhound() {
-    local TOOL_NAME="bloodhound"
-    local TOOL_COMMAND="bloodhound -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
+    local TOOL_NAME="bloodhound.py"
+    local TOOL_COMMAND="bloodhound.py -h"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

@@ -18,7 +18,7 @@ function install_pywerview() {
     TOOL_NAME="pywerview.py"
     GIT_URL="https://github.com/the-useless-one/pywerview"
     REQUIREMENTS_FILE=""
-    PIP_INSTALLS=()
+    PIP_INSTALLS=("bs4")
     #PIP_INSTALLS=(".")
 
     # Call the function
@@ -29,7 +29,7 @@ function install_pywerview() {
 function test_pywerview() {
     local TOOL_NAME="pywerview.py"
     local TOOL_COMMAND="pywerview.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

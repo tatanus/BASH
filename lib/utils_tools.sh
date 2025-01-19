@@ -172,29 +172,31 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         fi
 
         # Install additional pip packages if provided
-        for PACKAGE in "${PIP_INSTALLS[@]}"; do
-            if [[ "${PACKAGE}" == "." ]]; then
-                if ! _Pip_Install "${TOOLS_DIR}/${DIRECTORY_NAME}/." ""; then
-                    fail "Failed to install package: ${TOOLS_DIR}/${DIRECTORY_NAME}/."
-                    deactivate
-                    _Popd
-                    fail "Failed to install ${DIRECTORY_NAME}"
-                    return "${_FAIL}"
+        if [[ ${#PIP_INSTALLS[@]} -gt 0 ]]; then
+            for PACKAGE in "${PIP_INSTALLS[@]}"; do
+                if [[ "${PACKAGE}" == "." ]]; then
+                    if ! _Pip_Install "${TOOLS_DIR}/${DIRECTORY_NAME}/." ""; then
+                        fail "Failed to install package: ${TOOLS_DIR}/${DIRECTORY_NAME}/."
+                        deactivate
+                        _Popd
+                        fail "Failed to install ${DIRECTORY_NAME}"
+                        return "${_FAIL}"
+                    else
+                        info "Installed package ${PACKAGE}"
+                    fi
                 else
-                    info "Installed package ${PACKAGE}"
+                    if ! _Pip_Install "${PACKAGE}" ""; then
+                        fail "Failed to install package: ${PACKAGE}"
+                        deactivate
+                        _Popd
+                        fail "Failed to install ${DIRECTORY_NAME}"
+                        return "${_FAIL}"
+                    else
+                        info "Installed package ${PACKAGE}"
+                    fi
                 fi
-            else
-                if ! _Pip_Install "${PACKAGE}" ""; then
-                    fail "Failed to install package: ${PACKAGE}"
-                    deactivate
-                    _Popd
-                    fail "Failed to install ${DIRECTORY_NAME}"
-                    return "${_FAIL}"
-                else
-                    info "Installed package ${PACKAGE}"
-                fi
-            fi
-        done
+            done
+        fi
 
         deactivate
 

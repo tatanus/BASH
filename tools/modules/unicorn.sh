@@ -28,7 +28,7 @@ function install_unicorn() {
 function test_unicorn() {
     local TOOL_NAME="unicorn.py"
     local TOOL_COMMAND="unicorn.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

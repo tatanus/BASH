@@ -27,8 +27,8 @@ function install_ciscot7() {
 # Test function for ciscot7
 function test_ciscot7() {
     local TOOL_NAME="ciscot7.py"
-    local TOOL_COMMAND="ciscot7.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    local TOOL_COMMAND="ciscot7.py --help"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

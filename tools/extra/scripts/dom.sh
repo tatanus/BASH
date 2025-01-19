@@ -152,7 +152,7 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
             --ssh-keys "${ssh_key}" \
             --wait \
             --format ID,Name,PublicIPv4 \
-            --user-data '#!/bin/bash
+            --user-data '#!/usr/bin/env bash
 apt-get update && apt-get install -y ncat eza bat fzf proxychains4
 cd /root/
 git clone https://github.com/tatanus/BASH.git

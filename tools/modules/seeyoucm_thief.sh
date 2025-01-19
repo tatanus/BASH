@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_seeyoucm_thief() {
     # Define the arguments
-    TOOL_NAME="thief"
+    TOOL_NAME="thief.py"
     GIT_URL="https://github.com/trustedsec/SeeYouCM-Thief.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=()
@@ -27,8 +27,8 @@ function install_seeyoucm_thief() {
 # Test function for seeyoucm_thief
 function test_seeyoucm_thief() {
     local TOOL_NAME="seeyoucm_thief"
-    local TOOL_COMMAND="thief -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
+    local TOOL_COMMAND="thief.py -h"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

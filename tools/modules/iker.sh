@@ -30,7 +30,7 @@ function install_iker() {
 function test_iker() {
     local TOOL_NAME="iker.py"
     local TOOL_COMMAND="iker.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_pre2k() {
     # Define the arguments
-    TOOL_NAME="pre2k"
+    TOOL_NAME="pre2k.py"
     GIT_URL="https://github.com/garrettfoster13/pre2k-TS.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=("rich" "pycryptodome")
@@ -26,9 +26,9 @@ function install_pre2k() {
 
 # Test function for pre2k
 function test_pre2k() {
-    local TOOL_NAME="pre2k"
-    local TOOL_COMMAND="pre2k -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
+    local TOOL_NAME="pre2k.py"
+    local TOOL_COMMAND="pre2k.py -h"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

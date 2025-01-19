@@ -17,13 +17,12 @@ function install_siet() {
     _Git_Clone https://github.com/Sab0tag3d/SIET.git
 
     _add_tool_function "siet.py" "SIET/siet.py"
-
 }
 
 # Test function for siet
 function test_siet() {
-    local TOOL_NAME="siet"
-    local TOOL_COMMAND="siet -h"
+    local TOOL_NAME="siet.py"
+    local TOOL_COMMAND="siet.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 

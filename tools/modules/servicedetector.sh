@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_servicedetector() {
     # Define the arguments
-    TOOL_NAME="serviceDetector"
+    TOOL_NAME="serviceDetector.py"
     GIT_URL="https://github.com/tothi/serviceDetector.git"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,8 +26,8 @@ function install_servicedetector() {
 
 # Test function for servicedetector
 function test_servicedetector() {
-    local TOOL_NAME="servicedetector"
-    local TOOL_COMMAND="serviceDetector -h"
+    local TOOL_NAME="servicedetector.py"
+    local TOOL_COMMAND="serviceDetector.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
 

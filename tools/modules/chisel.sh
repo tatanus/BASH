@@ -36,8 +36,11 @@ function install_chisel() {
         return "${_FAIL}"
     fi
 
+    # Find the first matching file for chisel_*_linux_amd64
+    chisel_filename=$(find "${TOOLS_DIR}/chisel" -type f -name "chisel_*_linux_amd64" -exec basename {} \; | head -n 1)
+
     # Add alias for chisel
-    _add_tool_function "chisel" "chisel/chisel_*_linux_amd64"
+    _add_tool_function "chisel" "chisel/${chisel_filename}"
     pass "chisel installed and alias added successfully."
 }
 

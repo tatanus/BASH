@@ -15,7 +15,7 @@ set -uo pipefail
 
 function install_ldap_scanner() {
     # Define the arguments
-    TOOL_NAME="ldap-scanner"
+    TOOL_NAME="ldap-scanner.py"
     GIT_URL="https://github.com/Rcarnus/ldap-scanner"
     REQUIREMENTS_FILE=""
     PIP_INSTALLS=()
@@ -26,9 +26,9 @@ function install_ldap_scanner() {
 
 # Test function for ldap_scanner
 function test_ldap_scanner() {
-    local TOOL_NAME="ldap_scanner"
-    local TOOL_COMMAND="ldap-scanner -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
+    local TOOL_NAME="ldap-scanner.py"
+    local TOOL_COMMAND="ldap-scanner.py -h"
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest

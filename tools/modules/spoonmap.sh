@@ -21,7 +21,7 @@ function install_spoonmap() {
 
 # Test function for spoonmap
 function test_spoonmap() {
-    local TOOL_NAME="spoonmap"
+    local TOOL_NAME="spoonmap.py"
     local TOOL_COMMAND="ls ${TOOLS_DIR}/spoonmap/spoonmap.py"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?

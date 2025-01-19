@@ -31,7 +31,7 @@ function install_krbrelayx() {
 function test_krbrelayx() {
     local TOOL_NAME="krbrelayx.py"
     local TOOL_COMMAND="krbrelayx.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 2
+    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
     local status=$?
 
     # Return the status from AppTest
