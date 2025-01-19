@@ -129,7 +129,6 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
         done
 
         echo -e "\nSummary:\n    Region:  ${region}\n    OS:      ${os}\n    Version: ${os_version}\n    Size:    ${size}\n    SSH Key: ${ssh_key}\n    Name:    ${droplet_name}\n"
-        echo -e "    Cloning: https://github.com/tatanus/BASH.git to /root/BASH\n"
 
         # Loop until a valid confirmation is provided
         while true; do
