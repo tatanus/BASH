@@ -40,12 +40,12 @@
 # Make sure this is bash that's running and return otherwise.
 # Use POSIX syntax for this line:
 if [ -z "${BASH_VERSION-}" ]; then
-    return 1;
+    return 1
 fi
 
 # We only support Bash 3.1+.
 # Note: BASH_VERSINFO is first available in Bash-2.0.
-if [[ -z "${BASH_VERSINFO-}" ]] || (( BASH_VERSINFO[0] < 3 || (BASH_VERSINFO[0] == 3 && BASH_VERSINFO[1] < 1) )); then
+if [[ -z "${BASH_VERSINFO-}" ]] || ((BASH_VERSINFO[0] < 3 || (BASH_VERSINFO[0] == 3 && BASH_VERSINFO[1] < 1))); then
     return 1
 fi
 
@@ -78,13 +78,13 @@ __bp_install_string=$'__bp_trap_string="$(trap -p DEBUG)"\ntrap - DEBUG\n__bp_in
 # Fails if any of the given variables are readonly
 # Reference https://stackoverflow.com/a/4441178
 __bp_require_not_readonly() {
-  local var
-  for var; do
-    if ! ( unset "$var" 2> /dev/null ); then
-      echo "bash-preexec requires write access to ${var}" >&2
-      return 1
-    fi
-  done
+    local var
+    for var; do
+        if ! (unset "$var" 2> /dev/null); then
+            echo "bash-preexec requires write access to ${var}" >&2
+            return 1
+        fi
+    done
 }
 
 # Remove ignorespace and or replace ignoreboth from HISTCONTROL
@@ -93,11 +93,11 @@ __bp_require_not_readonly() {
 __bp_adjust_histcontrol() {
     local histcontrol
     histcontrol="${HISTCONTROL:-}"
-    histcontrol="${histcontrol//ignorespace}"
+    histcontrol="${histcontrol//ignorespace/}"
     # Replace ignoreboth with ignoredups
     if [[ "$histcontrol" == *"ignoreboth"* ]]; then
-        histcontrol="ignoredups:${histcontrol//ignoreboth}"
-    fi;
+        histcontrol="ignoredups:${histcontrol//ignoreboth/}"
+    fi
     export HISTCONTROL="$histcontrol"
 }
 
@@ -121,7 +121,6 @@ __bp_trim_whitespace() {
     printf -v "$var" '%s' "$text"
 }
 
-
 # Trims whitespace and removes any leading or trailing semicolons from $2 and
 # writes the resulting string to the variable name passed as $1. Used for
 # manipulating substrings in PROMPT_COMMAND
@@ -138,9 +137,8 @@ __bp_sanitize_string() {
 # It sets a variable to indicate that the prompt was just displayed,
 # to allow the DEBUG trap to know that the next command is likely interactive.
 __bp_interactive_mode() {
-    __bp_preexec_interactive_mode="on";
+    __bp_preexec_interactive_mode="on"
 }
-
 
 # This function is installed as part of the PROMPT_COMMAND.
 # It will invoke any functions defined in the precmd_functions array.
@@ -155,8 +153,8 @@ __bp_precmd_invoke_cmd() {
     # Don't invoke precmds if we are inside an execution of an "original
     # prompt command" by another precmd execution loop. This avoids infinite
     # recursion.
-    if (( __bp_inside_precmd > 0 )); then
-      return
+    if ((__bp_inside_precmd > 0)); then
+        return
     fi
     local __bp_inside_precmd=1
 
@@ -166,7 +164,7 @@ __bp_precmd_invoke_cmd() {
 
         # Only execute this function if it actually exists.
         # Test existence of functions with: declare -[Ff]
-        if type -t "$precmd_function" 1>/dev/null; then
+        if type -t "$precmd_function" 1> /dev/null; then
             __bp_set_ret_value "$__bp_last_ret_value" "$__bp_last_argument_prev_command"
             # Quote our function invocation to prevent issues with IFS
             "$precmd_function"
@@ -212,8 +210,8 @@ __bp_preexec_invoke_exec() {
     # https://stackoverflow.com/questions/40944532/bash-preserve-in-a-debug-trap#40944702
     __bp_last_argument_prev_command="${1:-}"
     # Don't invoke preexecs if we are inside of another preexec.
-    if (( __bp_inside_preexec > 0 )); then
-      return
+    if ((__bp_inside_preexec > 0)); then
+        return
     fi
     local __bp_inside_preexec=1
 
@@ -270,7 +268,7 @@ __bp_preexec_invoke_exec() {
 
         # Only execute each function if it actually exists.
         # Test existence of function with: declare -[fF]
-        if type -t "$preexec_function" 1>/dev/null; then
+        if type -t "$preexec_function" 1> /dev/null; then
             __bp_set_ret_value "${__bp_last_ret_value:-}"
             # Quote our function invocation to prevent issues with IFS
             "$preexec_function" "$this_command"
@@ -293,7 +291,7 @@ __bp_preexec_invoke_exec() {
 __bp_install() {
     # Exit if we already have this installed.
     if [[ "${PROMPT_COMMAND[*]:-}" == *"__bp_precmd_invoke_cmd"* ]]; then
-        return 1;
+        return 1
     fi
 
     trap '__bp_preexec_invoke_exec "$_"' DEBUG
@@ -302,7 +300,7 @@ __bp_install() {
     local prior_trap
     # we can't easily do this with variable expansion. Leaving as sed command.
     # shellcheck disable=SC2001
-    prior_trap=$(sed "s/[^']*'\(.*\)'[^']*/\1/" <<<"${__bp_trap_string:-}")
+    prior_trap=$(sed "s/[^']*'\(.*\)'[^']*/\1/" <<< "${__bp_trap_string:-}")
     unset __bp_trap_string
     if [[ -n "$prior_trap" ]]; then
         eval '__bp_original_debug_trap() {
@@ -323,7 +321,7 @@ __bp_install() {
         # Set so debug trap will work be invoked in subshells.
         set -o functrace > /dev/null 2>&1
         shopt -s extdebug > /dev/null 2>&1
-    fi;
+    fi
 
     local existing_prompt_command
     # Remove setting our trap install string and sanitize the existing prompt command string
@@ -341,7 +339,7 @@ __bp_install() {
     # actually entered something.
     PROMPT_COMMAND='__bp_precmd_invoke_cmd'
     PROMPT_COMMAND+=${existing_prompt_command:+$'\n'$existing_prompt_command}
-    if (( BASH_VERSINFO[0] > 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 1) )); then
+    if ((BASH_VERSINFO[0] > 5 || (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 1))); then
         PROMPT_COMMAND+=('__bp_interactive_mode')
     else
         # shellcheck disable=SC2179 # PROMPT_COMMAND is not an array in bash <= 5.0
@@ -371,7 +369,7 @@ __bp_install_after_session_init() {
     if [[ -n "$sanitized_prompt_command" ]]; then
         # shellcheck disable=SC2178 # PROMPT_COMMAND is not an array in bash <= 5.0
         PROMPT_COMMAND=${sanitized_prompt_command}$'\n'
-    fi;
+    fi
     # shellcheck disable=SC2179 # PROMPT_COMMAND is not an array in bash <= 5.0
     PROMPT_COMMAND+=${__bp_install_string}
 }
@@ -379,4 +377,4 @@ __bp_install_after_session_init() {
 # Run our install so long as we're not delaying it.
 if [[ -z "${__bp_delay_install:-}" ]]; then
     __bp_install_after_session_init
-fi;
+fi

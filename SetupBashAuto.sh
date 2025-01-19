@@ -604,12 +604,14 @@ function _Install_All_Tools() {
 
     if [[ ! -f "${script_path}" ]]; then
         fail "Script file not found: ${script_path}"
+        # shellcheck disable=SC2104
         continue
     fi
 
     # Source the script so we can access its functions
     if ! source "${script_path}"; then
         fail "Failed to source script: ${script_path}"
+        # shellcheck disable=SC2104
         continue
     fi
 
