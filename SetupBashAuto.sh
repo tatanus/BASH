@@ -591,6 +591,9 @@ function _Install_All_Tools() {
         if ! _Exec_Function "${item}"; then
             fail "Failed to execute predefined installation function: ${item}"
         fi
+
+        # Update menu item timestamp persistently
+        _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${item}"
     done
 
     # ------------------------------------------------------------------------------
@@ -632,6 +635,9 @@ function _Install_All_Tools() {
     # Step 4: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
     # ------------------------------------------------------------------------------
     for script_file in "${TOOL_MENU_ITEMS[@]}"; do
+
+        # Update menu item timestamp persistently
+        _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
 
         # Check if the script_file is "impacket" and skip if it is
         if [[ "${script_file}" == "impacket" ]]; then
