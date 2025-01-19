@@ -1,0 +1,11 @@
+#cloud-config
+package_update: true
+packages:
+  - bat
+  - eza
+  - ncat
+  - proxychains4
+  - fzf
+runcmd:
+  - git clone https://github.com/tatanus/BASH.git /root/BASH
+  - cd /root/BASH && ./SetupBashAuto.sh -bash

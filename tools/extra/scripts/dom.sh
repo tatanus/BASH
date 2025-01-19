@@ -152,13 +152,7 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
             --ssh-keys "${ssh_key}" \
             --wait \
             --format ID,Name,PublicIPv4 \
-            --user-data '#!/usr/bin/env bash
-apt-get update && apt-get install -y ncat eza bat fzf proxychains4
-cd /root/
-git clone https://github.com/tatanus/BASH.git
-cd BASH
-./SetupBashAuto.sh -bash
-' \
+            --user-data-file dom.yaml \
             --wait; then
             echo "[ERROR] Failed to create droplet."
         else
