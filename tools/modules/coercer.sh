@@ -19,7 +19,6 @@ function install_coercer() {
     GIT_URL="https://github.com/p0dalirius/Coercer.git"
     REQUIREMENTS_FILE="requirements.txt"
     PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe")
-    #PIP_INSTALLS=("six" "pycryptodomex" "pyasn1" "markupsafe" ".")
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"

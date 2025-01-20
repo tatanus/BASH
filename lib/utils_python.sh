@@ -368,10 +368,10 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         fi
 
         # Ensure pipx's binary location is in PATH
-        _Remove_From_PATH "${HOME}/.local/bin"
-        if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
-            export PATH="${PATH}:${HOME}/.local/bin"
-        fi
+        #_Remove_From_PATH "${HOME}/.local/bin"
+        #if [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
+        #    export PATH="${PATH}:${HOME}/.local/bin"
+        #fi
 
         if ! pipx ensurepath --force; then
             fail "Failed to ensure pipx's PATH. Check your installation."

@@ -619,16 +619,32 @@ function _Install_All_Tools() {
     fi
 
     # Build the install function name, e.g. "install_mytool"
+    # Build the test and install function names
     local install_function="install_${script_file}"
+    local test_function="test_${script_file}"
 
-    # Check if that function is actually defined
-    if declare -f "${install_function}" > /dev/null; then
-        info "Executing installation function: ${install_function}"
-        if ! "${install_function}"; then
-            fail "Installation function failed: ${install_function}"
+    # Check if the test function is defined and run it
+    if declare -f "${test_function}" > /dev/null; then
+        if "${test_function}"; then
+            info "Tool ${script_file} is already installed. Skipping."
+        else
+            # Install the tool if the test fails
+            info "Installing tool: ${install_function}"
+            if declare -f "${install_function}" > /dev/null; then
+                if ! "${install_function}"; then
+                    fail "Installation failed for tool: ${script_file}"
+                else
+                    pass "Successfully installed: ${script_file}"
+
+                    # Update menu item timestamp persistently
+                    _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
+                fi
+            else
+                fail "Installation function not found: ${install_function}"
+            fi
         fi
     else
-        fail "Installation function not found in script: ${install_function}"
+        warn "Test function not found: ${test_function}. Skipping test."
     fi
 
     # ------------------------------------------------------------------------------
@@ -661,17 +677,34 @@ function _Install_All_Tools() {
         fi
 
         # Build the install function name, e.g. "install_mytool"
+        # Build the test and install function names
         local install_function="install_${script_file}"
+        local test_function="test_${script_file}"
 
-        # Check if that function is actually defined
-        if declare -f "${install_function}" > /dev/null; then
-            info "Executing installation function: ${install_function}"
-            if ! "${install_function}"; then
-                fail "Installation function failed: ${install_function}"
+        # Check if the test function is defined and run it
+        if declare -f "${test_function}" > /dev/null; then
+            if "${test_function}"; then
+                info "Tool ${script_file} is already installed. Skipping."
+            else
+                # Install the tool if the test fails
+                info "Installing tool: ${install_function}"
+                if declare -f "${install_function}" > /dev/null; then
+                    if ! "${install_function}"; then
+                        fail "Installation failed for tool: ${script_file}"
+                    else
+                        pass "Successfully installed: ${script_file}"
+                    fi
+                else
+                    fail "Installation function not found: ${install_function}"
+                fi
             fi
         else
-            fail "Installation function not found in script: ${install_function}"
+            warn "Test function not found: ${test_function}. Skipping test."
         fi
+
+        # Update menu item timestamp persistently
+        _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
+
     done
 
     # If you want a final success message (assuming non-critical failures are okay)

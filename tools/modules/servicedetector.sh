@@ -26,7 +26,7 @@ function install_servicedetector() {
 
 # Test function for servicedetector
 function test_servicedetector() {
-    local TOOL_NAME="servicedetector.py"
+    local TOOL_NAME="serviceDetector.py"
     local TOOL_COMMAND="serviceDetector.py -h"
     AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
     local status=$?
