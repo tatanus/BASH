@@ -2,12 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Build Status](https://github.com/tatanus/BASH/actions/workflows/main.yml/badge.svg)
-![ShellCheck](https://github.com/tatanus/BASH/actions/workflows/shellcheck.yml/badge.svg)
-![shfmt Status](https://github.com/tatanus/BASH/actions/workflows/format.yml/badge.svg)
-![Security Scan](https://github.com/tatanus/BASH/actions/workflows/security.yml/badge.svg)
-[![Code Quality](https://api.codacy.com/project/badge/Grade/<project-id>)](https://www.codacy.com/gh/tatanus/BASH/dashboard)
 [![Coverage](https://coveralls.io/repos/github/tatanus/BASH/badge.svg?branch=main)](https://coveralls.io/github/tatanus/BASH)
-
 ![Last Commit](https://img.shields.io/github/last-commit/tatanus/BASH)
 
 
