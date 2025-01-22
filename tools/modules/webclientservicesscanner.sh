@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:52  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["webclientservicesscanner"]="vulnerability-analysis"
+
 function install_webclientservicesscanner() {
     _Git_Clone https://github.com/Hackndo/WebclientServiceScanner.git
     _Pushd "${TOOLS_DIR}"/WebclientServiceScanner

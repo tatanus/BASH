@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:46  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["responder"]="exploitation"
+
 function install_responder() {
     _Git_Clone https://github.com/lgandx/Responder.git
     _Pushd "${TOOLS_DIR}"/Responder

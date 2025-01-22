@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:39  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["nanodump"]="post-exploitation"
+
 function install_nanodump() {
     _Git_Clone https://github.com/fortra/nanodump.git
     _Pushd "${TOOLS_DIR}/nanodump"

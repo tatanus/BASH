@@ -13,6 +13,9 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["httpx"]="intelligence-gathering"
+tool_categories["nuclei"]="intelligence-gathering"
+
 function install_httpx_nuclei() {
     info "httpx and nuclei are installed via go"
     return

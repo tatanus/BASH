@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:25  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["chisel"]="post-exploitation"
+
 function install_chisel() {
     # Download and install chisel for Linux
     if _Git_Release "jpillora/chisel" "linux_amd64" "${TOOLS_DIR}/chisel"; then

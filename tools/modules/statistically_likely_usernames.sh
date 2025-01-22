@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["statistically_likely_usernames"]="intelligence-gathering"
+
 function install_statistically_likely_usernames() {
     _Git_Clone https://github.com/insidetrust/statistically-likely-usernames
 }

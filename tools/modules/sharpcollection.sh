@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["sharpcollection"]="post-exploitation intelligence-gathering"
+
 function install_sharpcollection() {
     _Git_Clone https://github.com/Flangvik/SharpCollection.git
 }

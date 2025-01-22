@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["ffuf"]="intelligence-gathering exploitation"
+
 function install_ffuf() {
     if _Git_Release "ffuf/ffuf" "linux_amd64" "${TOOLS_DIR}/ffuf"; then
         tar -C "${TOOLS_DIR}"/ffuf -xzvf "${TOOLS_DIR}"/ffuf/ffuf_*linux_amd64.tar.gz

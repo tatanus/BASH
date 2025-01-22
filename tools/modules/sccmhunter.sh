@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["sccmhunter"]="vulnerability-analysis"
+
 function install_sccmhunter() {
     # Define the arguments
     TOOL_NAME="sccmhunter.py"

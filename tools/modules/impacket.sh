@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["impacket"]="exploitation post-exploitation"
+
 function install_impacket() {
     # Define the Git repository URL for Impacket
     local GIT_URL="https://github.com/fortra/impacket.git"

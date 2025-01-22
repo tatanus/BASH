@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["bloodhound"]="post-exploitation intelligence-gathering"
+
 function install_bloodhound() {
     # Define the arguments
     TOOL_NAME="bloodhound.py"

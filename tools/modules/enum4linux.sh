@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["enum4linux"]="intelligence-gathering"
+
 function install_enum4linux() {
     _Git_Clone https://github.com/CiscoCXSecurity/enum4linux.git
     _Curl "https://raw.githubusercontent.com/Wh1t3Fox/polenum/master/polenum.py" "/usr/local/bin/polenum"

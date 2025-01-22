@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:34  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["dotnet"]="post-exploitation exploitation"
+
 function install_dotnet() {
     # Get Ubuntu version
     ubuntu_version=$(lsb_release -rs)

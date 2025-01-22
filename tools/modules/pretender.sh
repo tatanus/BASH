@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:44  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["pretender"]="exploitation"
+
 function install_pretender() {
     _Git_Clone https://github.com/RedTeamPentesting/pretender.git
     _Pushd "${TOOLS_DIR}"/pretender

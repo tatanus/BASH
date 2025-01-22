@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["ldaprelayscan"]="intelligence-gathering exploitation"
+
 function install_ldaprelayscan() {
     # Define the arguments
     TOOL_NAME="LdapRelayScan.py"

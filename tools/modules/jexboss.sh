@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["jexboss"]="exploitation"
+
 function install_jexboss() {
     # Define the arguments
     TOOL_NAME="jexboss.py"

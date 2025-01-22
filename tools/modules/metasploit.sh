@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:36  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["metasploit"]="exploitation post-exploitation"
+
 ###############################################################################
 # setup_msfdb_service
 #==============================
@@ -35,7 +37,7 @@ RemainAfterExit=true
 WantedBy=multi-user.target"
 
     info "Creating msfdb systemd service..."
-    echo "${systemd_service_content}" | sudo tee /etc/systemd/system/msfdb.service >/dev/null  || {
+    echo "${systemd_service_content}" | sudo tee /etc/systemd/system/msfdb.service > /dev/null || {
         fail "Failed to create msfdb.service file."
         return "${_FAIL}"
     }
@@ -150,7 +152,7 @@ function install_metasploit() {
     else
         # Update existing Metasploit installation
         info "Updating Metasploit Framework..."
-        if command -v msfupdate >/dev/null  2>&1; then
+        if command -v msfupdate > /dev/null 2>&1; then
             if ! ${PROXY} msfupdate; then
                 fail "Failed to update Metasploit Framework."
                 return "${_FAIL}"

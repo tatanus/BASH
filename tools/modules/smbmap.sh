@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:50  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["smbmap"]="intelligence-gathering"
+
 function install_smbmap() {
     _Git_Clone https://github.com/ShawnDEvans/smbmap
     _Pushd "${TOOLS_DIR}"/smbmap

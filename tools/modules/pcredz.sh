@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["pcredz"]="intelligence-gathering"
+
 function install_pcredz() {
     # Define the arguments
     TOOL_NAME="Pcredz"

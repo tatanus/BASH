@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-19 10:38:56  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["spoofy"]="intelligence-gathering"
+
 function install_spoofy() {
     # Define the arguments
     TOOL_NAME="spoofy.py"

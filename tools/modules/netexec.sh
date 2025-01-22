@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:41  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["netexec"]="exploitation"
+
 function install_netexec() {
     info "netexec is installed via pipx"
     return

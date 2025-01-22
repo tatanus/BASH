@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:29  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["crackmapexec"]="post-exploitation"
+
 function install_crackmapexec() {
     _Git_Clone https://github.com/byt3bl33d3r/CrackMapExec.git
     _Pushd "${TOOLS_DIR}"/CrackMapExec

@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-19 10:52:12  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["iker"]="vulnerability-analysis"
+
 function install_iker() {
     # Define the arguments
     TOOL_NAME="iker.py"

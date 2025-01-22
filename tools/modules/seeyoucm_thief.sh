@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["seeyoucm_thief"]="exploitation"
+
 function install_seeyoucm_thief() {
     # Define the arguments
     TOOL_NAME="thief.py"

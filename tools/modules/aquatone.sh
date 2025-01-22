@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["aquatone"]="intelligence-gathering"
+
 function install_aquatone() {
     _Git_Clone https://github.com/shelld3v/aquatone.git
 

@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:31  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["donpapi"]="exploitation post-exploitation"
+
 function install_donpapi() {
     _Git_Clone https://github.com/login-securite/DonPAPI.git
     _Pushd "${TOOLS_DIR}"/DonPAPI

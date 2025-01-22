@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["servicedetector"]="post-exploitation"
+
 function install_servicedetector() {
     # Define the arguments
     TOOL_NAME="serviceDetector.py"

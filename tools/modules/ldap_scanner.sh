@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["ldap_scanner"]="intelligence-gathering"
+
 function install_ldap_scanner() {
     # Define the arguments
     TOOL_NAME="ldap-scanner.py"

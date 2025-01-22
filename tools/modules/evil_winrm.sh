@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["evil-winrm"]="post-exploitation"
+
 function install_evil_winrm() {
     info "evil-winrm is installed via ruby"
     return

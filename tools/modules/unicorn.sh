@@ -13,6 +13,8 @@ set -uo pipefail
 # 2025-01-01 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["unicorn"]="post-exploitation"
+
 function install_unicorn() {
     # Define the arguments
     TOOL_NAME="unicorn.py"

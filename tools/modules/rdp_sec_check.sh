@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["rdp_sec_check"]="vulnerability-analysis"
+
 function install_rdp_sec_check() {
     _Git_Clone https://github.com/CiscoCXSecurity/rdp-sec-check.git
     export PERL_MM_USE_DEFAULT=1

@@ -288,6 +288,45 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     APP_TESTS["secretsdump"]="secretsdump.py -h"
     APP_TESTS["tshark"]="tshark -h"
 
+    # List of tool categories
+    TOOL_CATEGORIES=(
+        "ALL"
+        "intelligence-gathering"
+        "vulnerability-analysis"
+        "password-recovery"
+        "exploitation"
+        "post-exploitation"
+        "wireless"
+    )
+
+    declare -A tool_categories
+    tool_categories["adidnsdump"]="post-exploitation"
+    tool_categories["aircrack-ng"]="wireless exploitation"
+    tool_categories["bettercap"]="exploitation post-exploitation"
+    tool_categories["certipy"]="post-exploitation"
+    tool_categories["certi"]="post-exploitation"
+    tool_categories["dirb"]="intelligence-gathering"
+    tool_categories["dnsenum"]="intelligence-gathering exploitation"
+    tool_categories["dnsrecon"]="intelligence-gathering exploitation"
+    tool_categories["gowitness"]="intelligence-gathering"
+    tool_categories["hcxdumptool"]="wireless exploitation"
+    tool_categories["hcxtools"]="wireless"
+    tool_categories["hydra"]="password-recovery"
+    tool_categories["kismet"]="wireless"
+    tool_categories["ldapdomaindump"]="intelligence-gathering exploitation"
+    tool_categories["ldapnomnom"]="vulnerability-analysis"
+    tool_categories["lsassy"]="post-exploitation intelligence-gathering"
+    tool_categories["manspider"]="intelligence-gathering post-exploitation"
+    tool_categories["masscan"]="intelligence-gathering exploitation"
+    tool_categories["medusa"]="password-recovery"
+    tool_categories["minidump"]="post-exploitation"
+    tool_categories["minikerberos"]="post-exploitation"
+    tool_categories["mitm6"]="exploitation"
+    tool_categories["nmap"]="vulnerability-analysis"
+    tool_categories["nori"]="post-exploitation"
+    tool_categories["pypykatz"]="post-exploitation"
+    tool_categories["wifite"]="wireless exploitation"
+
     ###################################################################
     # MENUS
     ###################################################################
@@ -323,6 +362,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "Setup BASH Environment"
         "Setup PENTEST Environment"
         "Install Tools"
+        "Install Tools Categories"
         "Test Tool Installs"
         "Pentest Menu"
     )

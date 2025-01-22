@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["enum4linux_ng"]="intelligence-gathering"
+
 function install_enum4linux_ng() {
     # Define the arguments
     TOOL_NAME="enum4linux-ng.py"

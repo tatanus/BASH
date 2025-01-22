@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["nessus"]="exploitation"
+
 function install_nessus() {
     # Check required environment variables
     check_env_var "INSTALL_NESSUS" || return "${_FAIL}"
@@ -42,7 +44,7 @@ function install_nessus() {
     fi
     if ${SETUP_NESSUS}; then
                 # Add a new user (automated user addition)
-        /opt/nessus/sbin/nessuscli adduser "${NESSUS_USER}" <<EOF
+        /opt/nessus/sbin/nessuscli adduser "${NESSUS_USER}" << EOF
 ${NESSUS_PASSWORD}
 ${NESSUS_PASSWORD}
 y

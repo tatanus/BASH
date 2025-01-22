@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["ntlmv1_multi"]="password-recovery post-exploitation"
+
 function install_ntlmv1_multi() {
     _Git_Clone https://github.com/evilmog/ntlmv1-multi
 }
