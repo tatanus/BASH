@@ -4,6 +4,8 @@ shell=bash
 # Allow sourcing files not explicitly passed to ShellCheck
 external-sources=true
 
+
+
 # Enable specific style and best practice recommendations
 # Suggest adding a default case in `case` statements
 enable=add-default-case
@@ -32,18 +34,16 @@ enable=require-variable-braces
 # Require [[ over [ for Bash/Ksh scripts
 enable=require-double-brackets
 
+
+
+# Additional rules
+enable=SC2035   # Warn against .* in commands like rm
+enable=SC2148   # Ensure valid shebang
+enable=SC2231   # Warn about loop condition issues
+
 # Disable specific warnings
-# Disable warnings about sourcing dynamic or non-constant files
-disable=SC1090
-
-# Disable warnings about sourcing files that may not exist
-disable=SC1091
-
-# Disable warnings about unused variables
-disable=SC2034
-
-# Disable warnings about checking exit codes with $? -eq 0
-disable=SC2181
-
-# Disable warnings about unassigned variables
-disable=SC2154
+disable=SC1090  # Allow sourcing dynamic/non-constant files
+disable=SC1091  # Allow sourcing files that may not exist
+disable=SC2034  # Allow unused variables
+disable=SC2181  # Allow $? exit code checks
+disable=SC2154  # Allow unassigned variable warnings

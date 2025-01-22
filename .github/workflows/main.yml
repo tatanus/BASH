@@ -1,4 +1,4 @@
-name: CI Build and Test
+name: Bash Project CI
 
 on:
   push:
@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  build:
-    name: Run Tests
+  lint:
+    name: Lint Bash Scripts with ShellCheck
     runs-on: ubuntu-latest
 
     steps:
@@ -18,14 +18,96 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      # Set up dependencies
-      - name: Install Dependencies
+      # Install ShellCheck
+      - name: Install ShellCheck
         run: |
           sudo apt update
-          sudo apt install -y bash
+          sudo apt install -y shellcheck
 
-      # Run Tests
-      - name: Execute Tests
+      # Run ShellCheck on all scripts
+      - name: Run ShellCheck
         run: |
-          ./tests/run_tests.sh
-          # Replace with your actual test commands
+          find . -name "*.sh" -print0 | xargs -0 shellcheck
+
+  format:
+    name: Check Formatting with shfmt
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Install shfmt
+      - name: Install shfmt
+        run: |
+          sudo apt update
+          sudo apt install -y shfmt
+
+      # Run shfmt to check formatting
+      - name: Run shfmt
+        run: |
+          shfmt -d -i 4 -ci -bn -kp .
+
+  # test:
+  #   name: Run Unit Tests with BATS
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     # Checkout code
+  #     - name: Checkout Code
+  #       uses: actions/checkout@v3
+
+  #     # Install BATS
+  #     - name: Install BATS
+  #       run: |
+  #         sudo apt update
+  #         sudo apt install -y bats
+
+  #     # Run BATS tests
+  #     - name: Run BATS Tests
+  #       run: |
+  #         bats test/
+
+  security:
+    name: Security Scan with bash-security
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Install bash-security
+      - name: Install bash-security
+        run: |
+          pip install bash-security
+
+      # Run bash-security
+      - name: Run bash-security Scan
+        run: |
+          bash-security scan .
+
+  validate_permissions:
+    name: Validate File Permissions and Shebangs
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Ensure all shell scripts are executable
+      - name: Ensure Executable Permissions
+        run: |
+          find . -name "*.sh" -exec chmod +x {} \;
+
+      # Validate all scripts have a shebang
+      - name: Validate Shebangs
+        run: |
+          missing_shebangs=$(find . -name "*.sh" ! -exec head -n 1 {} \; | grep -v "^#!")
+          if [[ -n "$missing_shebangs" ]]; then
+            echo "The following files are missing a shebang:"
+            echo "$missing_shebangs"
+            exit 1
+          fi
