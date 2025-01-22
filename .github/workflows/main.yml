@@ -86,8 +86,7 @@ jobs:
       # Validate all scripts have a shebang
       - name: Validate Shebangs
         run: |
-          missing_shebangs=$(find . -name "*.sh" ! -path "./dot/bash-preexec.sh" ! -path "./another/ignored-file.sh" -exec sh -c 'head -n 1 "$1" | grep -q "^#!" || echo "Missing shebang: $1"' _ {} \;
-)
+          missing_shebangs=$(find . -name "*.sh" ! -path "./dot/bash-preexec.sh" ! -path "./another/ignored-file.sh" -exec sh -c 'head -n 1 "$1" | grep -q "^#!" || echo "Missing shebang: $1"' _ {} \;)
           if [[ -n "$missing_shebangs" ]]; then
             echo "The following files are missing a shebang:"
             echo "$missing_shebangs"
