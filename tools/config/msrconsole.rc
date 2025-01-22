@@ -1,0 +1,122 @@
+[framework/core]
+# Enable session logging to record activities in Metasploit sessions
+SessionLogging=true
+
+# Set logging verbosity (1: least verbose, 5: most verbose)
+LogLevel=5
+
+# Add timestamps to all console and log outputs
+TimestampOutput=true
+
+# Define the format of timestamps for logs and prompts
+PromptTimeFormat=%d-%b-%y %T
+
+# Customize the console prompt with a readable and meaningful format
+prompt=%grn[%T] %grnPentester %whiMSF%whi %L (s:%grn%S %whij:%grn%J%whi)
+
+# Enable stage encoding to bypass security mechanisms
+EnableStageEncoding=true
+
+# Customize Meterpreter's user-agent string to mimic legitimate web traffic
+MeterpreterUserAgent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36
+
+# Set Meterpreter's server name to mimic a common server header
+ MeterpreterServerName=Microsoft-IIS/10.0
+
+# Disable the automatic setup of payload handlers (useful for advanced users)
+DisablePayloadHandler=true
+
+# Session management
+SessionTimeout=600
+DisablePayloadUUIDTracking=true
+
+# Enable warnings for deprecated modules or settings
+EnableWarnings=true
+
+# Set the maximum number of simultaneous sessions to limit resource usage
+MaxSessions=50
+
+# Automatically retry failed payloads up to 3 times
+PayloadRetryCount=3
+
+
+
+
+
+[framework/dns/rules]
+# (Optional) Define DNS-specific rules here for custom resolution logic
+# Example:
+# example.com=192.168.1.1
+# *.test.internal=192.168.0.100
+
+# Log DNS resolutions for auditing purposes
+LogDNSResolutions=true
+
+
+
+
+
+[framework/dns/static_hostnames]
+# (Optional) Define static hostname resolutions for custom testing scenarios
+# Example:
+# static.localhost=127.0.0.1
+
+
+
+
+
+[framework/features]
+# Enable or disable framework-wide features
+EnableExperimentalFeatures=true
+EnableModuleCaching=true
+EnableDatabaseModuleSearch=true
+
+# Automatically load commonly used auxiliary or exploit modules (if needed)
+AutoLoadModules=true
+
+# Allow Metasploit to utilize all available CPU cores for performance improvements
+EnableMultithreading=true
+
+# Enable improved session management features
+EnableSessionTracking=true
+
+
+
+
+
+[framework/ui/console]
+# Customize console-specific behavior
+SaveCommandHistory=true
+CommandHistoryLimit=1000
+SaveCommandHistoryFile=true
+CommandHistoryFile=~/.msf4/history
+
+# Disable colored console output for compatibility with log files
+DisableColors=true
+
+# Enable tab completion for commands and module paths
+EnableTabCompletion=true
+
+# Show detailed help for commands (useful for beginners or scripting)
+EnableCommandHelp=true
+
+
+
+
+
+[framework/modules]
+# Define global options for modules
+AutoRunScripts=false
+ThreadCount=10
+
+# Automatically cleanup expired sessions to reduce resource usage
+AutoCleanupSessions=true
+
+# Timeout for slow-running modules (in seconds)
+ModuleExecutionTimeout=300
+
+# Automatically save results from successful module executions
+AutoSaveResults=true
+
+# Set a default payload encoding to bypass simple detection mechanisms
+DefaultPayloadEncoding=x86/shikata_ga_nai
