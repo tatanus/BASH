@@ -186,7 +186,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         # Find all backup files matching <filename>.old-<num>
         local backups
-        mapfile -t backups < <(ls "${filename}.old-"* 2> /dev/null || true)
+        mapfile -t backups < <(ls "${filename}.old-"* 2>/dev/null  || true)
 
         # Check if there are any backups
         if [[ ${#backups[@]} -eq 0 ]]; then

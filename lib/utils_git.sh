@@ -43,7 +43,7 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         mkdir -p "${TOOLS_DIR}/${dname}"
 
         # Attempt to clone the repository
-        if ${PROXY} git clone --recurse-submodules -q "${url}" "${TOOLS_DIR}/${dname}" > /dev/null 2>&1; then
+        if ${PROXY} git clone --recurse-submodules -q "${url}" "${TOOLS_DIR}/${dname}" >/dev/null  2>&1; then
             pass "Cloned repository ${url} into ${TOOLS_DIR}/${dname}."
             return "${_PASS}"
         else
@@ -68,10 +68,10 @@ if [[ -z "${UTILS_GIT_SH_LOADED:-}" ]]; then
         mkdir -p "${path}"
 
         # Attempt to download the release asset
-        if ${PROXY} curl -sSL "https://api.github.com/repos/${full_repo_name}/releases/latest" |
-              jq -r '.assets[].browser_download_url' |
-              grep "${release_name}" |
-              xargs -r wget --no-check-certificate -P "${path}" > /dev/null 2>&1; then
+        api_response=$(${PROXY} curl -sSL "https://api.github.com/repos/${full_repo_name}/releases/latest")
+        download_urls=$(echo "${api_response}" | jq -r '.assets[].browser_download_url' | grep "${release_name}")
+
+        if echo "${download_urls}" | xargs -r wget --no-check-certificate -P "${path}" >/dev/null  2>&1; then
             pass "Downloaded latest release '${release_name}' from repository '${full_repo_name}' to '${path}'."
             return "${_PASS}"
         else

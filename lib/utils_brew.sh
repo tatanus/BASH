@@ -32,7 +32,7 @@ if [[ -z "${UTILS_BREW_SH_LOADED:-}" ]]; then
         fi
 
         # Check if Homebrew is installed
-        if ! command -v brew > /dev/null 2>&1; then
+        if ! command -v brew >/dev/null  2>&1; then
             fail "Homebrew is not installed. Please install Homebrew and try again."
             return "${_FAIL}"
         fi

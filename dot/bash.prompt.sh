@@ -28,7 +28,7 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     blue=$(tput setaf 4)
     light_red=$(tput setaf 1)
     yellow=$(tput setaf 3)
-    orange=$(tput setaf 214 2> /dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
+    orange=$(tput setaf 214 2>/dev/null  || tput setaf 3) # Fallback to yellow if 214 isn't supported
     white=$(tput setaf 7)
     reset=$(tput sgr0)
 
@@ -93,16 +93,16 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     ###############################################################################
     function gen_prompt() {
         # Get the active session name
-        session_name=$(get_session_name 2> /dev/null)
+        session_name=$(get_session_name 2>/dev/null)
 
         # Construct the prompt
         PS1="\n"
         # SCREEN SESSION STATUS
-        PS1+="$(check_session 2> /dev/null)"
+        PS1+="$(check_session 2>/dev/null)"
         # KERBEROS CREDENTIAL CACHE
-        PS1+="$(check_kerb_ccache 2> /dev/null)"
+        PS1+="$(check_kerb_ccache 2>/dev/null)"
         # PYTHON VENV
-        PS1+="$(check_venv 2> /dev/null)"
+        PS1+="$(check_venv 2>/dev/null)"
         # DATE TIME
         PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
         # INTERNAL IP
@@ -119,13 +119,13 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
 
     # Call get_local_ip if it's been more than 5 minutes
     if (($(date +%s) - LAST_LOCAL_IP_CHECK > 300)); then
-        PROMPT_LOCAL_IP=$(get_local_ip 2> /dev/null || echo "Unavailable")
+        PROMPT_LOCAL_IP=$(get_local_ip 2>/dev/null  || echo "Unavailable")
         LAST_LOCAL_IP_CHECK=$(date +%s)
     fi
 
     # Call get_external_ip if it's been more than 60 minutes
     if (($(date +%s) - LAST_EXT_IP_CHECK > 3600)); then
-        PROMPT_EXTERNAL_IP=$(get_external_ip 2> /dev/null || echo "Unavailable")
+        PROMPT_EXTERNAL_IP=$(get_external_ip 2>/dev/null  || echo "Unavailable")
         LAST_EXT_IP_CHECK=$(date +%s)
     fi
 

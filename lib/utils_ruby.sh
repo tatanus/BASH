@@ -49,7 +49,7 @@ if [[ -z "${UTILS_RUBY_SH_LOADED:-}" ]]; then
 
             # Verify installation
             # shellcheck disable=SC2086 # this breaks if you put quotes around ${gem}
-            if ! gem list -i ${gem} > /dev/null 2>&1; then
+            if ! gem list -i ${gem} >/dev/null  2>&1; then
                 fail "Verification failed: ${gem} is not installed."
             fi
         done

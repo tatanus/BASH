@@ -54,7 +54,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             echo "function ${function_name}() {"
             echo "    run_tools_command \"\${TOOLS_DIR}/${tool_path}\" \"\$@\";"
             echo "}"
-        } >> "${PENTEST_ALIAS_FILE}"
+        } >>"${PENTEST_ALIAS_FILE}"
 
         # Confirm the function was added
         if grep -qE "^function ${function_name}\s*\(\)\s*{" "${PENTEST_ALIAS_FILE}"; then

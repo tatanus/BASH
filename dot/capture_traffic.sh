@@ -107,7 +107,7 @@ if [[ -z "${CAPTURETRAFFIC_SH_LOADED:-}" ]]; then
             -Y "ip.src==${SRC_IP} && ip.dst==${DST_IP} && tcp.srcport==${SRC_PORT} && tcp.dstport==${DST_PORT} || \
             ip.src==${DST_IP} && ip.dst==${SRC_IP} && tcp.srcport==${DST_PORT} && tcp.dstport==${SRC_PORT}" \
             -T fields -e frame.time -e ip.src -e tcp.srcport -e ip.dst -e tcp.dstport -e text \
-            2> /dev/null | awk '
+            2>/dev/null  | awk '
             BEGIN { OFS = ""; print "Timestamp\tSource\t\tDestination\t\tPayload" }
             {
                 timestamp = $1 " " $2

@@ -89,7 +89,7 @@ pass "All checks passed. Continuing script execution."
 if [[ -n "${HOME}" ]]; then
     # If HOME is set, use it
     info "HOME environment variable is set. Using HOME: ${HOME}"
-elif command -v getent > /dev/null 2>&1; then
+elif command -v getent >/dev/null  2>&1; then
     # If getent is available, use it to retrieve the home directory
     HOME_TEMP=$(getent passwd "$(whoami)" | cut -d: -f6)
     export HOME="${HOME_TEMP}"
@@ -344,7 +344,7 @@ function Setup_Cron_Jobs() {
 
     # Create or update the cron job
     if {
-        crontab -l 2> /dev/null | grep -v "${BASH_DIR}/renew_tgt.sh"
+        crontab -l 2>/dev/null  | grep -v "${BASH_DIR}/renew_tgt.sh"
         echo "0 */8 * * * ${BASH_DIR}/renew_tgt.sh >> ${BASH_LOG_DIR}/renew_tgt.log 2>&1"
     } | crontab -; then
         pass "Cron job for ${BASH_DIR}/renew_tgt.sh created or updated."
@@ -359,7 +359,7 @@ function Setup_Cron_Jobs() {
 # This function ensures that Docker containers can operate by setting the iptables FORWARD policy to ACCEPT.
 function Setup_Docker() {
     # Ensure iptables is available
-    if ! command -v iptables &> /dev/null; then
+    if ! command -v iptables &>/dev/null; then
         fail "iptables command not found. Ensure it is installed and accessible."
         return "${_FAIL}"
     fi
@@ -624,13 +624,13 @@ function _Install_All_Tools() {
     local test_function="test_${script_file}"
 
     # Check if the test function is defined and run it
-    if declare -f "${test_function}" > /dev/null; then
+    if declare -f "${test_function}" >/dev/null; then
         if "${test_function}"; then
             info "Tool ${script_file} is already installed. Skipping."
         else
             # Install the tool if the test fails
             info "Installing tool: ${install_function}"
-            if declare -f "${install_function}" > /dev/null; then
+            if declare -f "${install_function}" >/dev/null; then
                 if ! "${install_function}"; then
                     fail "Installation failed for tool: ${script_file}"
                 else
@@ -682,13 +682,13 @@ function _Install_All_Tools() {
         local test_function="test_${script_file}"
 
         # Check if the test function is defined and run it
-        if declare -f "${test_function}" > /dev/null; then
+        if declare -f "${test_function}" >/dev/null; then
             if "${test_function}"; then
                 info "Tool ${script_file} is already installed. Skipping."
             else
                 # Install the tool if the test fails
                 info "Installing tool: ${install_function}"
-                if declare -f "${install_function}" > /dev/null; then
+                if declare -f "${install_function}" >/dev/null; then
                     if ! "${install_function}"; then
                         fail "Installation failed for tool: ${script_file}"
                     else
@@ -755,7 +755,7 @@ function _Process_Tool_Install_Menu() {
             local install_function="install_${tool_name}"
 
             # Check if the install function exists
-            if declare -f "${install_function}" > /dev/null; then
+            if declare -f "${install_function}" >/dev/null; then
                 info "Executing installation function: ${install_function}"
                 if ! "${install_function}"; then
                     fail "Installation function failed: ${install_function}"

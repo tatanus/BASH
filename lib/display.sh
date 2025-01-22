@@ -27,7 +27,7 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
     blue=$(tput setaf 4)
     light_red=$(tput setaf 1)
     yellow=$(tput setaf 3)
-    orange=$(tput setaf 214 2> /dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
+    orange=$(tput setaf 214 2>/dev/null  || tput setaf 3) # Fallback to yellow if 214 isn't supported
     white=$(tput setaf 7)
     reset=$(tput sgr0)
 
@@ -88,7 +88,7 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
         fi
 
         # Write to log file
-        echo "${log_entry}" >> "${LOG_FILE}"
+        echo "${log_entry}" >>"${LOG_FILE}"
 
     }
 
@@ -113,7 +113,7 @@ if [[ -z "${DISPLAY_SH_LOADED:-}" ]]; then
         local line_number
         local function_name
         local file_name
-        read -r line_number function_name file_name <<< "$(echo "${caller_info}" | awk '{print $1, $2, $3}')"
+        read -r line_number function_name file_name <<<"$( echo "${caller_info}" | awk '{print $1, $2, $3}')"
 
         # Include detailed debug information
         local debug_message="CALLER: ${file_name}:${line_number} (${function_name}) - ${message}"

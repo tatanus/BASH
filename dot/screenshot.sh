@@ -24,7 +24,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
     # Function to verify required tools are available
     function check_required_screenshot_tools() {
         for cmd in ansifilter a2ps convert; do
-            if ! command -v "${cmd}" &> /dev/null; then
+            if ! command -v "${cmd}" &>/dev/null; then
                 echo "Error: Required tool '${cmd}' is not installed or not in PATH." >&2
                 return 1
             fi
@@ -43,7 +43,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         temp_ps_file=$(mktemp)
 
         # Process the input through ansifilter
-        echo "${input}" | ansifilter --html > "${temp_html_file}" 2> /dev/null
+        echo "${input}" | ansifilter --html >"${temp_html_file}"  2>/dev/null
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to process input with ansifilter." >&2
             rm -f "${temp_html_file}" "${temp_ps_file}"
@@ -51,7 +51,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         fi
 
         # Convert HTML to PostScript using a2ps
-        a2ps --no-header "${temp_html_file}" -o "${temp_ps_file}" > /dev/null 2>&1
+        a2ps --no-header "${temp_html_file}" -o "${temp_ps_file}" >/dev/null  2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to convert HTML to PostScript using a2ps." >&2
             rm -f "${temp_html_file}" "${temp_ps_file}"
@@ -59,7 +59,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
         fi
 
         # Convert PostScript to PNG using ImageMagick's convert
-        convert -density 300 "${temp_ps_file}" -quality 100 "${output_file}" > /dev/null 2>&1
+        convert -density 300 "${temp_ps_file}" -quality 100 "${output_file}" >/dev/null  2>&1
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to convert PostScript to PNG using ImageMagick's convert." >&2
             rm -f "${temp_html_file}" "${temp_ps_file}"
@@ -93,7 +93,7 @@ if [[ -z "${SCREENSHOT_SH_LOADED:-}" ]]; then
 
         # Execute the command and capture its output
         local command_output
-        command_output=$(eval "$1" 2> /dev/null)
+        command_output=$(eval "$1" 2>/dev/null)
         if [[ $? -ne 0 ]]; then
             echo "Error: Failed to execute command: $1" >&2
             return 1

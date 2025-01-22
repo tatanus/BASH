@@ -32,10 +32,11 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         fi
 
         # Check if the package is already installed
-        if ! dpkg -s "${package}" > /dev/null 2>&1; then
+        if ! dpkg -s "${package}" >/dev/null  2>&1; then
             info "Installing ${package} using apt..."
-            if ${PROXY} sudo apt update -qq > /dev/null 2>&1 &&
-                ${PROXY} sudo apt install -y "${package}" > /dev/null 2>&1; then
+            if { ${PROXY} sudo apt update -qq >/dev/null  2>&1 \
+                                                               && ${PROXY} sudo apt install -y "${package}" >/dev/null 2>&1; }; then
+
                 pass "Installed ${package} using apt."
                 return "${_PASS}"
             else
@@ -66,9 +67,9 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
 
         # Validate each package and add to the valid list if it exists
         for package in "${APT_PACKAGES[@]}"; do
-            if ${PROXY} apt show "${package}" 2> /dev/null | grep -q "State:.*(virtual)"; then
+            if ${PROXY} apt show "${package}" 2>/dev/null  | grep -q "State:.*(virtual)"; then
                 info "${package} is a virtual package and will be skipped."
-            elif ! ${PROXY} apt-cache policy "${package}" 2> /dev/null | grep "Candidate: [^ ]" > /dev/null 2>&1; then
+            elif ! ${PROXY} apt-cache policy "${package}" 2>/dev/null  | grep "Candidate: [^ ]" >/dev/null  2>&1; then
                 info "${package} is not a valid package and will be skipped."
             else
                 apt_packages_valid+=("${package}")
@@ -85,7 +86,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Verify that each package is properly installed
         local overall_status=0
         for package in "${apt_packages_valid[@]}"; do
-            if ! dpkg -s "${package}" > /dev/null 2>&1; then
+            if ! dpkg -s "${package}" >/dev/null  2>&1; then
                 fail "${package} is not installed."
                 overall_status=1
             else

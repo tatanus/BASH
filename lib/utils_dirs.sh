@@ -20,7 +20,7 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
     # Push to a directory, creating it if it doesn't exist
     function _Pushd() {
         mkdir -p "$1"
-        if pushd "$1" > /dev/null 2>&1; then
+        if pushd "$1" >/dev/null  2>&1; then
             return "${_PASS}"
         else
             return "${_FAIL}"
@@ -29,7 +29,7 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
     # Pop directory from the stack
     function _Popd() {
-        if popd > /dev/null 2>&1; then
+        if popd >/dev/null  2>&1; then
             return "${_PASS}"
         else
             return "${_FAIL}"

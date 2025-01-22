@@ -298,7 +298,7 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
 
     # Dependency Check
     for cmd in doctl fzf; do
-        if ! command -v "${cmd}" &> /dev/null; then
+        if ! command -v "${cmd}" &>/dev/null; then
             echo "[ERROR] ${cmd} is not installed. Please install it before running this script."
             exit 1
         fi

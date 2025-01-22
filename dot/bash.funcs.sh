@@ -44,7 +44,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         fi
 
         # WSL detection: 'Microsoft' in /proc/version
-        if grep -qi Microsoft /proc/version 2> /dev/null; then
+        if grep -qi Microsoft /proc/version 2>/dev/null; then
             echo "wsl"
             return
         fi
@@ -93,13 +93,13 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        if ! command -v sw_vers &> /dev/null; then
+        if ! command -v sw_vers &>/dev/null; then
             echo "[- FAIL ] Unable to determine macOS version. 'sw_vers' not found." >&2
             return "${_FAIL}"
         fi
 
         local macos_version
-        macos_version="$(sw_vers -productVersion 2> /dev/null || true)"
+        macos_version="$(sw_vers -productVersion 2>/dev/null  || true)"
 
         # Basic validation
         if [[ -z "${macos_version}" ]]; then
@@ -132,8 +132,8 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
             # Extract the version from /etc/os-release
             # e.g. VERSION_ID="20.04"
             ubuntu_version="$(grep -oP 'VERSION_ID="\K[^"]+' /etc/os-release || true)"
-        elif command -v lsb_release &> /dev/null; then
-            ubuntu_version="$(lsb_release -rs 2> /dev/null || true)"
+        elif command -v lsb_release &>/dev/null; then
+            ubuntu_version="$(lsb_release -rs 2>/dev/null  || true)"
         fi
 
         # Check if we got anything
@@ -167,13 +167,13 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        if ! command -v cmd.exe &> /dev/null; then
+        if ! command -v cmd.exe &>/dev/null; then
             echo "[- FAIL ] Unable to determine Windows version. 'cmd.exe' not found." >&2
             return "${_FAIL}"
         fi
 
         local ver_output
-        ver_output="$(cmd.exe /c "ver" 2> /dev/null || true)"
+        ver_output="$(cmd.exe /c "ver" 2>/dev/null  || true)"
         # Typical output: "Microsoft Windows [Version 10.0.19045.3086]"
         local windows_version
         windows_version="$(echo "${ver_output}" | grep -oP '\[Version\s\K[^\]]+' || true)"
@@ -241,7 +241,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         local cmd="$1"
 
         # If the command is missing, we figure out how to install it
-        if ! command -v "${cmd}" &> /dev/null; then
+        if ! command -v "${cmd}" &>/dev/null; then
             local os
             os="$(_get_os)"
 
@@ -367,7 +367,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         echo # Move to the next line after key press
 
         # Clear pause message from terminal
-        if command -v tput &> /dev/null; then
+        if command -v tput &>/dev/null; then
             tput cuu 3
             tput el
             tput el
@@ -498,7 +498,7 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
         printf "Processing... (0s) "
 
         i=0
-        while kill -0 "${pid}" 2> /dev/null; do
+        while kill -0 "${pid}" 2>/dev/null; do
             i=$(((i + 1) % 4))
             local current_time
             current_time=$(date +%s)

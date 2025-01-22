@@ -42,7 +42,7 @@ function install_nessus() {
     fi
     if ${SETUP_NESSUS}; then
                 # Add a new user (automated user addition)
-        /opt/nessus/sbin/nessuscli adduser "${NESSUS_USER}" << EOF
+        /opt/nessus/sbin/nessuscli adduser "${NESSUS_USER}" <<EOF
 ${NESSUS_PASSWORD}
 ${NESSUS_PASSWORD}
 y
