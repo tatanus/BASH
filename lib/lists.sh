@@ -91,7 +91,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     # Define the list of configuration files to copy
     TOOL_CONFIG_FILES=(
-        "tools/config/msf.config:${HOME}/.msf4/config"
+        "tools/config/msfconsole.rc:${HOME}/.msf4/config"
         "tools/config/cme.conf:${HOME}/.cme/cme.conf"
         "tools/config/nxc.conf:${HOME}/.nxc/nxc.conf"
         "tools/config/Responder.conf:${TOOLS_DIR}/Responder/Responder.conf"
