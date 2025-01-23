@@ -132,7 +132,7 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
         # Format the new host entry
         local new_entry
         new_entry=$(
-                cat <<EOF
+                cat << EOF
 
 Host ${host_name}
     Hostname localhost
@@ -143,7 +143,7 @@ EOF
         )
 
         # Append the new entry to the SSH config file
-        echo -e "${new_entry}" >>"${SSH_CONFIG_FILE}"
+        echo -e "${new_entry}" >> "${SSH_CONFIG_FILE}"
 
         # Inform the user of success
         echo "New host entry for ${host_name} added to ${SSH_CONFIG_FILE}."

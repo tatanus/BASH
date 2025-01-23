@@ -47,27 +47,29 @@ jobs:
       # Run shfmt to check formatting
       - name: Run shfmt
         run: |
-          shfmt -d -i 4 -ci -bn -kp .
+          shfmt -i 4 -ci -bn -kp -sr -ln bash -d .
 
-  # test:
-  #   name: Run Unit Tests with BATS
-  #   runs-on: ubuntu-latest
+          # Explanation of flags:
+          # ---------------------
+          # -i 4       # Indent with 4 spaces (default is 2). Ensures consistent indentation style.
+          # -ci        # Indent `case` blocks (useful for readability within `case` statements).
+          # -bn        # Keep `do`, `then`, and similar keywords on the same line as the preceding command.
+          #            # Example: `if true; then` instead of splitting to `if true; \n then`.
+          # -kp        # Preserve padding in alignment for tables or comments (helps keep things visually aligned).
+          #            # Example:
+          #            # VAR1="value1"  # aligned comment
+          #            # VAR2="value2"
+          # -sr        # Disable adding spaces around redirection operators (`>` and `<`).
+          #            # Example: `>file` instead of `> file`.
+          # -ln bash   # Specify the shell dialect as `bash` (default is `posix` for maximum portability).
+          #            # Ensures proper parsing for Bash-specific features.
+          # -d         # Diff mode: Show differences between the current script formatting and the `shfmt` output.
+          #            # This is useful in CI pipelines or for dry runs to check formatting issues without modifying files.
+          # .          # The target directory (current directory in this case). shfmt will recursively format all `.sh` files.
 
-  #   steps:
-  #     # Checkout code
-  #     - name: Checkout Code
-  #       uses: actions/checkout@v3
-
-  #     # Install BATS
-  #     - name: Install BATS
-  #       run: |
-  #         sudo apt update
-  #         sudo apt install -y bats
-
-  #     # Run BATS tests
-  #     - name: Run BATS Tests
-  #       run: |
-  #         bats test/
+          # Notes:
+          # - Remove the `-d` flag if you want shfmt to automatically apply formatting instead of displaying diffs.
+          # - Replace the `.` with a specific directory or file path to limit the scope of the formatting check.
 
   validate_permissions:
     name: Validate File Permissions and Shebangs

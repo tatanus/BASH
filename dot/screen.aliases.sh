@@ -139,7 +139,7 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
 
         # Validate input PID and check if the process exists
         #if [[ -z "${pid}" || ! -n $(ps -p "${pid}") ]]; then
-        if [[ -z "${pid}" ]] || ! ps -p "${pid}" &>/dev/null; then
+        if [[ -z "${pid}" ]] || ! ps -p "${pid}" &> /dev/null; then
             echo "Usage: get_commands <pid>" && return 1
             return 1
         fi
@@ -156,7 +156,7 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
             # If no children, it's a leaf process, so capture its command
             if [[ ${#children[@]} -eq 0 ]]; then
                 local command
-                command=$(ps -p "${p}" -o args= 2>/dev/null)
+                command=$(ps -p "${p}" -o args= 2> /dev/null)
                 [[ -n "${command}" ]] && commands+=("${command}")
             else
                 # Recursively find leaves of child processes

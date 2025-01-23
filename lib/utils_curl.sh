@@ -33,7 +33,7 @@ if [[ -z "${UTILS_CURL_SH_LOADED:-}" ]]; then
         fi
 
         # Attempt to download the file
-        if ${PROXY} curl -sSL "${url}" -o "${filename}" >/dev/null  2>&1; then
+        if ${PROXY} curl -sSL "${url}" -o "${filename}" > /dev/null 2>&1; then
             pass "Downloaded ${url} to ${filename}."
             return "${_PASS}"
         else

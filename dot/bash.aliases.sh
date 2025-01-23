@@ -33,9 +33,9 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
     check_command "eza" && alias ls="convert_ls_to_eza"
 
     # Check and set alias for bat or batcat
-    if command -v bat &>/dev/null; then
+    if command -v bat &> /dev/null; then
         alias cat='bat --paging=never --style=plain --theme=ansi-dark'
-    elif command -v batcat &>/dev/null; then
+    elif command -v batcat &> /dev/null; then
         alias cat='batcat --paging=never --style=plain --theme=ansi-dark'
     else
         echo "Neither 'bat' nor 'batcat' is installed. Defauting back to the base 'cat' functionality." >&2

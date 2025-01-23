@@ -116,7 +116,7 @@ done
 # =============================================================================
 # Step 7: Clone specific subdirectories
 for entry in "${SUBDIRS[@]}"; do
-    IFS="|" read -r repo path dest <<<"${entry}"
+    IFS="|" read -r repo path dest <<< "${entry}"
     log_info "Cloning repository '${repo}' to extract '${path}' into '${dest}'..."
 
     TEMP_REPO="${dest}/temp_repo"

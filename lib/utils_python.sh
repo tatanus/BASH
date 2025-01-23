@@ -51,7 +51,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
     # Returns "--break-system-packages" if supported, otherwise "".
     ###############################################################################
     function check_pip_break_system_packages() {
-        if python"${PYTHON_VERSION}" -m pip help install 2>&1 | grep "break-system-packages" >/dev/null  2>&1; then
+        if python"${PYTHON_VERSION}" -m pip help install 2>&1 | grep "break-system-packages" > /dev/null 2>&1; then
             echo "--break-system-packages"
         else
             echo ""
@@ -111,7 +111,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         _Wait_Pid
 
         # Only install pip for Python 2.7 if needed
-        if command -v python2.7 >/dev/null  2>&1; then
+        if command -v python2.7 > /dev/null 2>&1; then
             if _Install_Pip "python2.7"; then
                 pass "pip was installed successfully."
             else
@@ -246,13 +246,13 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         local python_version
 
         # Check if the specified Python command is available
-        if ! command -v "${python_cmd}" >/dev/null  2>&1; then
+        if ! command -v "${python_cmd}" > /dev/null 2>&1; then
             fail "Python command '${python_cmd}' is not found. Ensure that the specified Python version is installed."
             return "${_FAIL}"
         fi
 
         # Determine Python version
-        python_version=$("${python_cmd}" -c "import sys; print('{}.{}'.format(*sys.version_info[:2]))" 2>/dev/null)
+        python_version=$("${python_cmd}" -c "import sys; print('{}.{}'.format(*sys.version_info[:2]))" 2> /dev/null)
         if [[ -z "${python_version}" ]]; then
             fail "Failed to determine Python version for '${python_cmd}'."
             return "${_FAIL}"
@@ -261,7 +261,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         info "Detected Python version: ${python_version} for command: ${python_cmd}"
 
         # Check if pip is already installed
-        if "${python_cmd}" -m pip --version >/dev/null  2>&1; then
+        if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
             pass "pip is already installed for Python ${python_version}."
             return "${_PASS}"
         fi
@@ -282,7 +282,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         fi
 
         # Verify pip installation
-        if "${python_cmd}" -m pip --version >/dev/null  2>&1; then
+        if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
             pass "pip installed successfully for Python ${python_version} using apt."
             return "${_PASS}"
         fi
@@ -311,7 +311,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         rm -f "${get_pip_file}"
         pass "Installed pip for Python ${python_version} using get-pip.py."
 
-        if "${python_cmd}" -m pip --version >/dev/null  2>&1; then
+        if "${python_cmd}" -m pip --version > /dev/null 2>&1; then
             pass "pip installed successfully for Python ${python_version}."
             return "${_PASS}"
         else
@@ -326,13 +326,13 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         local python_cmd="${1:-${PYTHON}}"
 
         # Check if the specified Python version is installed
-        if ! command -v "${python_cmd}" >/dev/null  2>&1; then
+        if ! command -v "${python_cmd}" > /dev/null 2>&1; then
             fail "Python command '${python_cmd}' is not found. Ensure that the specified Python version is installed."
             return "${_FAIL}"
         fi
 
         # Attempt to install pipx using apt if not already installed
-        if ! command -v pipx >/dev/null  2>&1; then
+        if ! command -v pipx > /dev/null 2>&1; then
             info "Attempting to install pipx using apt..." # should work for Ubuntu >= 23.04
             if ! _Apt_Install "pipx"; then
                 fail "Failed to install pipx using apt."
@@ -350,7 +350,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
                 eval "$(register-python-argcomplete pipx)"
 
                 # Verify pipx installation
-                if command -v pipx >/dev/null  2>&1; then
+                if command -v pipx > /dev/null 2>&1; then
                     pass "pipx installed successfully using apt."
                     return "${_PASS}"
                 else
@@ -364,7 +364,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
 
         # Fallback method: Install pipx using pip if the apt method fails
         info "Attempting to install pipx using pip..." # Needed for Ubuntu < 23.04
-        if ! "${python_cmd}" -m pip --version >/dev/null  2>&1; then
+        if ! "${python_cmd}" -m pip --version > /dev/null 2>&1; then
             fail "pip is not available for Python command '${python_cmd}'. Install pip before proceeding."
             return "${_FAIL}"
         fi
@@ -385,11 +385,11 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        pipx completions bash >>~/.bashrc
+        pipx completions bash >> ~/.bashrc
         eval "$(register-python-argcomplete pipx)"
 
         # Verify pipx installation
-        if command -v pipx >/dev/null  2>&1; then
+        if command -v pipx > /dev/null 2>&1; then
             pass "pipx installed successfully using pip."
             return "${_PASS}"
         else
@@ -415,14 +415,14 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         # Attempt to install the library using pip
         # shellcheck disable=SC2086 # this breaks if you put quotes around ${local_PIP_ARGS}
         # TODO FIX
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip ${local_PIP_ARGS} "${lib}" >/dev/null  2>&1; then
+        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip ${local_PIP_ARGS} "${lib}" > /dev/null 2>&1; then
             fail "Failed to install ${lib} using python${python_version} -m pip."
             return "${_FAIL}"
         fi
 
         # Skip verification if $lib ends with '/.'
         if [[ ! "${lib}" =~ /.$ ]]; then
-            if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${lib}" >/dev/null  2>&1; then
+            if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${lib}" > /dev/null 2>&1; then
                 fail "${lib} is not installed for python${python_version}. Verification failed."
                 return "${_FAIL}"
             fi
@@ -469,7 +469,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         info "Installing Python packages from ${file} using python${python_version}..."
 
         # Attempt to install the libraries using pip
-        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip "${local_PIP_ARGS}" -r "${file}" >/dev/null  2>&1; then
+        if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip "${local_PIP_ARGS}" -r "${file}" > /dev/null 2>&1; then
             fail "Failed to install packages from ${file} using python${python_version} -m pip."
             return "${_FAIL}"
         fi
@@ -484,11 +484,11 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             package_name=$(echo "${package}" | awk -F'[>=<]' '{print $1}' | xargs)
 
             # Check if the package is installed
-            if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${package_name}" >/dev/null  2>&1; then
+            if ! PIP_ROOT_USER_ACTION=ignore ${PROXY} python"${python_version}" -m pip show "${package_name}" > /dev/null 2>&1; then
                 fail "${package_name} from ${file} is not installed for python${python_version}. Verification failed."
                 return "${_FAIL}"
             fi
-        done <"${file}"
+        done < "${file}"
 
         pass "Successfully installed packages from ${file} using python${python_version}."
         return "${_PASS}"
@@ -558,14 +558,14 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             fi
 
             # Verify installation
-            if ! ${PYTHON} -m pip show "${lib}" >/dev/null  2>&1; then
+            if ! ${PYTHON} -m pip show "${lib}" > /dev/null 2>&1; then
                 fail "${lib} is not installed. Verification failed."
                 ERROR_FLAG=true
             fi
         done
 
         # Remove old or unnecessary packages
-        if ! ${PROXY} apt remove -y python3-blinker >/dev/null  2>&1; then
+        if ! ${PROXY} apt remove -y python3-blinker > /dev/null 2>&1; then
             warning "Failed to remove python3-blinker."
         fi
 

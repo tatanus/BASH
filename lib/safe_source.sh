@@ -25,10 +25,10 @@ if [[ -z "${SAFE_SOURCE_SH_LOADED:-}" ]]; then
         local snapshot_id="$1"
 
         # Capture variables, functions, aliases, and exported variables
-        compgen -v >"/tmp/env_vars_${snapshot_id}"
-        compgen -A function >"/tmp/env_funcs_${snapshot_id}"
-        alias >"/tmp/env_aliases_${snapshot_id}"
-        env >"/tmp/env_exported_${snapshot_id}"
+        compgen -v > "/tmp/env_vars_${snapshot_id}"
+        compgen -A function > "/tmp/env_funcs_${snapshot_id}"
+        alias > "/tmp/env_aliases_${snapshot_id}"
+        env > "/tmp/env_exported_${snapshot_id}"
     }
 
     # Save the current environment snapshot and push to the stack
@@ -75,10 +75,10 @@ if [[ -z "${SAFE_SOURCE_SH_LOADED:-}" ]]; then
 
         # Take a new snapshot of the current environment
         local vars_after funcs_after aliases_after exported_after
-        compgen -v >/tmp/env_vars_after_$$
-        compgen -A function >/tmp/env_funcs_after_$$
-        alias >/tmp/env_aliases_after_$$
-        env >/tmp/env_exported_after_$$
+        compgen -v > /tmp/env_vars_after_$$
+        compgen -A function > /tmp/env_funcs_after_$$
+        alias > /tmp/env_aliases_after_$$
+        env > /tmp/env_exported_after_$$
 
         # Revert variables added or modified
         for var in $(comm -13 "/tmp/env_vars_${snapshot_id}" /tmp/env_vars_after_$$); do
@@ -92,7 +92,7 @@ if [[ -z "${SAFE_SOURCE_SH_LOADED:-}" ]]; then
 
         # Revert aliases added or modified
         for alias in $(comm -13 "/tmp/env_aliases_${snapshot_id}" /tmp/env_aliases_after_$$); do
-            unalias "${alias%%=*}" 2>/dev/null
+            unalias "${alias%%=*}" 2> /dev/null
         done
 
         # Revert exported variables added or modified

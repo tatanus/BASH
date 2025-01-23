@@ -69,7 +69,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         fi
 
         # Check for macOS or Ubuntu
-        if sed --version >/dev/null  2>&1; then
+        if sed --version > /dev/null 2>&1; then
             # GNU sed (Ubuntu)
             if grep -q "^${menu_title}::${selected_item}:" "${MENU_TIMESTAMP_FILE}"; then
                 # If the entry exists, replace it
@@ -84,7 +84,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         fi
 
         # Add the new entry (append or replace)
-        echo "${menu_title}::${selected_item}:${timestamp}" >>"${MENU_TIMESTAMP_FILE}"
+        echo "${menu_title}::${selected_item}:${timestamp}" >> "${MENU_TIMESTAMP_FILE}"
     }
 
     # Display menu from a provided list
@@ -231,7 +231,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         fi
 
         # Check if the function is defined
-        if declare -f "${function_name}" >/dev/null; then
+        if declare -f "${function_name}" > /dev/null; then
             info "Calling function: ${function_name}"
             "${function_name}" || {
                 fail "Execution of function ${function_name} failed."

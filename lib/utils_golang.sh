@@ -32,7 +32,7 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
         fi
 
         # Check if Golang is already installed and purge it if present
-        if apt list --installed 2>/dev/null  | grep -q '^golang/'; then
+        if apt list --installed 2> /dev/null | grep -q '^golang/'; then
             if ! sudo apt purge -y golang; then
                 fail "Failed to purge existing Golang installation."
                 _Popd
@@ -77,7 +77,7 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
         source "${BASH_DIR}/bash.path.sh"
 
         # Verify that the Go command is available and print its version
-        if command -v go >/dev/null  2>&1; then
+        if command -v go > /dev/null 2>&1; then
             local go_version_installed
             go_version_installed=$(go version)
             pass "Golang installed successfully: ${go_version_installed}"
@@ -122,7 +122,7 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
             local tool_name
             tool_name=$(basename "${tool}" | cut -d '@' -f 1)
 
-            if ! command -v "${tool_name}" >/dev/null  2>&1; then
+            if ! command -v "${tool_name}" > /dev/null 2>&1; then
                 fail "Verification failed: ${tool_name} is not installed."
             fi
         done

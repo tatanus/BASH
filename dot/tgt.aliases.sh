@@ -168,7 +168,7 @@ if [[ -z "${TGT_ALIAS_SH_LOADED:-}" ]]; then
         fi
 
         local end_time
-        end_time=$(KRB5CCNAME="${tgt_file}" klist -A 2>/dev/null  | grep "krbtgt" | awk '{print $3, $4}')
+        end_time=$(KRB5CCNAME="${tgt_file}" klist -A 2> /dev/null | grep "krbtgt" | awk '{print $3, $4}')
         if [[ -z "${end_time}" ]]; then
             echo "${tgt_file}: Expired"
             return 1

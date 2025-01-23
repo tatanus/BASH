@@ -32,7 +32,7 @@ if [[ -z "${UTILS_CMD_SH_LOADED:-}" ]]; then
     function check_tool() {
         local tool="$1"
 
-        if ! command -v "${tool}" >/dev/null  2>&1; then
+        if ! command -v "${tool}" > /dev/null 2>&1; then
             fail "Tool '${tool}' is not installed or not found in PATH."
             return 1
         else
@@ -42,7 +42,7 @@ if [[ -z "${UTILS_CMD_SH_LOADED:-}" ]]; then
 
     # Helper function: Check command availability
     function check_command() {
-        command -v "$1" &>/dev/null
+        command -v "$1" &> /dev/null
         if [[ $? -ne 0 ]]; then
             echo "$1 is not installed or not functional."
             return 1

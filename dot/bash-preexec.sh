@@ -80,7 +80,7 @@ __bp_install_string=$'__bp_trap_string="$(trap -p DEBUG)"\ntrap - DEBUG\n__bp_in
 __bp_require_not_readonly() {
     local var
     for var; do
-        if ! (unset "$var" 2>/dev/null ); then
+        if ! (unset "$var" 2> /dev/null); then
             echo "bash-preexec requires write access to ${var}" >&2
             return 1
         fi
@@ -164,7 +164,7 @@ __bp_precmd_invoke_cmd() {
 
         # Only execute this function if it actually exists.
         # Test existence of functions with: declare -[Ff]
-        if type -t "$precmd_function" 1>/dev/null; then
+        if type -t "$precmd_function" 1> /dev/null; then
             __bp_set_ret_value "$__bp_last_ret_value" "$__bp_last_argument_prev_command"
             # Quote our function invocation to prevent issues with IFS
             "$precmd_function"
@@ -184,7 +184,7 @@ __bp_set_ret_value() {
 __bp_in_prompt_command() {
 
     local prompt_command_array IFS=$'\n;'
-    read -rd '' -a prompt_command_array <<<"${PROMPT_COMMAND[*]:-}"
+    read -rd '' -a prompt_command_array <<< "${PROMPT_COMMAND[*]:-}"
 
     local trimmed_arg
     __bp_trim_whitespace trimmed_arg "${1:-}"
@@ -268,7 +268,7 @@ __bp_preexec_invoke_exec() {
 
         # Only execute each function if it actually exists.
         # Test existence of function with: declare -[fF]
-        if type -t "$preexec_function" 1>/dev/null; then
+        if type -t "$preexec_function" 1> /dev/null; then
             __bp_set_ret_value "${__bp_last_ret_value:-}"
             # Quote our function invocation to prevent issues with IFS
             "$preexec_function" "$this_command"
@@ -300,7 +300,7 @@ __bp_install() {
     local prior_trap
     # we can't easily do this with variable expansion. Leaving as sed command.
     # shellcheck disable=SC2001
-    prior_trap=$(sed "s/[^']*'\(.*\)'[^']*/\1/" <<<"${__bp_trap_string:-}")
+    prior_trap=$(sed "s/[^']*'\(.*\)'[^']*/\1/" <<< "${__bp_trap_string:-}")
     unset __bp_trap_string
     if [[ -n "$prior_trap" ]]; then
         eval '__bp_original_debug_trap() {
@@ -319,8 +319,8 @@ __bp_install() {
     if [[ -n "${__bp_enable_subshells:-}" ]]; then
 
         # Set so debug trap will work be invoked in subshells.
-        set -o functrace >/dev/null  2>&1
-        shopt -s extdebug >/dev/null  2>&1
+        set -o functrace > /dev/null 2>&1
+        shopt -s extdebug > /dev/null 2>&1
     fi
 
     local existing_prompt_command

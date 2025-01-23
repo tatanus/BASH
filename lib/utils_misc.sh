@@ -104,7 +104,7 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
         printf "Processing... (0s) "
 
         i=0
-        while kill -0 "${pid}" 2>/dev/null; do
+        while kill -0 "${pid}" 2> /dev/null; do
             i=$(((i + 1) % 4))
             local current_time
             current_time=$(date +%s)
@@ -141,15 +141,15 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
         info "Testing connectivity to ${test_url}..."
 
         # Test direct connectivity
-        if curl -s --connect-timeout "${timeout}" "${test_url}" >/dev/null; then
+        if curl -s --connect-timeout "${timeout}" "${test_url}" > /dev/null; then
             PROXY=""
             pass "Direct Internet access available. No proxy needed."
             return "${_PASS}"
         fi
 
         # Test connectivity via proxychains4
-        if command -v proxychains4 >/dev/null  2>&1; then
-            if proxychains4 -q curl -s --connect-timeout "${timeout}" "${test_url}" >/dev/null; then
+        if command -v proxychains4 > /dev/null 2>&1; then
+            if proxychains4 -q curl -s --connect-timeout "${timeout}" "${test_url}" > /dev/null; then
                 PROXY="proxychains4 -q "
                 pass "Proxy required. Using proxychains4."
                 return "${_PASS}"
