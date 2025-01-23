@@ -1,9 +1,8 @@
 # Project Badges
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-![Build Status](https://github.com/tatanus/BASH/actions/workflows/main.yml/badge.svg)
-[![Coverage](https://coveralls.io/repos/github/tatanus/BASH/badge.svg?branch=main)](https://coveralls.io/github/tatanus/BASH)
-![Last Commit](https://img.shields.io/github/last-commit/tatanus/BASH)
+[![Build Status](https://github.com/tatanus/BASH/actions/workflows/main.yml/badge.svg)](https://github.com/tatanus/BASH/actions/workflows/main.yml)
+[![Last Commit](https://img.shields.io/github/last-commit/tatanus/BASH)](https://github.com/tatanus/BASH/commits/main)
 
 
 # BASH - "Bash Automation for Simple Hacking"
