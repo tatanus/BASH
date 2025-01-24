@@ -42,14 +42,14 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
 
         # Validate inputs
         if [[ -z "${file_path}" || -z "${replacement}" ]]; then
-            echo "Error: Missing required arguments."
-            echo "Usage: replace_in_file <file_path> <replacement_value> [search_value]"
-            return 1
+            fail "Error: Missing required arguments."
+            fail "Usage: replace_in_file <file_path> <replacement_value> [search_value]"
+            return "${_FAIL}"
         fi
 
         if [[ ! -f "${file_path}" ]]; then
-            echo "Error: File '${file_path}' does not exist."
-            return 1
+            fail "Error: File '${file_path}' does not exist."
+            return "${_FAIL}"
         fi
 
         # Escape special characters in replacement and search values
@@ -60,18 +60,18 @@ if [[ -z "${UTILS_MISC_SH_LOADED:-}" ]]; then
 
         # Check if the search value exists in the file
         if ! grep -q "${escaped_search_value}" "${file_path}"; then
-            echo "Warning: Search value '${search_value}' not found in file '${file_path}'."
-            return 1
+            warn "Warning: Search value '${search_value}' not found in file '${file_path}'."
+            return "${_FAIL}"
         fi
 
         # Perform in-place replacement using sed
         if sed -i.bak "s${delimiter}${escaped_search_value}${delimiter}${escaped_replacement}${delimiter}g" "${file_path}"; then
-            echo "Replaced '${search_value}' with '${replacement}' in '${file_path}'."
+            info "Replaced '${search_value}' with '${replacement}' in '${file_path}'."
             # Optionally remove backup file (comment out the following line if backup is desired)
             rm -f "${file_path}.bak"
         else
-            echo "Error: Failed to modify the file '${file_path}'."
-            return 1
+            fail "Error: Failed to modify the file '${file_path}'."
+            return "${_FAIL}"
         fi
     }
 

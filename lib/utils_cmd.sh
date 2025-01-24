@@ -34,9 +34,9 @@ if [[ -z "${UTILS_CMD_SH_LOADED:-}" ]]; then
 
         if ! command -v "${tool}" > /dev/null 2>&1; then
             fail "Tool '${tool}' is not installed or not found in PATH."
-            return 1
+            return "${_FAIL}"
         else
-            return 0
+            return "${_PASS}"
         fi
     }
 
@@ -44,9 +44,9 @@ if [[ -z "${UTILS_CMD_SH_LOADED:-}" ]]; then
     function check_command() {
         command -v "$1" &> /dev/null
         if [[ $? -ne 0 ]]; then
-            echo "$1 is not installed or not functional."
-            return 1
+            fail "$1 is not installed or not functional."
+            return "${_FAIL}"
         fi
-        return 0
+        return "${_PASS}"
     }
 fi

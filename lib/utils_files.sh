@@ -22,7 +22,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
     function generate_filename() {
         if [[ -z "$1" ]]; then
             fail "Error: Toolname argument is required."
-            return 1
+            return "${_FAIL}"
         fi
 
         local toolname="$1"
@@ -33,7 +33,7 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         date_time=$(date --utc +"%Y-%m-%d_%H-%M-%S") || {
             fail "Failed to get date."
-            return 1
+            return "${_FAIL}"
         }
 
         sanitized_toolname=$(echo "${toolname}" | tr -c '[:alnum:]' '_')
@@ -53,15 +53,15 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -f "${file_path}" ]]; then
             pass "File ${file_path} exists."
-            return 0
+            return "${_PASS}"
         else
             fail "File ${file_path} does not exist."
-            return 1
+            return "${_FAIL}"
         fi
     }
 
@@ -72,15 +72,15 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -f "${file_path}" && -r "${file_path}" ]]; then
             pass "File ${file_path} is readable."
-            return 0
+            return "${_PASS}"
         else
             fail "File ${file_path} is not readable."
-            return 1
+            return "${_FAIL}"
         fi
     }
 
@@ -91,15 +91,15 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -f "${file_path}" && -w "${file_path}" ]]; then
             pass "File ${file_path} is writable."
-            return 0
+            return "${_PASS}"
         else
             fail "File ${file_path} is not writable."
-            return 1
+            return "${_FAIL}"
         fi
     }
 
@@ -110,15 +110,15 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
 
         if [[ -z "${file_path}" ]]; then
             fail "No file path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -f "${file_path}" && -x "${file_path}" ]]; then
             pass "File ${file_path} is executable."
-            return 0
+            return "${_PASS}"
         else
             fail "File ${file_path} is not executable."
-            return 1
+            return "${_FAIL}"
         fi
     }
 

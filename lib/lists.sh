@@ -362,7 +362,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "Setup BASH Environment"
         "Setup PENTEST Environment"
         "Install Tools"
-        "Install Tools Categories"
+        #"Install Tools Categories"
         "Test Tool Installs"
         "Pentest Menu"
     )

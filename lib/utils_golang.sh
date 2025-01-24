@@ -25,7 +25,7 @@ if [[ -z "${UTILS_GOLANG_SH_LOADED:-}" ]]; then
     function _Install_Go() {
         # Navigate to /tmp directory for temporary file operations
         if _Pushd /tmp; then
-            echo "Successfully changed directory to /tmp."
+            info "Successfully changed directory to /tmp."
         else
             fail "Failed to change directory to /tmp."
             return "${_FAIL}"

@@ -127,9 +127,9 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
 
             # Handle choice
             if [[ -z "${choice}" ]]; then
-                return 0
+                return "${_PASS}"
             elif [[ "${choice}" == "Back/Exit" ]]; then
-                return 0
+                return "${_PASS}"
             else
                 # Update menu item timestamp persistently
                 _Update_Menu_Timestamp "${title}" "${choice}"
@@ -222,22 +222,34 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
     }
 
     function _Exec_Function() {
-        local function_name="$1"  # Use a descriptive variable name
+        local function_name="$1"  # The name of the function to execute
+        shift                     # Remove the function name from the arguments
+        local args=("$@")         # Collect any remaining arguments into an array
 
         # Check if a function name was provided
         if [[ -z "${function_name}" ]]; then
-            warn "Usage: _Exec_Function '<function_name>'"
+            warn "Usage: _Exec_Function '<function_name>' [arguments...]"
             return "${_FAIL}"
         fi
 
         # Check if the function is defined
         if declare -f "${function_name}" > /dev/null; then
-            info "Calling function: ${function_name}"
-            "${function_name}" || {
-                fail "Execution of function ${function_name} failed."
-            }
+            if [[ ${#args[@]} -eq 0 ]]; then
+                info "Calling function: ${function_name} with no arguments"
+                "${function_name}" || {
+                    fail "Execution of function ${function_name} failed."
+                    return "${_FAIL}"
+                }
+            else
+                info "Calling function: ${function_name} with arguments: ${args[*]}"
+                "${function_name}" "${args[@]}" || {
+                    fail "Execution of function ${function_name} failed with arguments: ${args[*]}."
+                    return "${_FAIL}"
+                }
+            fi
         else
             fail "Function ${function_name} not found."
+            return "${_FAIL}"
         fi
     }
 fi

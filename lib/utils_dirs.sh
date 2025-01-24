@@ -43,15 +43,15 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -d "${dir_path}" ]]; then
             pass "Directory ${dir_path} exists."
-            return 0
+            return "${_PASS}"
         else
             fail "Directory ${dir_path} does not exist."
-            return 1
+            return "${_FAIL}"
         fi
     }
 
@@ -62,15 +62,15 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -d "${dir_path}" && -r "${dir_path}" ]]; then
             pass "Directory ${dir_path} is readable."
-            return 0
+            return "${_PASS}"
         else
             fail "Directory ${dir_path} is not readable."
-            return 1
+            return "${_FAIL}"
         fi
     }
 
@@ -81,15 +81,15 @@ if [[ -z "${UTILS_DIRS_SH_LOADED:-}" ]]; then
 
         if [[ -z "${dir_path}" ]]; then
             fail "No directory path provided."
-            return 0
+            return "${_PASS}"
         fi
 
         if [[ -d "${dir_path}" && -w "${dir_path}" ]]; then
             pass "Directory ${dir_path} is writable."
-            return 0
+            return "${_PASS}"
         else
             fail "Directory ${dir_path} is not writable."
-            return 1
+            return "${_FAIL}"
         fi
     }
 fi

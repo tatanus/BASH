@@ -152,7 +152,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
             case "${UBUNTU_VER}" in
                 "22.04" | "24.04" | "24.10")
                     if _Apt_Install "${PYTHON}"; then
-                        echo "[INFO] Python ${PYTHON_VERSION} installed successfully."
+                        pass "Python ${PYTHON_VERSION} installed successfully."
                         _Popd
                         return "${_PASS}"
                     else

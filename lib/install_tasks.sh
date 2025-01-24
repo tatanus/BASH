@@ -34,6 +34,62 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         _Popd
     }
 
+    function _Install_Tool() {
+        local script_file="$1" # Accept the tool's script file as an argument
+        local MODULES_DIR="tools/modules"
+        local script_path="${MODULES_DIR}/${script_file}.sh"
+
+        info "Installing tool: ${script_file}"
+
+        local script_path="${MODULES_DIR}/${script_file}.sh"
+
+        # Check if the script_file is "impacket" and skip if it is
+        if [[ "${script_file}" == "impacket" ]]; then
+            return "${_PASS}"
+        fi
+
+        if [[ ! -f "${script_path}" ]]; then
+            fail "Script file not found: ${script_path}"
+            return "${_FAIL}"
+        fi
+
+        # Source the script so we can access its functions
+        if ! source "${script_path}"; then
+            fail "Failed to source script: ${script_path}"
+            return "${_FAIL}"
+        fi
+
+        # Build the install function name, e.g. "install_mytool"
+        # Build the test and install function names
+        local install_function="install_${script_file}"
+        local test_function="test_${script_file}"
+
+        # Check if the test function is defined and run it
+        if declare -f "${test_function}" > /dev/null; then
+            if "${test_function}"; then
+                info "Tool ${script_file} is already installed. Skipping."
+                continue
+            fi
+        else
+            warn "Test function not found: ${test_function}. Skipping test."
+        fi
+
+        # Run the install function if defined
+        if declare -f "${install_function}" > /dev/null; then
+            if ! "${install_function}"; then
+                fail "Installation failed for tool: ${script_file}"
+                return "${_FAIL}"
+            else
+                pass "Successfully installed: ${script_file}"
+                _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
+                return "${_PASS}"
+            fi
+        else
+            fail "Installation function not found: ${install_function}"
+            return "${_FAIL}"
+        fi
+    }
+
     # Function to move in-house tools
     # This function moves and sets up various custom tools into the appropriate directories.
     function _Install_Inhouse_Tools() {
@@ -48,26 +104,34 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
     }
 
     function _Install_All_Tools() {
-        TOOL_MENU_ITEMS=()
+        local module_list=("$@") # Accept a list of modules passed as arguments
         MODULES_DIR="tools/modules"
 
         # ------------------------------------------------------------------------------
-        # Step 1: Dynamically populate TOOL_MENU_ITEMS with script basenames
+        # Step 1: Validate and populate TOOL_MENU_ITEMS from the passed module list
         # ------------------------------------------------------------------------------
-        if [[ -d "${MODULES_DIR}" ]]; then
-            for script in "${MODULES_DIR}"/*.sh; do
-                # Skip if the directory is empty and returns "*.sh"
-                [[ -f "${script}" ]] || continue
+        if [[ ${#module_list[@]} -eq 0 ]]; then
+            fail "No modules specified for installation."
+            return "${_FAIL}"
+        fi
 
-                tool_name="$(basename "${script}" .sh)" # e.g., "mytool" from "mytool.sh"
+        TOOL_MENU_ITEMS=()
+        for tool_name in "${module_list[@]}"; do
+            local script_path="${MODULES_DIR}/${tool_name}.sh"
+            if [[ -f "${script_path}" ]]; then
                 TOOL_MENU_ITEMS+=("${tool_name}")
-            done
-        else
-            warn "Directory not found: ${MODULES_DIR}"
+            else
+                warn "Script file not found for module: ${tool_name}"
+            fi
+        done
+
+        if [[ ${#TOOL_MENU_ITEMS[@]} -eq 0 ]]; then
+            fail "No valid tools found in the specified module list."
+            return "${_FAIL}"
         fi
 
         # ------------------------------------------------------------------------------
-        # Step 2: Call each item in INSTALL_TOOLS_MENU_ITEMS
+        # Step 2: Install each tool from INSTALL_TOOL_MENU_ITEMS
         # ------------------------------------------------------------------------------
         for item in "${INSTALL_TOOLS_MENU_ITEMS[@]}"; do
             # Skip this function
@@ -140,63 +204,14 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         # Step 4: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
         # ------------------------------------------------------------------------------
         for script_file in "${TOOL_MENU_ITEMS[@]}"; do
-
-            # Update menu item timestamp persistently
-            _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
-
-            # Check if the script_file is "impacket" and skip if it is
-            if [[ "${script_file}" == "impacket" ]]; then
-                continue
+            if ! _Install_Tool "${script_file}"; then
+                fail "Failed to install tool: ${script_file}. Moving to the next tool."
             fi
-
-            info "Found script for tool: ${script_file}"
-
-            # Construct the full path to the script
-            local script_path="${MODULES_DIR}/${script_file}.sh"
-
-            if [[ ! -f "${script_path}" ]]; then
-                fail "Script file not found: ${script_path}"
-                continue
-            fi
-
-            # Source the script so we can access its functions
-            if ! source "${script_path}"; then
-                fail "Failed to source script: ${script_path}"
-                continue
-            fi
-
-            # Build the install function name, e.g. "install_mytool"
-            # Build the test and install function names
-            local install_function="install_${script_file}"
-            local test_function="test_${script_file}"
-
-            # Check if the test function is defined and run it
-            if declare -f "${test_function}" > /dev/null; then
-                if "${test_function}"; then
-                    info "Tool ${script_file} is already installed. Skipping."
-                else
-                    # Install the tool if the test fails
-                    info "Installing tool: ${install_function}"
-                    if declare -f "${install_function}" > /dev/null; then
-                        if ! "${install_function}"; then
-                            fail "Installation failed for tool: ${script_file}"
-                        else
-                            pass "Successfully installed: ${script_file}"
-                        fi
-                    else
-                        fail "Installation function not found: ${install_function}"
-                    fi
-                fi
-            else
-                warn "Test function not found: ${test_function}. Skipping test."
-            fi
-
-            # Update menu item timestamp persistently
-            _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
-
         done
 
-        # If you want a final success message (assuming non-critical failures are okay)
-        pass "All installation tasks completed."
+        # ------------------------------------------------------------------------------
+        # Final success message (if applicable)
+        # ------------------------------------------------------------------------------
+        pass "All specified tools have been processed."
     }
 fi

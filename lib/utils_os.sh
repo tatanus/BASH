@@ -42,7 +42,7 @@ if [[ -z "${UTILS_OS_SH_LOADED:-}" ]]; then
         if command -v sw_vers > /dev/null 2>&1; then
             macos_version=$(sw_vers -productVersion)
         else
-            echo "[- FAIL  ] Unable to determine macOS version. 'sw_vers' command not found."
+            fail "Unable to determine macOS version. 'sw_vers' command not found."
             exit "${_FAIL}"
         fi
 
@@ -59,11 +59,11 @@ if [[ -z "${UTILS_OS_SH_LOADED:-}" ]]; then
             if command -v cmd.exe > /dev/null 2>&1; then
                 windows_version=$(cmd.exe /c "ver" 2> /dev/null | grep -oP '\[Version\s\K[^\]]+')
             else
-                echo "[- FAIL  ] Unable to determine Windows version. 'cmd.exe' not found."
+                fail "Unable to determine Windows version. 'cmd.exe' not found."
                 exit "${_FAIL}"
             fi
         else
-            echo "[- FAIL  ] This does not appear to be a Windows environment."
+            fail "This does not appear to be a Windows environment."
             exit "${_FAIL}"
         fi
 

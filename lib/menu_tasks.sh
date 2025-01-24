@@ -90,10 +90,22 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
             if [[ "${item}" == "${choice}" ]]; then
                 found_match=true
                 info "Executing predefined installation function: ${choice}"
-                if ! _Exec_Function "${choice}"; then
-                    fail "Failed to execute predefined installation function: ${choice}"
-                    return "${_FAIL}"
+
+                # Check if the item is "_Install_All_Tools"
+                if [[ "${choice}" == "_Install_All_Tools" ]]; then
+                    # Pass TOOL_MENU_ITEMS[@] as arguments
+                    if ! _Exec_Function "${choice}" "${TOOL_MENU_ITEMS[@]}"; then
+                        fail "Failed to execute predefined installation function: ${choice} with TOOL_MENU_ITEMS."
+                        return "${_FAIL}"
+                    fi
+                else
+                    # Execute the function without additional arguments
+                    if ! _Exec_Function "${choice}"; then
+                        fail "Failed to execute predefined installation function: ${choice}"
+                        return "${_FAIL}"
+                    fi
                 fi
+
                 break
             fi
         done
@@ -105,27 +117,8 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
 
             # Check if the script file exists
             if [[ -f "${script_file}" ]]; then
-                info "Found script for tool: ${script_file}"
-
-                # Source the script and execute the install function
-                source "${script_file}" || {
-                    fail "Failed to source script: ${script_file}"
-                    return "${_FAIL}"
-                }
-
-                local tool_name="${choice}" # Assuming the tool name matches the choice
-                local install_function="install_${tool_name}"
-
-                # Check if the install function exists
-                if declare -f "${install_function}" > /dev/null; then
-                    info "Executing installation function: ${install_function}"
-                    if ! "${install_function}"; then
-                        fail "Installation function failed: ${install_function}"
-                        return "${_FAIL}"
-                    fi
-                else
-                    fail "Installation function not found in script: ${install_function}"
-                    return "${_FAIL}"
+                if ! _Install_Tool "${script_file}"; then
+                    fail "Failed to install tool: ${script_file}. Moving to the next tool."
                 fi
             else
                 fail "Script file not found: ${script_file}"

@@ -13,6 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
+tool_categories["spoonmap"]="exploitation"
+
 function install_tenable_poc() {
     _Git_Clone https://github.com/tenable/poc.git "tenable_poc"
 }
