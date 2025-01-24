@@ -68,7 +68,7 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         if declare -f "${test_function}" > /dev/null; then
             if "${test_function}"; then
                 info "Tool ${script_file} is already installed. Skipping."
-                continue
+                return "${_PASS}"
             fi
         else
             warn "Test function not found: ${test_function}. Skipping test."
