@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["bloodhound"]="post-exploitation intelligence-gathering"
+TOOL_CATEGORY_MAP["bloodhound"]="post-exploitation intelligence-gathering"
+APP_TESTS["bloodhound"]="bloodhound.py -h"
 
 function install_bloodhound() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_bloodhound() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for bloodhound
-function test_bloodhound() {
-    local TOOL_NAME="bloodhound.py"
-    local TOOL_COMMAND="bloodhound.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

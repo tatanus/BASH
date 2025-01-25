@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["eaphammer"]="exploitation"
+TOOL_CATEGORY_MAP["eaphammer"]="exploitation"
+APP_TESTS["eaphammer"]="eaphammer -h"
 
 function install_eaphammer() {
     # Define the arguments
@@ -43,15 +44,4 @@ function install_eaphammer() {
     echo 'y' | ./kali-setup
     deactivate
     _Popd
-}
-
-# Test function for eaphammer
-function test_eaphammer() {
-    local TOOL_NAME="eaphammer"
-    local TOOL_COMMAND="eaphammer -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}" 1
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

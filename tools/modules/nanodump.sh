@@ -13,22 +13,12 @@ set -uo pipefail
 # 2024-12-09 13:53:39  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["nanodump"]="post-exploitation"
+TOOL_CATEGORY_MAP["nanodump"]="post-exploitation"
+APP_TESTS["nanodump"]="ls ${TOOLS_DIR}/nanodump/dist"
 
 function install_nanodump() {
     _Git_Clone https://github.com/fortra/nanodump.git
     _Pushd "${TOOLS_DIR}/nanodump"
     make -f Makefile.mingw
     _Popd
-}
-
-# Test function for nanodump
-function test_nanodump() {
-    local TOOL_NAME="nanodump"
-    local TOOL_COMMAND="ls ${TOOLS_DIR}/nanodump/dist"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

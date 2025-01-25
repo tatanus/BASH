@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["krbrelayx"]="post-exploitation"
+TOOL_CATEGORY_MAP["krbrelayx"]="post-exploitation"
+APP_TESTS["krbrelayx"]="krbrelayx.py -h"
 
 function install_krbrelayx() {
     # Define the arguments
@@ -27,15 +28,4 @@ function install_krbrelayx() {
 
     # Add additional aliases
     _add_tool_function "dnstool.py" "krbrelayx/dnstool.py"
-}
-
-# Test function for krbrelayx
-function test_krbrelayx() {
-    local TOOL_NAME="krbrelayx.py"
-    local TOOL_COMMAND="krbrelayx.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

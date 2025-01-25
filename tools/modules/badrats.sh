@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["badrats"]="post-exploitation"
+TOOL_CATEGORY_MAP["badrats"]="post-exploitation"
+APP_TESTS["badrats"]="true"
 
 function install_badrats() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_badrats() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for badrats
-function test_badrats() {
-    local TOOL_NAME="badrat_server"
-    local TOOL_COMMAND="true"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

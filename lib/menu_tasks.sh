@@ -158,7 +158,7 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
 
     #     if [[ "${choice}" == "ALL" ]]; then
     #         # List all modules regardless of category
-    #         local all_modules=("${!tool_categories[@]}")
+    #         local all_modules=("${!TOOL_CATEGORY_MAP[@]}")
 
     #         # Sort the category_modules array alphabetically
     #         IFS=$'\n' all_modules=($(sort <<< "${all_modules[*]}"))
@@ -168,8 +168,8 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
     #     else
     #         # List modules specific to the selected category
     #         local category_modules=()
-    #         for script in "${!tool_categories[@]}"; do
-    #             if [[ " ${tool_categories[${script}]} " == *" ${choice} "* ]]; then
+    #         for script in "${!TOOL_CATEGORY_MAP[@]}"; do
+    #             if [[ " ${TOOL_CATEGORY_MAP[${script}]} " == *" ${choice} "* ]]; then
     #                 category_modules+=("${script}")
     #             fi
     #         done
@@ -234,7 +234,7 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
         #         warn "Directory not found: ${MODULES_DIR}"
         #     fi
 
-        #     _Display_Menu "CHOOSE A TOOL CATEGORY" "_Process_Tools_Categories_Install_Menu" false "${TOOL_CATEGORIES[@]}"
+        #     _Display_Menu "CHOOSE A TOOL CATEGORY" "_Process_Tools_Categories_Install_Menu" false "${TOOL_CATEGORY_MAP[@]}"
         elif [[ "${choice}" == "Test Tool Installs" ]]; then
             _Test_Tool_Installs
         elif [[ "${choice}" == "Pentest Menu" ]]; then

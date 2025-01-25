@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["petitpotam"]="exploitation"
+TOOL_CATEGORY_MAP["petitpotam"]="exploitation"
+APP_TESTS["petitpotam"]="PetitPotam.py -h"
 
 function install_petitpotam() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_petitpotam() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for petitpotam
-function test_petitpotam() {
-    local TOOL_NAME="PetitPotam.py"
-    local TOOL_COMMAND="PetitPotam.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

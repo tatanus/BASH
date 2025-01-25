@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:25  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["chisel"]="post-exploitation"
+TOOL_CATEGORY_MAP["chisel"]="post-exploitation"
+APP_TESTS["chisel"]="chisel -h"
 
 function install_chisel() {
     # Download and install chisel for Linux
@@ -44,15 +45,4 @@ function install_chisel() {
     # Add alias for chisel
     _add_tool_function "chisel" "chisel/${chisel_filename}"
     pass "chisel installed and alias added successfully."
-}
-
-# Test function for chisel
-function test_chisel() {
-    local TOOL_NAME="chisel"
-    local TOOL_COMMAND="chisel -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

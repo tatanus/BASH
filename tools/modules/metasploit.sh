@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:36  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["metasploit"]="exploitation post-exploitation"
+TOOL_CATEGORY_MAP["metasploit"]="exploitation post-exploitation"
+APP_TESTS["metasploit"]="msfconsole -h"
 
 ###############################################################################
 # setup_msfdb_service
@@ -164,15 +165,4 @@ function install_metasploit() {
             return "${_FAIL}"
         fi
     fi
-}
-
-# Test function for metasploit
-function test_metasploit() {
-    local TOOL_NAME="metasploit"
-    local TOOL_COMMAND="msfconsole -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

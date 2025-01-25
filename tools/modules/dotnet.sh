@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:34  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["dotnet"]="post-exploitation exploitation"
+TOOL_CATEGORY_MAP["dotnet"]="post-exploitation exploitation"
+APP_TESTS["dotnet"]="dotnet -h"
 
 function install_dotnet() {
     # Get Ubuntu version
@@ -38,15 +39,4 @@ function install_dotnet() {
     fi
 
     _Popd
-}
-
-# Test function for dotnet
-function test_dotnet() {
-    local TOOL_NAME="dotnet"
-    local TOOL_COMMAND="dotnet -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

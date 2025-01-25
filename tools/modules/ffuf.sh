@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ffuf"]="intelligence-gathering exploitation"
+TOOL_CATEGORY_MAP["ffuf"]="intelligence-gathering exploitation"
+APP_TESTS["ffuf"]="ffuf -h"
 
 function install_ffuf() {
     if _Git_Release "ffuf/ffuf" "linux_amd64" "${TOOLS_DIR}/ffuf"; then
@@ -22,15 +23,4 @@ function install_ffuf() {
 
         _add_tool_function "ffuf" "ffuf/ffuf"
     fi
-}
-
-# Test function for ffuf
-function test_ffuf() {
-    local TOOL_NAME="ffuf"
-    local TOOL_COMMAND="ffuf -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

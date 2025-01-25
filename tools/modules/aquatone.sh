@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["aquatone"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["aquatone"]="intelligence-gathering"
+APP_TESTS["aquatone"]="aquatone -h"
 
 function install_aquatone() {
     _Git_Clone https://github.com/shelld3v/aquatone.git
@@ -30,15 +31,4 @@ function install_aquatone() {
     # Add alias for Aquatone
     _add_tool_function "aquatone" "aquatone/aquatone"
     pass "Aquatone installed and alias added successfully."
-}
-
-# Test function for aquatone
-function test_aquatone() {
-    local TOOL_NAME="aquatone"
-    local TOOL_COMMAND="aquatone -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

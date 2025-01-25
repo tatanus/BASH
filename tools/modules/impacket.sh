@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["impacket"]="exploitation post-exploitation"
+TOOL_CATEGORY_MAP["impacket"]="exploitation post-exploitation"
+APP_TESTS["impacket"]="secretsdump.py -h"
 
 function install_impacket() {
     # Define the Git repository URL for Impacket
@@ -55,15 +56,4 @@ function install_impacket() {
     # Indicate successful installation
     pass "${PACKAGE_NAME} installed successfully."
     return "${_PASS}"
-}
-
-# Test function for impacket
-function test_impacket() {
-    local TOOL_NAME="secretsdump.py"
-    local TOOL_COMMAND="secretsdump.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

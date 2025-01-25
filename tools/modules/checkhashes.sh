@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["checkhashes"]="password-recovery post-exploitation"
+TOOL_CATEGORY_MAP["checkhashes"]="password-recovery post-exploitation"
+APP_TESTS["check_hashes"]="check_hashes.py -h"
 
 function install_checkhashes() {
     # Create directory for CheckHashes
@@ -28,15 +29,4 @@ function install_checkhashes() {
     # Add aliases for check_hashes
     _add_tool_function "check_hashes.py" "CheckHashes/check_hashes.py"
     pass "check_hashes installed and aliases added successfully."
-}
-
-# Test function for checkhashes
-function test_checkhashes() {
-    local TOOL_NAME="check_hashes.py"
-    local TOOL_COMMAND="check_hashes.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

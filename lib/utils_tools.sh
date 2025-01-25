@@ -206,7 +206,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         pass "${DIRECTORY_NAME} installed and virtual environment set up successfully."
     }
 
-    function AppTest() {
+    function RunAppTest() {
         # Ensure aliases are expanded in non-interactive scripts
         shopt -s expand_aliases
 
@@ -219,15 +219,28 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         output=$(eval "${appCommand}" 2>&1)
         local status=$?
 
-        # Check if the command was successful or if specific conditions are met
+        # Return the exit status of the command
         if [[ "${status}" -eq "${successExitCode}" ]]; then
-            pass "SUCCESS: [${appName}] - [${appCommand}]"
+            return 0  # Indicate success
         else
-            fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
+            return "${status}"  # Indicate failure
         fi
+    }
 
-        # Return a non-zero status if the command failed
-        return "${status}"
+    function AppTest() {
+        local appName="$1"
+        local appCommand="$2"
+        local successExitCode="${3:-0}"
+
+        # Call the test function and handle the result
+        if RunAppTest "${appName}" "${appCommand}" "${successExitCode}"; then
+            pass "SUCCESS: [${appName}] - [${appCommand}]"
+            return 0
+        else
+            local status=$?
+            fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
+            return "${status}"  # Return the failure status
+        fi
     }
 
     function _Test_Tool_Installs()  {
@@ -256,32 +269,6 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                 ((failed_tests++))
             fi
         done
-
-        # load list of tools from the tools/modules directory
-        MODULES_DIR="${SCRIPT_DIR}/tools/modules"
-
-        # Dynamically add tool names from scripts in MODULES_DIR
-        if [[ -d "${MODULES_DIR}" ]]; then
-            for script in "${MODULES_DIR}"/*.sh; do
-                source "${script}" || warn "Failed to source ${script}."
-
-                if [[ -f "${script}" ]]; then
-                    tool_name=$(basename "${script}" .sh) # Extract the tool name
-
-                    "test_${tool_name}"
-                    local status=$?  # Capture the exit status immediately
-
-                    ((total_tests++))
-
-                    # Check the exit status of the last executed command
-                    if [[ "${status}" -ne 0 ]]; then
-                        ((failed_tests++))
-                    fi
-                fi
-            done
-        else
-            warn "Directory not found: ${MODULES_DIR}"
-        fi
 
         # Print summary of results
         warning "Test Summary: ${total_tests} tests ran, ${failed_tests} failed."

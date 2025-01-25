@@ -62,16 +62,21 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         # Build the install function name, e.g. "install_mytool"
         # Build the test and install function names
         local install_function="install_${script_file}"
-        local test_function="test_${script_file}"
 
         # Check if the test function is defined and run it
-        if declare -f "${test_function}" > /dev/null; then
-            if "${test_function}"; then
-                info "Tool ${script_file} is already installed. Skipping."
-                return "${_PASS}"
+        if declare -f "RunAppTest" > /dev/null; then
+            # Verify if APP_TESTS contains a key for $script_file
+            if [[ -n "${APP_TESTS[${script_file}]}" ]]; then
+                if RunAppTest "${script_file}" "${APP_TESTS[${script_file}]}"; then
+                    info "Tool ${script_file} is already installed. Skipping."
+                    return "${_PASS}"
+                fi
+            else
+                warn "No test command defined for tool: ${script_file}. Skipping test."
             fi
         else
-            warn "Test function not found: ${test_function}. Skipping test."
+            fail "Test function 'RunAppTest' not found: Aborting test."
+            return "${_FAIL}"
         fi
 
         # Run the install function if defined
@@ -152,53 +157,7 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         # ------------------------------------------------------------------------------
         # Step 3: Install impacket
         # ------------------------------------------------------------------------------
-        script_file="impacket"
-        info "Found script for tool: ${script_file}"
-
-        # Construct the full path to the script
-        local script_path="${MODULES_DIR}/${script_file}.sh"
-
-        if [[ ! -f "${script_path}" ]]; then
-            fail "Script file not found: ${script_path}"
-            # shellcheck disable=SC2104
-            continue
-        fi
-
-        # Source the script so we can access its functions
-        if ! source "${script_path}"; then
-            fail "Failed to source script: ${script_path}"
-            # shellcheck disable=SC2104
-            continue
-        fi
-
-        # Build the install function name, e.g. "install_mytool"
-        # Build the test and install function names
-        local install_function="install_${script_file}"
-        local test_function="test_${script_file}"
-
-        # Check if the test function is defined and run it
-        if declare -f "${test_function}" > /dev/null; then
-            if "${test_function}"; then
-                info "Tool ${script_file} is already installed. Skipping."
-            else
-                # Install the tool if the test fails
-                info "Installing tool: ${install_function}"
-                if declare -f "${install_function}" > /dev/null; then
-                    if ! "${install_function}"; then
-                        fail "Installation failed for tool: ${script_file}"
-                    else
-                        pass "Successfully installed: ${script_file}"
-
-                        # Update menu item timestamp persistently
-                        _Update_Menu_Timestamp "TOOL INSTALLATION MENU" "${script_file}"
-                    fi
-                else
-                    fail "Installation function not found: ${install_function}"
-                fi
-            fi
-        else
-            warn "Test function not found: ${test_function}. Skipping test."
-        fi
+        _Install_Tool "impacket"
 
         # ------------------------------------------------------------------------------
         # Step 4: For each script in TOOL_MENU_ITEMS, source it and call install_<tool>
