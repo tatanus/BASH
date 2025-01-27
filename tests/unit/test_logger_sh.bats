@@ -8,18 +8,19 @@
 
 # Setup: Load the logger.sh script
 setup() {
-  SCRIPT_DIR="$(pwd)"
-  export SCRIPT_DIR
+    SCRIPT_DIR="$(pwd)"
+    export SCRIPT_DIR
+    export TERM=${TERM:-xterm}
 
-  if [[ -f "${SCRIPT_DIR}/lib/logger.sh" ]]; then
-    source "${SCRIPT_DIR}/lib/logger.sh"
-  else
-    echo "logger.sh not found." >&2
-    exit 1
-  fi
+    if [[ -f "${SCRIPT_DIR}/lib/logger.sh" ]]; then
+        source "${SCRIPT_DIR}/lib/logger.sh"
+    else
+        echo "logger.sh not found." >&2
+        exit 1
+    fi
 
-  TEST_LOG_DIR=$(mktemp -d)
-  TEST_LOG_FILE="${TEST_LOG_DIR}/test_logger.log"
+    TEST_LOG_DIR=$(mktemp -d)
+    TEST_LOG_FILE="${TEST_LOG_DIR}/test_logger.log"
 } 
 
 ## Teardown: Clean up the temporary directory
