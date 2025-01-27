@@ -112,17 +112,17 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
 
         # Dynamically define methods for this instance
         eval "
-        ${instance_name}.info() { Logger_log \"${instance_name}\" \"info\" \"\${1:-""}\"; }
-        ${instance_name}.warn() { Logger_log \"${instance_name}\" \"warn\" \"\${1:-""}\"; }
-        ${instance_name}.pass() { Logger_log \"${instance_name}\" \"pass\" \"\${1:-""}\"; }
-        ${instance_name}.fail() { Logger_log \"${instance_name}\" \"fail\" \"\${1:-""}\"; }
-        ${instance_name}.debug() { Logger_log \"${instance_name}\" \"debug\" \"\${1:-""}\"; }
-        ${instance_name}.set_log_to_screen() { _Logger_set_property \"${instance_name}\" \"log_to_screen\" \"\${1:-""}\"; }
-        ${instance_name}.get_log_to_screen() { _Logger_get_property \"${instance_name}\" \"log_to_screen\"; }
-        ${instance_name}.set_log_to_file() { _Logger_set_property \"${instance_name}\" \"log_to_file\" \"\${1:-""}\"; }
-        ${instance_name}.get_log_to_file() { _Logger_get_property \"${instance_name}\" \"log_to_file\"; }
-        ${instance_name}.set_log_level() { _Logger_set_property \"${instance_name}\" \"log_level\" \"\${1:-""}\"; }
-        ${instance_name}.get_log_level() { _Logger_get_property \"${instance_name}\" \"log_level\"; }
+            ${instance_name}.info() { Logger_log '${instance_name}' 'info' \"\${1:-}\"; }
+            ${instance_name}.warn() { Logger_log '${instance_name}' 'warn' \"\${1:-}\"; }
+            ${instance_name}.pass() { Logger_log '${instance_name}' 'pass' \"\${1:-}\"; }
+            ${instance_name}.fail() { Logger_log '${instance_name}' 'fail' \"\${1:-}\"; }
+            ${instance_name}.debug() { Logger_log '${instance_name}' 'debug' \"\${1:-}\"; }
+            ${instance_name}.set_log_to_screen() { _Logger_set_property '${instance_name}' 'log_to_screen' \"\${1:-}\"; }
+            ${instance_name}.get_log_to_screen() { _Logger_get_property '${instance_name}' 'log_to_screen'; }
+            ${instance_name}.set_log_to_file() { _Logger_set_property '${instance_name}' 'log_to_file' \"\${1:-}\"; }
+            ${instance_name}.get_log_to_file() { _Logger_get_property '${instance_name}' 'log_to_file'; }
+            ${instance_name}.set_log_level() { _Logger_set_property '${instance_name}' 'log_level' \"\${1:-}\"; }
+            ${instance_name}.get_log_level() { _Logger_get_property '${instance_name}' 'log_level'; }
         "
     }
 
