@@ -27,7 +27,7 @@ if [[ -z "${UTILS_SH_LOADED:-}" ]]; then
     for utils_file in "${SCRIPT_DIR}"/lib/utils_*.sh; do
         if [[ -f "${utils_file}" ]]; then
             source "${utils_file}"
-            info "Sourced: ${utils_file}"
+            pass "Sourced: ${utils_file}"
         else
             fail "No matching files to source in ${SCRIPT_DIR}/lib/"
             exit 1

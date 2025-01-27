@@ -271,7 +271,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         done
 
         # Print summary of results
-        warning "Test Summary: ${total_tests} tests ran, ${failed_tests} failed."
+        warn "Test Summary: ${total_tests} tests ran, ${failed_tests} failed."
 
         # Pause so the user can read the output
         _Pause

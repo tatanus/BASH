@@ -312,12 +312,12 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             # Skip excluded interfaces using glob matching
             local exclude=0
             for pattern in "${excluded_interfaces[@]}"; do
-                if [[ "${iface}" == $pattern ]]; then
+                if [[ "${iface}" == "${pattern}" ]]; then
                     exclude=1
                     break
                 fi
             done
-            [[ $exclude -eq 1 ]] && continue
+            [[ ${exclude} -eq 1 ]] && continue
 
             # Determine if the interface is using DHCP or static
             if command -v is_dhcp_static &> /dev/null; then

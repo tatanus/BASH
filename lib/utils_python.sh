@@ -566,7 +566,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
 
         # Remove old or unnecessary packages
         if ! ${PROXY} apt remove -y python3-blinker > /dev/null 2>&1; then
-            warning "Failed to remove python3-blinker."
+            warn "Failed to remove python3-blinker."
         fi
 
         if [[ "${ERROR_FLAG}" = true ]]; then

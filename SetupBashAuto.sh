@@ -15,16 +15,29 @@ set -uo pipefail
 
 # Minimal placeholders (until more robust functions can be defined later)
 function fail() {
-    echo "[- FAIL  ] $*" >&2
+    local timestamp
+    timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+    echo "${timestamp} [- FAIL  ] $*" >&2
 }
 function pass() {
-    echo "[+ PASS  ] $*"
+    local timestamp
+    timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+    echo "${timestamp} [+ PASS  ] $*"
 }
 function info() {
-    echo "[* INFO  ] $*"
+    local timestamp
+    timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+    echo "${timestamp} [* INFO  ] $*"
 }
 function warn() {
-    echo "[! WARN  ] $*"
+    local timestamp
+    timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+    echo "${timestamp} [! WARN  ] $*"
+}
+function debug() {
+    local timestamp
+    timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+    echo "${timestamp} [! DEBUG ] $*"
 }
 
 # Initialize the error flag
@@ -40,6 +53,8 @@ fi
 if [[ -n "${BASH_VERSION:-}" && "${BASH_VERSINFO[0]}" -lt 4 ]]; then
     fail "Error: This script requires Bash version 4.0 or higher. Current version: ${BASH_VERSION}"
     ERROR_FLAG=true
+else
+    info "Detected bash version: ${BASH_VERSION}"
 fi
 
 # Ensure the script is run as root (user ID 0)
@@ -126,7 +141,7 @@ fi
 # These files must exist and be sourced for the script to work correctly.
 declare -a REQUIRED_FILES=(
     "${SCRIPT_DIR}/config/config.sh"
-    "${SCRIPT_DIR}/lib/display.sh"
+    "${SCRIPT_DIR}/lib/logger.sh"
     "${SCRIPT_DIR}/lib/lists.sh"
     "${SCRIPT_DIR}/lib/utils.sh"
     "${SCRIPT_DIR}/lib/menu.sh"
@@ -141,13 +156,26 @@ for file in "${REQUIRED_FILES[@]}"; do
     if [[ -f "${file}" ]]; then
         # Source the file if it exists
         source "${file}" || {
-            fail "Failed to source file: ${file}. Exiting."
+            echo "Failed to source file: ${file}. Exiting."
             exit 1
         }
-        pass "Sourced required file: ${file}"
+
+        # If logger.sh is sourced, initialize the logger
+        if [[ "${file}" == "${SCRIPT_DIR}/lib/logger.sh" ]]; then
+            Logger_Init "setup" "${LOG_FILE}" "info" "true" "true" || exit 1
+
+            # Define wrapper functions
+            for level in fail info warn pass debug; do
+                eval "${level}() { setup.${level} \"\$@\"; }"
+            done
+
+            pass "Logger initialized after sourcing: ${file}"
+        else
+            pass "Sourced required file: ${file}"
+        fi
     else
         # Log an error if the file is missing
-        fail "Required file is missing: ${file}. Exiting."
+        echo "Required file is missing: ${file}. Exiting."
         exit 1
     fi
 done
@@ -175,7 +203,7 @@ function ensure_fzf() {
                 _install_package "fzf"
                 ;;
             [Nn]*)
-                warning "fzf will not be installed. Exiting."
+                warn "fzf will not be installed. Exiting."
                 exit "${_FAIL}"
                 ;;
             *)

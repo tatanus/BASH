@@ -162,7 +162,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         local input="$1"
 
         if [[ -z "${input}" ]]; then
-            warning "Usage: execute_command_or_script '<command or script>'"
+            warn "Usage: execute_command_or_script '<command or script>'"
             return "${_FAIL}"
         fi
 

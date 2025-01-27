@@ -99,7 +99,7 @@ if [[ -z "${UTILS_OS_SH_LOADED:-}" ]]; then
             }
 
             export UBUNTU_VER
-            pass "Detected Ubuntu version: ${UBUNTU_VER}"
+            info "Detected Ubuntu version: ${UBUNTU_VER}"
             ;;
         Darwin)
             # Check if the _Get_MacOS_Version function is available
@@ -114,7 +114,7 @@ if [[ -z "${UTILS_OS_SH_LOADED:-}" ]]; then
             }
 
             export MACOS_VER
-            pass "Detected macOS version: ${MACOS_VER}"
+            info "Detected macOS version: ${MACOS_VER}"
             ;;
         CYGWIN* | MINGW* | MSYS* | Windows_NT)
             # Handle Windows platforms
