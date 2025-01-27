@@ -31,7 +31,7 @@ if [[ -z "${INIT_TASKS_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        for file in "${DOT_FILES[@]}"; do
+        for file in "${COMMON_DOT_FILES[@]}"; do
             local target="${HOME}/.${file}"
             local source="dot/${file}"
 
@@ -68,7 +68,7 @@ if [[ -z "${INIT_TASKS_SH_LOADED:-}" ]]; then
     # Function to undo the setup of dotfiles
     function Undo_Setup_Dot_Files() {
         # Revert dotfiles in the home directory
-        for file in "${DOT_FILES[@]}"; do
+        for file in "${COMMON_DOT_FILES[@]}"; do
             local target="${HOME}/.${file}"
 
             if [[ -f "${target}" ]]; then

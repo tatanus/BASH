@@ -3,7 +3,8 @@ set -uo pipefail
 
 # =============================================================================
 # NAME        : lists.sh
-# DESCRIPTION :
+# DESCRIPTION : Contains predefined lists and mappings used in the Bash
+#               automation framework.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-10 12:29:41
 # =============================================================================
@@ -17,14 +18,26 @@ set -uo pipefail
 if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     declare -g LISTS_SH_LOADED=true
 
-    # List of directories
+    # =============================================================================
+    # VALIDATION
+    # =============================================================================
+    # Validate essential environment variables
+    : "${DATA_DIR:?Environment variable DATA_DIR is not set or empty.}"
+    : "${ENGAGEMENT_DIR:?Environment variable ENGAGEMENT_DIR is not set or empty.}"
+    : "${TOOLS_DIR:?Environment variable TOOLS_DIR is not set or empty.}"
+
+    # =============================================================================
+    # REQUIRED DIRECTORIES
+    # =============================================================================
+
+    # Directories used for pentest workflows
     PENTEST_REQUIRED_DIRECTORIES=(
         "${DATA_DIR}/TOOLS"
         "${DATA_DIR}/TOOLS/SCRIPTS"
         "${DATA_DIR}/LOGS"
     )
 
-    # List of directories
+    # Engagement-specific directories
     ENGAGEMENT_REQUIRED_DIRECTORIES=(
         "${ENGAGEMENT_DIR}/BACKUP"
         "${ENGAGEMENT_DIR}/LOOT/CREDENTIALS"
@@ -47,13 +60,29 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "${ENGAGEMENT_DIR}/OUTPUT/MSF"
     )
 
+    # Necessary engagement files
     NECESSARY_ENGAGEMENT_FILES=(
         "${ENGAGEMENT_DIR}/targets.txt"
         "${ENGAGEMENT_DIR}/excludes.txt"
     )
 
-    ## DOT FILES
-    DOT_FILES=(
+    # =============================================================================
+    # CONFIGURATION FILES
+    # =============================================================================
+
+    TOOL_CONFIG_FILES=(
+        "tools/config/msfconsole.rc:${HOME}/.msf4/config"
+        "tools/config/cme.conf:${HOME}/.cme/cme.conf"
+        "tools/config/nxc.conf:${HOME}/.nxc/nxc.conf"
+        "tools/config/Responder.conf:${TOOLS_DIR}/Responder/Responder.conf"
+        "tools/config/spoonmap.config.json:${TOOLS_DIR}/spoonmap/config.json"
+    )
+
+    # =============================================================================
+    # DOT FILES
+    # =============================================================================
+
+    COMMON_DOT_FILES=(
         "bashrc"
         "profile"
         "bash_profile"
@@ -61,7 +90,6 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "screenrc"
     )
 
-    ## DOT FILES
     BASH_DOT_FILES=(
         "bash.path.sh"
         "bash.env.sh"
@@ -77,7 +105,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     )
 
-    ## DOT FILES
+    # Pentest-specific files
     PENTEST_FILES=(
         "pentest.sh"
         "pentest.alias.sh"
@@ -89,14 +117,9 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "capture_traffic.sh"
     )
 
-    # Define the list of configuration files to copy
-    TOOL_CONFIG_FILES=(
-        "tools/config/msfconsole.rc:${HOME}/.msf4/config"
-        "tools/config/cme.conf:${HOME}/.cme/cme.conf"
-        "tools/config/nxc.conf:${HOME}/.nxc/nxc.conf"
-        "tools/config/Responder.conf:${TOOLS_DIR}/Responder/Responder.conf"
-        "tools/config/spoonmap.config.json:${TOOLS_DIR}/spoonmap/config.json"
-    )
+    # =============================================================================
+    # PACKAGES AND TOOLS
+    # =============================================================================
 
     ## APT-GET PACKAGES
     APT_PACKAGES=(
@@ -270,8 +293,11 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "evil-winrm"
     )
 
+    # =============================================================================
+    # TOOL APP TEST MAPPINGS
+    # =============================================================================
+
     ## TOOLS to APP TEST
-    ## The command should return an exit status of 0 if the application is installed
     declare -A APP_TESTS
     APP_TESTS["bettercap"]="bettercap -h"
     APP_TESTS["certi"]="certi.py -h"
@@ -287,6 +313,10 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     APP_TESTS["pypykatz"]="pypykatz -h"
     APP_TESTS["secretsdump"]="secretsdump.py -h"
     APP_TESTS["tshark"]="tshark -h"
+
+    # =============================================================================
+    # TOOL CATEGORIES AND MAPPINGS
+    # =============================================================================
 
     # List of tool categories
     TOOL_CATEGORIES=(
@@ -327,9 +357,9 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
     TOOL_CATEGORY_MAP["pypykatz"]="post-exploitation"
     TOOL_CATEGORY_MAP["wifite"]="wireless exploitation"
 
-    ###################################################################
-    # MENUS
-    ###################################################################
+    # =============================================================================
+    # MENU ITEMS
+    # =============================================================================
 
     # Array for Setup_Environment functions
     BASH_ENVIRONMENT_MENU_ITEMS=(

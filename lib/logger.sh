@@ -4,6 +4,9 @@ set -uo pipefail
 # =============================================================================
 # NAME        : logger.sh
 # DESCRIPTION : A modular and instance-based logging utility for Bash scripts.
+#               - Provides configurable log levels (debug, info, warn, etc.)
+#               - Supports logging to both console and file.
+#               - Enables creation of multiple logger instances.
 # AUTHOR      : Adam Compton
 # DATE CREATED: 2024-12-08 20:11:12
 # =============================================================================
@@ -17,9 +20,10 @@ set -uo pipefail
 if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     declare -g LOGGER_SH_LOADED=true
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Define colors for screen output
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+
     # Check if `tput` is available; otherwise, use ANSI escape codes as fallback
     if command -v tput &> /dev/null; then
         light_green=$(tput setaf 2)
@@ -41,14 +45,20 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         reset="\033[0m"
     fi
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Valid logging levels
-    # -----------------------------------------------------------------------------
-    valid_levels=("debug" "info" "warn" "pass" "fail")
+    # =============================================================================
+    # Define log levels and their priorities
+    declare -gA log_level_priorities
+    log_level_priorities[debug]=1
+    log_level_priorities[info]=2
+    log_level_priorities[warn]=3
+    log_level_priorities[pass]=4
+    log_level_priorities[fail]=5
 
-    # -----------------------------------------------------------------------------
-    # Validates an instance name to ensure it's a valid Bash variable name
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+    # Validates an instance name to ensure it's a valid Bash variable name.
+    # =============================================================================
     function _validate_instance_name() {
         local name=$1
         if [[ ! "${name}" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
@@ -57,38 +67,48 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Validates if a given log level is valid
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     function _validate_log_level() {
-        local level=$1
-        if [[ ! " ${valid_levels[*]} " =~ ${level} ]]; then
-            printf "Error: Invalid log level '%s'. Valid levels are: %s.\n" "${level}" "${valid_levels[*]}" >&2
+        local -r level="${1:-}"
+
+        # Check if level is empty
+        if [[ -z "${level}" ]]; then
+            printf "Error: Log level is empty. Valid levels are: %s.\n" \
+                "${!log_level_priorities[*]}" >&2
+            return 1
+        fi
+
+        # Check if level exists in log_level_priorities
+        if [[ -z "${log_level_priorities[${level}]:-}" ]]; then
+            printf "Error: Invalid log level '%s'. Valid levels are: %s.\n" \
+                "${level}" "${!log_level_priorities[*]}" >&2
             return 1
         fi
     }
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Initializes a new logger instance
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     function Logger_Init() {
-        local instance_name=$1
-        local log_file=${2:-"${HOME}/${instance_name}.log"}  # Default log file
-        local log_level=${3:-"info"}
-        local log_to_screen=${4:-"true"}
-        local log_to_file=${5:-"true"}
+        local -r instance_name="${1:-default}"
+        local -r log_file="${2:-${HOME}/${instance_name}.log}" # Default log file
+        local -r log_level="${3:-info}"
+        local -r log_to_screen="${4:-true}"
+        local -r log_to_file="${5:-true}"
 
         # Validate instance name
         _validate_instance_name "${instance_name}" || return 1
 
-        # Validate log file path
+        # Validate log level
+        _validate_log_level "${log_level}" || return 1
+
+        # Ensure log file directory exists
         if [[ -z "${log_file}" || "${log_file}" == */* && ! -d "$(dirname "${log_file}")" ]]; then
             printf "Error: Log file directory does not exist or is not writable: %s\n" "$(dirname "${log_file}")" >&2
             return 1
         fi
-
-        # Validate log level
-        _validate_log_level "${log_level}" || return 1
 
         # Validate boolean values for log_to_screen and log_to_file
         if [[ "${log_to_screen}" != "true" && "${log_to_screen}" != "false" ]]; then
@@ -103,6 +123,12 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
 
         # Create an empty associative array for the instance
         declare -gA "${instance_name}_props"
+
+        # Check if the array is declared
+        declare -p "${instance_name}_props" 2> /dev/null || {
+            echo "Failed to declare ${instance_name}_props" >&2
+            return 1
+        }
 
         # Set properties using _Logger_set_property
         _Logger_set_property "${instance_name}" "log_file" "${log_file}"
@@ -126,25 +152,28 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         "
     }
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Generates a timestamp for log entries
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     function _Logger_timestamp() {
         date +"[%Y-%m-%d %H:%M:%S]"
     }
 
-    # -----------------------------------------------------------------------------
-    # Logs a message
-    # -----------------------------------------------------------------------------
+    # =============================================================================
+    # Logs a message for the given instance and log level.
+    # =============================================================================
     function Logger_log() {
-        local instance_name="${1:-"default"}"
-        local level="${2:="debug"}"
-        local message="${3:-""}" # Allow blank messages
-        local caller_info="${4:-$(caller 1)}" # Caller information for debug messages
+        local -r instance_name="${1:-default}"
+        local -r level="${2:="debug"}"
+        local -r message="${3:-}" # Allow blank messages
+        local -r caller_info="${4:-$(caller 1)}" # Caller information for debug messages
 
-        # Ensure instance_name is provided
-        if [[ -z "${instance_name}" ]]; then
-            printf "Error: instance_name is required for Logger_log.\n" >&2
+        # Validate the log level
+        _validate_log_level "${level}" || return 1
+            # Validate the log level
+        if ! _validate_log_level "${level}"; then
+            # Print error and propagate failure
+            printf "Error: Invalid log level '%s'\n" "${level}"
             return 1
         fi
 
@@ -154,30 +183,27 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             return 1
         fi
 
-        # Validate the log level
-        _validate_log_level "${level}" || return 1
-
-        # Access instance properties using _Logger_get_property
-        local log_file
-        local log_level
-        local log_to_screen
-        local log_to_file
+        # Retrieve properties
+        local log_file log_level log_to_screen log_to_file
         log_file=$(_Logger_get_property "${instance_name}" "log_file")
         log_level=$(_Logger_get_property "${instance_name}" "log_level")
         log_to_screen=$(_Logger_get_property "${instance_name}" "log_to_screen")
         log_to_file=$(_Logger_get_property "${instance_name}" "log_to_file")
 
-        # Define log levels
-        local levels
-        local priority
-        local current_priority
-        levels=("debug" "info" "warn" "pass" "fail")
-        priority=$(printf '%s\n' "${levels[@]}" | grep -nx "${level}" | cut -d':' -f1)
-        current_priority=$(printf '%s\n' "${levels[@]}" | grep -nx "${log_level}" | cut -d':' -f1)
+        # Get priorities for the current log level and the message log level
+        local current_priority priority
+        current_priority="${log_level_priorities[${log_level}]}"
+        priority="${log_level_priorities[${level}]}"
 
-        # Skip logging if the level is lower than the configured level
-        if [[ -n "${priority}" && -n "${current_priority}" && "${priority}" -lt "${current_priority}" ]]; then
-            return
+        # Ensure priorities are valid
+        if [[ -z "${current_priority}" || -z "${priority}" ]]; then
+            printf "Error: Invalid log level priority.\n" >&2
+            return 1
+        fi
+
+        # Skip logging if the message level is below the instance's configured level
+        if [[ "${priority}" -lt "${current_priority}" ]]; then
+            return 0
         fi
 
         # Parse caller information for debug messages
@@ -208,16 +234,19 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             formatted_message="${message}"
         fi
 
+        local error=false
+
         # Log to file if enabled
         if [[ "${log_to_file}" == "true" ]]; then
-            printf "%s\n" "${timestamp} ${prefix} ${formatted_message}" >> "${log_file}" || {
+            if ! printf "%s\n" "${timestamp} ${prefix} ${formatted_message}" >> "${log_file}"; then
                 printf "Error: Failed to write to log file: %s\n" "${log_file}" >&2
-                return 1
-            }
+                error=true
+            fi
         fi
 
         # Log to screen if enabled
         if [[ "${log_to_screen}" == "true" ]]; then
+            local color
             case "${level}" in
                 debug) color="${orange}" ;;
                 info)  color="${blue}" ;;
@@ -228,15 +257,28 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             esac
             printf "%s %b%s%b %s\n" "${timestamp}" "${color}" "${prefix}" "${reset}" "${formatted_message}"
         fi
+
+        # Return status based on the error state
+        if [[ "${error}" == "true" ]]; then
+            return 1
+        else
+            return 0
+        fi
     }
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Set a property for a logger instance
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     function _Logger_set_property() {
         local instance_name=$1
         local property=$2
         local value=$3
+
+        # Ensure the instance's associative array is declared
+        if ! declare -p "${instance_name}_props" &> /dev/null; then
+            echo "Error: Logger instance '${instance_name}' is not declared." >&2
+            return 1
+        fi
 
         # Validate property names and values
         case "${property}" in
@@ -265,40 +307,12 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         eval "${instance_name}_props[${property}]='$(printf "%q" "${value}")'"
     }
 
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     # Get a property from a logger instance
-    # -----------------------------------------------------------------------------
+    # =============================================================================
     function _Logger_get_property() {
         local instance_name=$1
         local property=$2
         eval "echo \${${instance_name}_props[${property}]}"
     }
 fi
-
-###############################################################################
-# Example usage
-###############################################################################
-
-# # Create two logger instances
-# Logger_Init "logger1" "/tmp/logger1.log" "debug" "true" "true" || exit 1
-# Logger_Init "logger2" "/tmp/logger2.log" "debug" "true" "false" || exit 1
-
-# # Use instance-specific methods
-# logger1.info "This is an info message for logger1."
-# logger1.warn "This is a warning message for logger1."
-# logger2.info "This is an info message for logger2 (won't log due to level)."
-# logger2.warn "This is a warning message for logger2."
-# logger1.debug "This is a debug message for logger1."
-# logger2.fail "This is a failure message for logger2."
-# logger1.debug "This is a debug message"
-# logger2.debug
-# logger2.info
-# logger2.warn
-# logger2.pass
-# logger2.fail
-
-# logger2.debug ""
-# logger2.info ""
-# logger2.warn ""
-# logger2.pass ""
-# logger2.fail ""
