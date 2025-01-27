@@ -50,7 +50,7 @@ jobs:
       # Run shfmt to check formatting
       - name: Run shfmt
         run: |
-          shfmt -i 4 -ci -bn -kp -sr -ln bash -d .
+          find . -type f -name "*.sh" -print0 | xargs -0 shfmt -i 4 -ci -bn -kp -sr -ln bash -d
 
           # Explanation of flags:
           # ---------------------
