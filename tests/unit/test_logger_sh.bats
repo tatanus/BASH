@@ -10,7 +10,6 @@
 setup() {
     SCRIPT_DIR="$(pwd)"
     export SCRIPT_DIR
-    export TERM=${TERM:-xterm}
 
     if [[ -f "${SCRIPT_DIR}/lib/logger.sh" ]]; then
         source "${SCRIPT_DIR}/lib/logger.sh"

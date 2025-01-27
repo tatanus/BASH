@@ -25,7 +25,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # =============================================================================
 
     # Check if `tput` is available; otherwise, use ANSI escape codes as fallback
-    if command -v tput &> /dev/null; then
+    if [[ -t 1 && -n "$(command -v tput)" ]]; then
         light_green=$(tput setaf 2)
         light_blue=$(tput setaf 6)
         blue=$(tput setaf 4)
