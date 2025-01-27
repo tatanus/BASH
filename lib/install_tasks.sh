@@ -35,6 +35,8 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
     }
 
     function _Install_Tool() {
+        source "${PENTEST_ALIAS_FILE}"
+
         local script_file="$1" # Accept the tool's script file as an argument
         local MODULES_DIR="tools/modules"
         local script_path="${MODULES_DIR}/${script_file}.sh"

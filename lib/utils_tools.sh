@@ -206,7 +206,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         pass "${DIRECTORY_NAME} installed and virtual environment set up successfully."
     }
 
-    function AppTest() {
+    function RunAppTest() {
         # Ensure aliases are expanded in non-interactive scripts
         shopt -s expand_aliases
 
@@ -221,13 +221,26 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
         # Check if the command was successful or if specific conditions are met
         if [[ "${status}" -eq "${successExitCode}" ]]; then
-            pass "SUCCESS: [${appName}] - [${appCommand}]"
+            return 0  # Indicate success
         else
-            fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
+            return "${status}"  # Indicate failure
         fi
+    }
 
-        # Return a non-zero status if the command failed
-        return "${status}"
+    function AppTest() {
+        local appName="$1"
+        local appCommand="$2"
+        local successExitCode="${3:-0}"
+
+        # Call the test function and handle the result
+        if RunAppTest "${appName}" "${appCommand}" "${successExitCode}"; then
+            pass "SUCCESS: [${appName}] - [${appCommand}]"
+            return 0
+        else
+            local status=$?
+            fail "FAILED : [${appName}] - [${appCommand}] - Exit Status [${status}]"
+            return "${status}"  # Return the failure status
+        fi
     }
 
     function _Test_Tool_Installs()  {
