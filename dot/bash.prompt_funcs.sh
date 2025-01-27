@@ -310,11 +310,14 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             ip=$(echo "${line}" | awk '{print $2}' | cut -d'/' -f1)
 
             # Skip excluded interfaces using glob matching
+            local exclude=0
             for pattern in "${excluded_interfaces[@]}"; do
-                if [[ "${iface}" == "${pattern}" ]]; then
-                    continue 2 # Skip to the next line in the parent loop
+                if [[ "${iface}" == $pattern ]]; then
+                    exclude=1
+                    break
                 fi
             done
+            [[ $exclude -eq 1 ]] && continue
 
             # Determine if the interface is using DHCP or static
             if command -v is_dhcp_static &> /dev/null; then

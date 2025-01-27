@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["privexchange"]="post-exploitation"
+TOOL_CATEGORY_MAP["privexchange"]="post-exploitation"
+APP_TESTS["privexchange"]="privexchange.py -h"
 
 function install_privexchange() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_privexchange() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for privexchange
-function test_privexchange() {
-    local TOOL_NAME="privexchange.py"
-    local TOOL_COMMAND="privexchange.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

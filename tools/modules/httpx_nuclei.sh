@@ -13,8 +13,10 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["httpx"]="intelligence-gathering"
-tool_categories["nuclei"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["httpx"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["nuclei"]="intelligence-gathering"
+APP_TESTS["httpx"]="httpx -h"
+APP_TESTS["nuclei"]="nuclei -h"
 
 function install_httpx_nuclei() {
     info "httpx and nuclei are installed via go"
@@ -34,32 +36,4 @@ function install_httpx_nuclei() {
     # fi
 
     # _Git_Clone https://github.com/projectdiscovery/nuclei-templates.git
-}
-
-# Test function for httpx
-function test_httpx() {
-    local TOOL_NAME="httpx"
-    local TOOL_COMMAND="httpx -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
-}
-
-# Test function for nuclei
-function test_nuclei() {
-    local TOOL_NAME="nuclei"
-    local TOOL_COMMAND="nuclei -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
-}
-
-# Test function for httpx_nuclei
-function test_httpx_nuclei() {
-    test_httpx
-    test_nuclei
 }

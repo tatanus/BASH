@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:44  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["pretender"]="exploitation"
+TOOL_CATEGORY_MAP["pretender"]="exploitation"
+APP_TESTS["pretender"]="pretender -h"
 
 function install_pretender() {
     _Git_Clone https://github.com/RedTeamPentesting/pretender.git
@@ -22,15 +23,4 @@ function install_pretender() {
     _Popd
 
     _add_tool_function "pretender" "pretender/pretender"
-}
-
-# Test function for pretender
-function test_pretender() {
-    local TOOL_NAME="pretender"
-    local TOOL_COMMAND="pretender -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

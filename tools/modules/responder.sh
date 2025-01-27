@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:53:46  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["responder"]="exploitation"
+TOOL_CATEGORY_MAP["responder"]="exploitation"
+APP_TESTS["responder"]="Responder.py -h"
 
 function install_responder() {
     _Git_Clone https://github.com/lgandx/Responder.git
@@ -24,15 +25,4 @@ function install_responder() {
     _Popd
 
     _add_tool_function "Responder.py" "Responder/Responder.py"
-}
-
-# Test function for responder
-function test_responder() {
-    local TOOL_NAME="Responder.py"
-    local TOOL_COMMAND="Responder.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["kerbrute"]="exploitation post-exploitation password-recovery"
+TOOL_CATEGORY_MAP["kerbrute"]="exploitation post-exploitation password-recovery"
+APP_TESTS["kerbrute"]="kerbrute -h"
 
 function install_kerbrute() {
     if _Git_Release "ropnop/kerbrute" "linux_amd64" "${TOOLS_DIR}/kerbrute"; then
@@ -21,15 +22,4 @@ function install_kerbrute() {
 
         _add_tool_function "kerbrute" "kerbrute/kerbrute_linux_amd64"
     fi
-}
-
-# Test function for kerbrute
-function test_kerbrute() {
-    local TOOL_NAME="kerbrute"
-    local TOOL_COMMAND="kerbrute -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

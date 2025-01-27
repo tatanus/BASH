@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["autoproc"]="post-exploitation"
+TOOL_CATEGORY_MAP["autoproc"]="post-exploitation"
+APP_TESTS["autoProc"]="autoProc.py -h"
 
 function install_autoproc() {
     # Create directory for autoProc
@@ -29,15 +30,4 @@ function install_autoproc() {
     _add_tool_function "autoProc.py" "autoProc/autoProc.py"
 
     pass "autoProc installed and aliases added successfully."
-}
-
-# Test function for autoproc
-function test_autoproc() {
-    local TOOL_NAME="autoProc.py"
-    local TOOL_COMMAND="autoProc.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

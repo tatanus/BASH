@@ -219,7 +219,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         output=$(eval "${appCommand}" 2>&1)
         local status=$?
 
-        # Check if the command was successful or if specific conditions are met
+        # Return the exit status of the command
         if [[ "${status}" -eq "${successExitCode}" ]]; then
             return 0  # Indicate success
         else
@@ -269,32 +269,6 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                 ((failed_tests++))
             fi
         done
-
-        # load list of tools from the tools/modules directory
-        MODULES_DIR="${SCRIPT_DIR}/tools/modules"
-
-        # Dynamically add tool names from scripts in MODULES_DIR
-        if [[ -d "${MODULES_DIR}" ]]; then
-            for script in "${MODULES_DIR}"/*.sh; do
-                source "${script}" || warn "Failed to source ${script}."
-
-                if [[ -f "${script}" ]]; then
-                    tool_name=$(basename "${script}" .sh) # Extract the tool name
-
-                    "test_${tool_name}"
-                    local status=$?  # Capture the exit status immediately
-
-                    ((total_tests++))
-
-                    # Check the exit status of the last executed command
-                    if [[ "${status}" -ne 0 ]]; then
-                        ((failed_tests++))
-                    fi
-                fi
-            done
-        else
-            warn "Directory not found: ${MODULES_DIR}"
-        fi
 
         # Print summary of results
         warning "Test Summary: ${total_tests} tests ran, ${failed_tests} failed."

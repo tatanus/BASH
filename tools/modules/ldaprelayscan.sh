@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ldaprelayscan"]="intelligence-gathering exploitation"
+TOOL_CATEGORY_MAP["ldaprelayscan"]="intelligence-gathering exploitation"
+APP_TESTS["ldaprelayscan"]="LdapRelayScan.py -h"
 
 function install_ldaprelayscan() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_ldaprelayscan() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for ldaprelayscan
-function test_ldaprelayscan() {
-    local TOOL_NAME="ldapRelayscan.py"
-    local TOOL_COMMAND="LdapRelayScan.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

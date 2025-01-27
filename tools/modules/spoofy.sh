@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-19 10:38:56  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["spoofy"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["spoofy"]="intelligence-gathering"
+APP_TESTS["spoofy"]="spoofy.py -h"
 
 function install_spoofy() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_spoofy() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for spoofy
-function test_spoofy() {
-    local TOOL_NAME="Spoofy.py"
-    local TOOL_COMMAND="spoofy.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

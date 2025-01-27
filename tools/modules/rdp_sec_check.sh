@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["rdp_sec_check"]="vulnerability-analysis"
+TOOL_CATEGORY_MAP["rdp_sec_check"]="vulnerability-analysis"
+APP_TESTS["rdp_sec_check"]="rdp-sec-check.pl -h"
 
 function install_rdp_sec_check() {
     _Git_Clone https://github.com/CiscoCXSecurity/rdp-sec-check.git
@@ -21,15 +22,4 @@ function install_rdp_sec_check() {
     ${PROXY} perl -MCPAN -e 'install Encoding::BER'
 
     _add_tool_function "rdp-sec-check.pl" "rdp-sec-check/rdp-sec-check.pl"
-}
-
-# Test function for rdp_sec_check
-function test_rdp_sec_check() {
-    local TOOL_NAME="rdp_sec_check.pl"
-    local TOOL_COMMAND="rdp-sec-check.pl -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

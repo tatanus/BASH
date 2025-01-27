@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ek47"]="exploitation"
+TOOL_CATEGORY_MAP["ek47"]="exploitation"
+APP_TESTS["ek47"]="ek47.py -h"
 
 function install_ek47() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_ek47() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for ek47
-function test_ek47() {
-    local TOOL_NAME="ek47.py"
-    local TOOL_COMMAND="ek47.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

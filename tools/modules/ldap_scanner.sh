@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ldap_scanner"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["ldap_scanner"]="intelligence-gathering"
+APP_TESTS["ldap_scanner"]="ldap-scanner.py -h"
 
 function install_ldap_scanner() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_ldap_scanner() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for ldap_scanner
-function test_ldap_scanner() {
-    local TOOL_NAME="ldap-scanner.py"
-    local TOOL_COMMAND="ldap-scanner.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

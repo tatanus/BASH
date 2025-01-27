@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["nessus"]="exploitation"
+TOOL_CATEGORY_MAP["nessus"]="exploitation"
+APP_TESTS["nessus"]="/opt/nessus/bin/nasl -h"
 
 function install_nessus() {
     # Check required environment variables
@@ -60,15 +61,4 @@ EOF
         # Restart the daemon
         systemctl start nessusd.service
     fi
-}
-
-# Test function for nessus
-function test_nessus() {
-    local TOOL_NAME="nessus"
-    local TOOL_COMMAND="/opt/nessus/bin/nasl -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

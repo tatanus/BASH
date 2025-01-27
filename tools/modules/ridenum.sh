@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ridenum"]="intelligence-gathering"
+TOOL_CATEGORY_MAP["ridenum"]="intelligence-gathering"
+APP_TESTS["ridenum"]="ridenum.py -h"
 
 function install_ridenum() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_ridenum() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for ridenum
-function test_ridenum() {
-    local TOOL_NAME="ridenum.py"
-    local TOOL_COMMAND="ridenum.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["coercer"]="exploitation post-exploitation"
+TOOL_CATEGORY_MAP["coercer"]="exploitation post-exploitation"
+APP_TESTS["coercer"]="Coercer.py -h"
 
 function install_coercer() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_coercer() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" true "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for coercer
-function test_coercer() {
-    local TOOL_NAME="Coercer.py"
-    local TOOL_COMMAND="Coercer.py -h"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }

@@ -13,7 +13,8 @@ set -uo pipefail
 # 2024-12-09 13:49:51  | Adam Compton | Initial creation.
 # =============================================================================
 
-tool_categories["ciscot7"]="password-recovery"
+TOOL_CATEGORY_MAP["ciscot7"]="password-recovery"
+APP_TESTS["ciscot7"]="ciscot7.py --help"
 
 function install_ciscot7() {
     # Define the arguments
@@ -24,15 +25,4 @@ function install_ciscot7() {
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
-}
-
-# Test function for ciscot7
-function test_ciscot7() {
-    local TOOL_NAME="ciscot7.py"
-    local TOOL_COMMAND="ciscot7.py --help"
-    AppTest "${TOOL_NAME}" "${TOOL_COMMAND}"
-    local status=$?
-
-    # Return the status from AppTest
-    return "${status}"
 }
