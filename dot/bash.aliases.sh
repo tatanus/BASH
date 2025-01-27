@@ -29,6 +29,15 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
         check_command "gsed" && alias sed="gsed"
     fi
 
+    # Alias for grep with color
+    alias grep='grep --color=auto'
+
+    # Alias for ggrep
+    # shellcheck disable=SC2262
+    if [[ "$(_get_os)" == "macos" ]]; then
+        check_command "ggrep" && alias grep="ggrep --color=auto"
+    fi
+
     # Alias and function for eza
     check_command "eza" && alias ls="convert_ls_to_eza"
 
@@ -51,9 +60,6 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
         # Alias to run 'curl' with a specific user agent string
         alias curl='curl -A "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36" -k'
     fi
-
-    # Alias for grep with color
-    alias grep='grep --color=auto'
 
     # Alias for dig with short output
     alias dig='dig +short'
