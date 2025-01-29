@@ -46,6 +46,16 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     fi
 
     # =============================================================================
+    # Default values
+    # =============================================================================
+
+    instance_name_default="default"
+    log_file_default="$${HOME}/${instance_name_default}.log" # Default log file
+    log_level_default="info"
+    log_to_screen_default="true"
+    log_to_file_default="true"
+
+    # =============================================================================
     # Valid logging levels
     # =============================================================================
     # Define log levels and their priorities
@@ -60,7 +70,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # Validates an instance name to ensure it's a valid Bash variable name.
     # =============================================================================
     function _validate_instance_name() {
-        local name=$1
+        local name="${1:-${instance_name_default}}"
         if [[ ! "${name}" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
             printf "Error: Invalid instance name '%s'. Must start with a letter or underscore and contain only alphanumeric characters and underscores.\n" "${name}" >&2
             return 1
@@ -71,7 +81,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # Validates if a given log level is valid
     # =============================================================================
     function _validate_log_level() {
-        local -r level="${1:-}"
+        local -r level="${1:-${log_level_default}}"
 
         # Check if level is empty
         if [[ -z "${level}" ]]; then
@@ -92,11 +102,11 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # Initializes a new logger instance
     # =============================================================================
     function Logger_Init() {
-        local -r instance_name="${1:-default}"
-        local -r log_file="${2:-${HOME}/${instance_name}.log}" # Default log file
-        local -r log_level="${3:-info}"
-        local -r log_to_screen="${4:-true}"
-        local -r log_to_file="${5:-true}"
+        local -r instance_name="${1:-${instance_name_default}}"
+        local -r log_file="${2:-${log_file_default}}"
+        local -r log_level="${3:-${log_level_default}}"
+        local -r log_to_screen="${4:-${log_to_screen_default}}"
+        local -r log_to_file="${5:-${log_to_file_default}}"
 
         # Validate instance name
         _validate_instance_name "${instance_name}" || return 1
@@ -163,8 +173,8 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # Logs a message for the given instance and log level.
     # =============================================================================
     function Logger_log() {
-        local -r instance_name="${1:-default}"
-        local -r level="${2:="debug"}"
+        local -r instance_name="${1:-${instance_name_default}}"
+        local -r level="${2:-${log_level_default}}"
         local -r message="${3:-}" # Allow blank messages
         local -r caller_info="${4:-$(caller 1)}" # Caller information for debug messages
 
@@ -186,9 +196,16 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         # Retrieve properties
         local log_file log_level log_to_screen log_to_file
         log_file=$(_Logger_get_property "${instance_name}" "log_file")
+        log_file="${log_file:-${log_file_default}}"
+
         log_level=$(_Logger_get_property "${instance_name}" "log_level")
+        log_level="${log_level:-${log_level_default}}"
+
         log_to_screen=$(_Logger_get_property "${instance_name}" "log_to_screen")
+        log_to_screen="${log_to_screen:-${log_to_screen_default}}"
+
         log_to_file=$(_Logger_get_property "${instance_name}" "log_to_file")
+        log_to_file="${log_to_file:-${log_to_file_default}}"
 
         # Get priorities for the current log level and the message log level
         local current_priority priority
