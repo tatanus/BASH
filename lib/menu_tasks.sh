@@ -117,8 +117,8 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
 
             # Check if the script file exists
             if [[ -f "${script_file}" ]]; then
-                if ! _Install_Tool "${script_file}"; then
-                    fail "Failed to install tool: ${script_file}. Moving to the next tool."
+                if ! _Install_Tool "${choice}"; then
+                    fail "Failed to install tool: ${choice}. Moving to the next tool."
                 fi
             else
                 fail "Script file not found: ${script_file}"

@@ -50,7 +50,6 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # =============================================================================
 
     instance_name_default="default"
-    log_file_default="$${HOME}/${instance_name_default}.log" # Default log file
     log_level_default="info"
     log_to_screen_default="true"
     log_to_file_default="true"
@@ -103,7 +102,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     # =============================================================================
     function Logger_Init() {
         local -r instance_name="${1:-${instance_name_default}}"
-        local -r log_file="${2:-${log_file_default}}"
+        local -r log_file="${2:-${HOME}/${instance_name}.log}"
         local -r log_level="${3:-${log_level_default}}"
         local -r log_to_screen="${4:-${log_to_screen_default}}"
         local -r log_to_file="${5:-${log_to_file_default}}"
@@ -145,7 +144,6 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         _Logger_set_property "${instance_name}" "log_level" "${log_level}"
         _Logger_set_property "${instance_name}" "log_to_screen" "${log_to_screen}"
         _Logger_set_property "${instance_name}" "log_to_file" "${log_to_file}"
-
         # Dynamically define methods for this instance
         eval "
             ${instance_name}.info() { Logger_log '${instance_name}' 'info' \"\${1:-}\"; }
@@ -196,7 +194,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         # Retrieve properties
         local log_file log_level log_to_screen log_to_file
         log_file=$(_Logger_get_property "${instance_name}" "log_file")
-        log_file="${log_file:-${log_file_default}}"
+        log_file="${log_file:-${HOME}/${instance_name}.log}"
 
         log_level=$(_Logger_get_property "${instance_name}" "log_level")
         log_level="${log_level:-${log_level_default}}"

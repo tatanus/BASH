@@ -119,7 +119,6 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
 
         ssh_key=$(echo "${ssh_key}" | awk '{print $2}')
 
-        # Loop until a valid droplet name is provided
         while true; do
             read -rp "Enter a name for the droplet: " droplet_name
             if [[ -n "${droplet_name}" && ${#droplet_name} -le 64 ]]; then
@@ -128,7 +127,23 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
             echo "[ERROR] Droplet name is invalid or too long (max 64 characters). Please try again."
         done
 
-        echo -e "\nSummary:\n    Region:  ${region}\n    OS:      ${os}\n    Version: ${os_version}\n    Size:    ${size}\n    SSH Key: ${ssh_key}\n    Name:    ${droplet_name}\n"
+        # Ask user if they want to use a user-data file
+        while true; do
+            read -rp "Would you like to include a user-data file (dom.yaml)? (yes/no): " use_user_data
+            case "${use_user_data}" in
+                yes)
+                    use_user_data=true
+                    break
+                    ;;
+                no)
+                    use_user_data=false
+                    break
+                    ;;
+                *) echo "[ERROR] Invalid input. Please type 'yes' or 'no'." ;;
+            esac
+        done
+
+        echo -e "\nSummary:\n    Region:  ${region}\n    OS:      ${os}\n    Version: ${os_version}\n    Size:    ${size}\n    SSH Key: ${ssh_key}\n    Name:    ${droplet_name}\n    User-Data: ${use_user_data}\n"
 
         # Loop until a valid confirmation is provided
         while true; do
@@ -144,21 +159,30 @@ if [[ -z "${DIGITAL_OCEAN_LOADED:-}" ]]; then
         done
 
         echo "Creating droplet..."
-        if ! doctl compute droplet create "${droplet_name}" \
-            --region "${region}" \
-            --image "${os_version}" \
-            --size "${size}" \
-            --ssh-keys "${ssh_key}" \
-            --wait \
-            --format ID,Name,PublicIPv4 \
-            --user-data-file dom.yaml \
-            --wait; then
+        local create_cmd=(
+            doctl compute droplet create "${droplet_name}"
+            --region "${region}"
+            --image "${os_version}"
+            --size "${size}"
+            --ssh-keys "${ssh_key}"
+            --wait
+            --format "ID,Name,PublicIPv4"
+            --wait
+        )
+
+        # Conditionally add user-data-file argument if the user opted in
+        if [[ "${use_user_data}" == "true" ]]; then
+            create_cmd+=(--user-data-file dom.yaml)
+        fi
+
+        # Execute the command
+        if ! "${create_cmd[@]}"; then
             echo "[ERROR] Failed to create droplet."
         else
             echo "[SUCCESS] Droplet created successfully!"
         fi
-        _Pause
 
+        _Pause
     }
 
     function ssh_into_droplet() {

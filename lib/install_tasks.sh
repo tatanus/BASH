@@ -68,7 +68,7 @@ if [[ -z "${INSTALL_TASKS_SH_LOADED:-}" ]]; then
         # Check if the test function is defined and run it
         if declare -f "RunAppTest" > /dev/null; then
             # Verify if APP_TESTS contains a key for $script_file
-            if [[ -n "${APP_TESTS[${script_file}]}" ]]; then
+            if [[ -v APP_TESTS["${script_file}"] ]]; then
                 if RunAppTest "${script_file}" "${APP_TESTS[${script_file}]}"; then
                     info "Tool ${script_file} is already installed. Skipping."
                     return "${_PASS}"
