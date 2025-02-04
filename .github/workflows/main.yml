@@ -50,7 +50,7 @@ jobs:
       # Run shfmt to check formatting
       - name: Run shfmt
         run: |
-          find . -type f -name "*.sh" -print0 | xargs -0 shfmt -i 4 -ci -bn -kp -sr -ln bash -d
+          find . -type f -name "*.sh" -print0 | xargs -0 shfmt -i 4 -ci -bn -kp -ln bash -d
 
           # Explanation of flags:
           # ---------------------
@@ -62,8 +62,6 @@ jobs:
           #            # Example:
           #            # VAR1="value1"  # aligned comment
           #            # VAR2="value2"
-          # -sr        # Disable adding spaces around redirection operators (`>` and `<`).
-          #            # Example: `>file` instead of `> file`.
           # -ln bash   # Specify the shell dialect as `bash` (default is `posix` for maximum portability).
           #            # Ensures proper parsing for Bash-specific features.
           # -d         # Diff mode: Show differences between the current script formatting and the `shfmt` output.
