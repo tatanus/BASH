@@ -207,4 +207,70 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
     }
+
+    # Replaces placeholders in a file with their corresponding environment values.
+    # Placeholders should be formatted as --VAR_NAME-- and will be replaced with
+    # the value of the corresponding ${VAR_NAME} environment variable.
+    function replace_env_variables_in_file() {
+        local file_path="$1"
+
+        # Ensure file is provided
+        if [[ -z "${file_path}" ]]; then
+            fail "Error: No file path provided."
+            return "${_FAIL}"
+        fi
+
+        # Ensure file is readable
+        check_file_readable "${file_path}"
+        if [[ $? -eq "${_FAIL}" ]]; then
+            return "${_FAIL}"
+        fi
+
+        # Ensure file is writable
+        check_file_writable "${file_path}"
+        if [[ $? -eq "${_FAIL}" ]]; then
+            return "${_FAIL}"
+        fi
+
+        # Extract all placeholders (formatted as --VAR_NAME--)
+        local placeholders
+        placeholders=$(grep -oP -- "--[A-Z0-9_]+--" "${file_path}" | sort -u || true)
+
+        # If no placeholders are found, return
+        if [[ -z "${placeholders}" ]]; then
+            pass "No placeholders found in '${file_path}'."
+            return "${_PASS}"
+        fi
+
+        # Create a temporary file to prevent corruption in case of failure
+        temp_file=$(mktemp)
+        if [[ $? -ne 0 ]]; then
+            fail "Error: Failed to create temp file."
+            return "${_FAIL}"
+        fi
+
+        cp "${file_path}" "${temp_file}"  # Backup the original file before modification
+
+        for placeholder in ${placeholders}; do
+            # Convert --VAR_NAME-- to VAR_NAME (remove --)
+            local var_name="${placeholder//--/}"
+
+            # Check if the environment variable exists using check_env_var
+            check_env_var "${var_name}"
+            if [[ $? -eq "${_FAIL}" ]]; then
+                fail "Skipping replacement for '${placeholder}' because '${var_name}' is not set."
+                continue
+            fi
+
+            # Perform the replacement
+            sed -i "s|${placeholder}|${!var_name}|g" "${temp_file}"
+            pass "Replaced '${placeholder}' with '${!var_name}'."
+        done
+
+        # Move the temp file back to original
+        mv "${temp_file}" "${file_path}"
+
+        pass "File successfully updated: ${file_path}"
+        return "${_PASS}"
+    }
 fi

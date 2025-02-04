@@ -5,6 +5,6 @@
     "target_scan" : "Internal",
     "max_rate" : "2000",
     "target_file" : "/targets.txt",
-    "exclusions_file" : "/excludes.txt",
-    "output_path" : "/RECON/SPOONMAP/"
+    "exclusions_file" : "--DATA_DIR--/excludes.txt",
+    "output_path" : "--DATA_DIR--/RECON/SPOONMAP/"
 }

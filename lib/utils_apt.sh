@@ -22,6 +22,20 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
     # -----------------------------------------------------------------------------
 
     # Install a package using apt if it's not already installed
+    function _Apt_Install_Missing_Dependencies() {
+        info "Installing Missing Dependencies via apt..."
+
+        if ${PROXY} sudo apt update -qq > /dev/null 2>&1 &&
+            ${PROXY} sudo apt install -y -f > /dev/null 2>&1; then
+            pass "Installed missing dependencies using apt."
+            return "${_PASS}"
+        else
+            fail "Could not install missing dependencies using apt."
+            return "${_FAIL}"
+        fi
+    }
+
+    # Install a package using apt if it's not already installed
     function _Apt_Install() {
         local package="$1"
 
@@ -34,8 +48,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
         # Check if the package is already installed
         if ! dpkg -s "${package}" > /dev/null 2>&1; then
             info "Installing ${package} using apt..."
-            if { ${PROXY} sudo apt update -qq > /dev/null 2>&1 \
-                                                               && ${PROXY} sudo apt install -y "${package}" > /dev/null 2>&1; }; then
+            if { ${PROXY} sudo apt update -qq > /dev/null 2>&1 && ${PROXY} sudo apt install -y "${package}" > /dev/null 2>&1; }; then
 
                 pass "Installed ${package} using apt."
                 return "${_PASS}"
