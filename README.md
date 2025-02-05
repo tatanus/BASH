@@ -154,6 +154,83 @@ BASH/
 
 ---
 
+# Project Directory Structure
+
+This document provides an overview of the directory structure used in this project. It includes environment variable mappings for key directories and a hierarchical breakdown of all relevant subdirectories.
+
+---
+
+## **Environment Variable Mappings**
+The following environment variables are used to reference key directories within the project. This allows for flexible configuration and easier management of paths.
+
+| Environment Variable  | Directory Path |
+|----------------------|-------------------------|
+| `${DATA_DIR}`       | `DATA/`                 |
+| `${TOOLS_DIR}`      | `DATA/TOOLS/`           |
+| `${BACKUP_DIR}`     | `DATA/BACKUP/`          |
+| `${LOGS_DIR}`       | `DATA/LOGS/`            |
+| `${LOOT_DIR}`       | `DATA/LOOT/`            |
+| `${CREDS_DIR}`      | `DATA/LOOT/CREDENTIALS/` |
+| `${RECON_DIR}`      | `DATA/RECON/`           |
+| `${OUTPUT_DIR}`     | `DATA/OUTPUT/`          |
+| `${PORTSCAN_DIR}`   | `DATA/OUTPUT/PORTSCAN/` |
+| `${TEE_DIR}`        | `DATA/OUTPUT/TEE/`      |
+| `${SHARES_DIR}`     | `DATA/SHARES/`          |
+
+---
+
+## 📂 **Directory Breakdown**
+
+Below is a structured breakdown of the directories and their purpose:
+
+```
+DATA/                        # Root data directory
+│── TOOLS/                    # Tool storage
+│   ├── SCRIPTS/              # Custom scripts used for automation
+│   ├── MSF/                  # Metasploit-related files
+│
+│── BACKUP/                   # Backups of important data
+│
+│── LOGS/                     # Log files and reports
+│
+│── LOOT/                     # Data collected from assessments
+│   ├── CREDENTIALS/          # Harvested credentials
+│   │   ├── CCACHE/           # Kerberos ticket caches
+│   ├── SCREENSHOTS/          # Captured images from engagements
+│   ├── FILES/                # Miscellaneous collected files
+│
+│── RECON/                    # Reconnaissance-related files
+│
+│── OUTPUT/                   # Processed or generated output
+│   ├── PORTSCAN/             # Port scanning results
+│   │   ├── NMAP/             # Nmap scan results
+│   │   ├── SPOONMAP/         # Spoonmap scan results
+│   ├── TEE/                  # Stored tee command outputs
+│   ├── MITM/                 # Man-in-the-Middle attack logs
+│   ├── MSF/                  # Metasploit framework outputs
+│   ├── BLOODHOUND/           # BloodHound AD mapping data
+│   ├── CISCO/                # Cisco network assessment data
+│   ├── SMB/                  # SMB-related logs and data
+│   ├── WEB/                  # Web application assessment data
+│   ├── LDAP/                 # LDAP reconnaissance data
+│   ├── COERSION/             # Coercion attack-related files
+│   ├── ADCS/                 # Active Directory Certificate Services data
+│   ├── PCAP/                 # Network packet capture files
+│
+│── SHARES/                   # Network share enumeration data
+│   ├── NFS/                  # NFS shares
+│   ├── SMB/                  # SMB shares
+```
+---
+
+## 💡 **Usage Notes**
+- Environment variables should be set dynamically in scripts to avoid hardcoding paths.
+- Subdirectories are logically grouped to improve organization and efficiency during assessments.
+- The `OUTPUT/` directory is used to store pre/post-processing results from tools and automated scripts.
+- The `LOOT/` directory is strictly for collected artifacts, while `RECON/` is for analyzed and colleded data.
+
+---
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:

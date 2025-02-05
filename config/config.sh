@@ -104,6 +104,7 @@ if [[ -z "${CONFIG_SH_LOADED:-}" ]]; then
     export OUTPUT_DIR="${ENGAGEMENT_DIR}/OUTPUT"
     export PORTSCAN_DIR="${OUTPUT_DIR}/PORTSCAN"
     export SHARES_DIR="${OUTPUT_DIR}/SHARES"
+    export TEE_DIR="${OUTPUT_DIR}/TEE"
 
     # # Ensure directories exist
     # for dir in "${DATA_DIR}" "${TOOLS_DIR}" "${LOGS_DIR}" "${ENGAGEMENT_DIR}" "${BACKUP_DIR}" "${RECON_DIR}" "${LOOT_DIR}" "${CREDS_DIR}" "${OUTPUT_DIR}" "${PORTSCAN_DIR}" "${SHARES_DIR}"; do
