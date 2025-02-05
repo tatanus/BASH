@@ -25,8 +25,7 @@ if [[ -z "${UTILS_APT_SH_LOADED:-}" ]]; then
     function _Apt_Install_Missing_Dependencies() {
         info "Installing Missing Dependencies via apt..."
 
-        if ${PROXY} sudo apt update -qq > /dev/null 2>&1 && \
-           ${PROXY} sudo apt install -y -f > /dev/null 2>&1; then
+        if ${PROXY} sudo apt update -qq > /dev/null 2>&1 && ${PROXY} sudo apt install -y -f > /dev/null 2>&1; then
             pass "Installed missing dependencies using apt."
             return "${_PASS}"
         else
