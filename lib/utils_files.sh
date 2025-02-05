@@ -84,6 +84,25 @@ if [[ -z "${UTILS_FILES_SH_LOADED:-}" ]]; then
         fi
     }
 
+    # Check if a file exists and is non-empty
+    # Usage: is_file_non_empty "file_path"
+    function is_file_non_empty() {
+        local file_path="$1"
+
+        if [[ -z "${file_path}" ]]; then
+            fail "No file path provided."
+            return "${_FAIL}"
+        fi
+
+        if [[ -s "${file_path}" ]]; then
+            pass "File ${file_path} exists and is not empty."
+            return "${_PASS}"
+        else
+            fail "File ${file_path} does not exist or is empty."
+            return "${_FAIL}"
+        fi
+    }
+
     # Check if a file is writable
     # Usage: check_file_writable "file_path"
     function check_file_writable() {

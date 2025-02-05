@@ -65,6 +65,7 @@ build/
 
 # Specify filepatterns you want git to ignore.
 setup.log
+menu_timestamps
 BASH_ENV.tar
 tools/modules/_example.sh
 pentest_menu/modules/run_example.sh
