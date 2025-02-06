@@ -76,6 +76,8 @@ secondary_bash_files=(
     "${BASH_DIR}/screen.aliases.sh"
     "${BASH_DIR}/tmux.aliases.sh"
 
+    "${BASH_DIR}/ssh.aliases.sh"
+
     # Scripts or extra configuration
     "${BASH_DIR}/bash.history.sh"
 
