@@ -77,7 +77,7 @@ secondary_bash_files=(
     "${BASH_DIR}/tmux.aliases.sh"
 
     # Scripts or extra configuration
-    "${BASH_DIR}/logging.sh"
+    "${BASH_DIR}/bash.history.sh"
 
     #pentest environment if present
     "${BASH_DIR}/pentest.sh"

@@ -157,7 +157,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         log_command "Executed action for menu item: ${choice}"
     }
 
-    # Function to execute a Bash command or a script from $SCRIPT_DIR/modules/
+    # Function to execute a Bash command or a script
     function _Execute_And_Wait() {
         local input="$1"
 
@@ -166,13 +166,11 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
             return "${_FAIL}"
         fi
 
-        # Check if the input is a script in $SCRIPT_DIR/modules
-        local script_path="${SCRIPT_DIR}/modules/${input}"
-
-        # validate $script_path exists and is executable
-        if [[ -x "${script_path}" ]]; then
-            info "Executing script: ${script_path}"
-            "${script_path}"
+        # Check if the input is a script
+        # validate script exists and is executable
+        if [[ -x "${input}" ]]; then
+            info "Executing script: ${input}"
+            "${input}"
         else
             # Assume it's a command and try to execute it
             info "Executing command: ${input}"
@@ -183,9 +181,9 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
         local exit_status=$?
 
         if [[ ${exit_status} -eq 0 ]]; then
-            info "Execution completed successfully."
+            pass "Execution completed successfully."
         else
-            info "Execution failed with exit status ${exit_status}."
+            fail "Execution failed with exit status ${exit_status}."
         fi
 
         return "${exit_status}"
@@ -198,7 +196,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
 
         # Check if the process ID is valid (non-empty and numeric)
         if [[ -z "${process_id}" || ! "${process_id}" =~ ^[0-9]+$ ]]; then
-            #info "Error: Invalid process ID."
+            #fail "Invalid process ID."
             return "${_FAIL}"  # Return an error code
         fi
 
@@ -208,7 +206,7 @@ if [[ -z "${MENU_SH_LOADED:-}" ]]; then
 
         # Check if the wait command was successful
         if [[ ${wait_status} -ne 0 ]]; then
-            fail "Error: Process with PID ${process_id} did not complete successfully."
+            fail "Process with PID ${process_id} did not complete successfully."
             return "${_FAIL}"  # Return an error code
         fi
 
