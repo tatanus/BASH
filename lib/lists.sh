@@ -94,6 +94,10 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "bash_profile"
         "tmux.conf"
         "screenrc"
+        "inputrc"
+        "vimrc"
+        "wgetrc"
+        "curlrc"
     )
 
     BASH_DOT_FILES=(

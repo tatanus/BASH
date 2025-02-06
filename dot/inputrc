@@ -1,0 +1,36 @@
+# Enable case-insensitive completion
+set completion-ignore-case on
+
+# Make tab autocomplete cycle through options instead of stopping
+set show-all-if-ambiguous on
+set menu-complete-display-prefix on
+
+# Enable colored autocomplete suggestions if supported
+set colored-completion-prefix on
+set colored-stats on
+
+# Use vi mode for command-line editing if Vim is your preferred editor
+set editing-mode vi
+
+# Enable history search with Up/Down arrow keys (matches start of input)
+"\e[A": "\C-p"
+"\e[B": "\C-n"
+
+# Allow backspace/delete to work correctly
+set enable-keypad on
+
+# Fix Home/End keys behavior for better compatibility
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+
+# Make Ctrl+Left/Right jump by word
+"\e[1;5D": backward-word
+"\e[1;5C": forward-word
+
+# Improve command history navigation and prevent duplicates
+$if Bash
+    set show-mode-in-prompt off
+    set history-preserve-point on
+$endif
