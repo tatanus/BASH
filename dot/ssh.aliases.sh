@@ -80,7 +80,7 @@ if [[ -z "${SSH_ALIASES_SH_LOADED:-}" ]]; then
         local MOUNT_POINT="${HOME}/mnt/${TARGET_SYSTEM}"
 
         # Ensure the mount point exists
-        if [[ ! -d "$MOUNT_POINT" ]]; then
+        if [[ ! -d "${MOUNT_POINT}" ]]; then
             echo "[INFO] Mount point ${MOUNT_POINT} does not exist. Nothing to unmount."
             return 0
         fi
