@@ -1,44 +1,122 @@
-# Set default shell to bash
+# ==============================================================================
+# .screenrc Configuration File
+# Author: Adam Compton
+# Description: Configures GNU Screen settings for optimized logging, usability, 
+#              and session management.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Set default shell to bash (or the user's default shell)
+# ------------------------------------------------------------------------------
 shell -"${SHELL}"
 
-# Disable startup message
+# ------------------------------------------------------------------------------
+# Disable startup message to prevent unnecessary prompts when launching screen
+# ------------------------------------------------------------------------------
 startup_message off
 
-# Make sure the LOG directory exists
+# ------------------------------------------------------------------------------
+# Ensure the log directory exists before screen starts
+# ------------------------------------------------------------------------------
 startup_command mkdir -p "${HOME}"/DATA/LOGS
 
-# Fix xterm issue
+# ------------------------------------------------------------------------------
+# Fix known xterm compatibility issues with screen
+# ------------------------------------------------------------------------------
 termcapinfo xterm* ti@:te@
 
+# ------------------------------------------------------------------------------
+# Automatically detach screen sessions when the connection is lost
+# ------------------------------------------------------------------------------
 autodetach on
 
-# Enable Logging for each window
+# ------------------------------------------------------------------------------
+# Enable logging for all windows by default
+# ------------------------------------------------------------------------------
 deflog on
 
-# Define the log file name and path
-logfile "${HOME}"/DATA/LOGS/%S_%n.%Y%m%d-%H%M%S.screen
+# ------------------------------------------------------------------------------
+# Define the log file name and path for each screen window
+# Format: <SESSION_NAME>_<WINDOW_NUMBER>.<YYYYMMDD>-<HHMMSS>:<SECONDS>.screen
+# - %S = Session name
+# - %n = Window number
+# - %Y = Year
+# - %m = Month
+# - %d = Day
+# - %0c = Time in HH:MM format (requires post-processing to remove colons)
+# - %s = Seconds
+# ------------------------------------------------------------------------------
+logfile "${HOME}"/DATA/LOGS/%S_%n.%Y%m%d-%0c:%s.screen
 
-# Flush the logging buffer every second
+# ------------------------------------------------------------------------------
+# Flush the logging buffer every second to ensure real-time logging
+# ------------------------------------------------------------------------------
 logfile flush 1
 
-# Define the scrollback number of lines
+# ------------------------------------------------------------------------------
+# Define the scrollback buffer size (100,000 lines)
+# Allows viewing older output within a screen window
+# ------------------------------------------------------------------------------
 defscrollback 100000
 
-# Enable UTF-8
+# ------------------------------------------------------------------------------
+# Enable UTF-8 support for proper display of special characters
+# ------------------------------------------------------------------------------
 defutf8 on
 
-# Set backspace key to send delete
+# ------------------------------------------------------------------------------
+# Set backspace key behavior for various terminal types to send the delete signal
+# Ensures compatibility across different terminal emulators
+# ------------------------------------------------------------------------------
 termcapinfo xterm* | rxvt* | kterm* | Eterm* 'kb=^H:im=\E[4h:ei=\E[4l'
 
-# Set the escape key sequence
+# ------------------------------------------------------------------------------
+# Change the escape sequence to `Ctrl-a a` instead of `Ctrl-a`
+# This prevents conflicts with applications that use `Ctrl-a`
+# ------------------------------------------------------------------------------
 escape ^Aa
 
-# Enable mouse scrolling and insert mode with software flow control
+# ------------------------------------------------------------------------------
+# Enable mouse scrolling and support for insert mode with software flow control
+# ------------------------------------------------------------------------------
 termcapinfo xterm* | rxvt* | Eterm* 'XT:AF=\E[3%dm:AB=\E[4%dm:AX'
 terminfo rxvt* | Eterm* 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
 
-# define vertical split
+# ------------------------------------------------------------------------------
+# Bind `Ctrl-a |` to split the screen vertically
+# ------------------------------------------------------------------------------
 bind | split -v
 
-# define horizontal split
+# ------------------------------------------------------------------------------
+# Bind `Ctrl-a -` to split the screen horizontally
+# ------------------------------------------------------------------------------
 bind - split
+
+# ------------------------------------------------------------------------------
+# Enable the hardstatus line for better window navigation
+# - `on`: Enables hardstatus line
+# - `alwayslastline`: Displays it at the bottom of the screen
+# ------------------------------------------------------------------------------
+hardstatus on
+hardstatus alwayslastline
+
+# ------------------------------------------------------------------------------
+# Define the format of the hardstatus line for better usability
+# 
+# Format: [HOSTNAME] [DATE TIME:SECONDS] [WINDOW LIST]
+#
+# - `%{= kw}`  : Set color to white (default color)
+# - `%{= kG}`  : Set color to green (used for hostname and date/time)
+# - `%H`       : Display hostname
+# - `%Y-%m-%d` : Show date in YYYY-MM-DD format
+# - `%0c`      : Show current time (HH:MM format)
+# - `%s`       : Show seconds
+# - `%-w`      : Left-aligned list of inactive windows
+# - `%{= kR}`  : Set color to red (for highlighting the active window)
+# - `%n %t`    : Show active window number and title
+# - `%+w`      : Right-aligned list of inactive windows
+#
+# Example Output:
+# [myhost] [2025-02-06 08:45:30]  0:bash  1:vim  [2 logs]  3:ssh  
+# ------------------------------------------------------------------------------
+hardstatus string "%{= kw}[%{= kG}%H%{= kw}] %{= kw}[%{= kG}%Y-%m-%d %0c:$s%{= kw}] %{= kw}%-w%{= kR}[%n %t]%{= kw}%+w"

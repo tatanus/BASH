@@ -56,16 +56,17 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
 
         # If -S <session_name> was found, start a logged screen session
         if [[ -n "${session_name}" ]]; then
-            local timestamp
-            timestamp=$(date +"%Y%m%d_%H%M%S")
+            # local timestamp
+            # timestamp=$(date +"%Y%m%d_%H%M%S")
 
-            local logfile_path
-            logfile_path="${HOME}/DATA/LOGS/${session_name}.${timestamp}.screen"
+            # local logfile_path
+            # logfile_path="${HOME}/DATA/LOGS/${session_name}.${timestamp}.screen"
 
-            mkdir -p "${HOME}/DATA/LOGS"
+            # mkdir -p "${HOME}/DATA/LOGS"
 
-            echo "  -- Starting session [${session_name}]"
-            command screen -L -Logfile "${logfile_path}" -S "${session_name}" "${args[@]}"
+            # echo "  -- Starting session [${session_name}]"
+            # command screen -L -Logfile "${logfile_path}" -S "${session_name}" "${args[@]}"
+            command screen -S "${session_name}" "${args[@]}"
         else
             # Default behavior if -S <session_name> is not found
             command screen "${args[@]}"
