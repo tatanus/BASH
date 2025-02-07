@@ -111,7 +111,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "bash.prompt.sh"
         "bash.prompt_funcs.sh"
         "bash-preexec.sh"
-        "logging.sh"
+        "bash.history.sh"
         "ssh.aliases.sh"
     )
 
