@@ -11,54 +11,60 @@ PS1="${PS1:-}"
 PS2="${PS2:-}"
 
 # Check if we are running inside Ghostty terminal and fixing unbound variables
-_term_program="${TERM_PROGRAM:-}"
-case "${_term_program}" in
-    "ghostty")
-        GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
-        GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
-        GHOSTTY_BASH_ENV="${GHOSTTY_BASH_ENV:-}"
-        GHOSTTY_BASH_RCFILE="${GHOSTTY_BASH_RCFILE:-$HOME/.bashrc}"
-        GHOSTTY_SHELL_INTEGRATION_NO_SUDO="${GHOSTTY_SHELL_INTEGRATION_NO_SUDO:-0}"
-        GHOSTTY_SHELL_INTEGRATION_NO_CURSOR="${GHOSTTY_SHELL_INTEGRATION_NO_CURSOR:-0}"
-        GHOSTTY_SHELL_INTEGRATION_NO_TITLE="${GHOSTTY_SHELL_INTEGRATION_NO_TITLE:-0}"
-        _ghostty_executing="${_ghostty_executing:-}"
-        _ghostty_last_reported_cwd="${_ghostty_last_reported_cwd:-}"
-        ;;
-    "Apple_Terminal")
-        ;;
-    "iTerm.app")
-        export USE_TMUX=false
-        ;;
-    "gnome-terminal")
-        ;;
-    "konsole")
-        ;;
-    "xfce4-terminal")
-        ;;
-    "alacritty")
-        ;;
-    "kitty")
-        ;;
-    "tilix")
-        ;;
-    "hyper")
-        ;;
-    "WarpTerminal")
-        ;;
-    "wezterm")
-        ;;
-    "xterm")
-        ;;
-    "screen")
-        ;;
-    "tmux")
-        ;;
-    *)
-        ;;
-esac
+if [[ -n "${TERM_PROGRAM:-}" ]]; then
+    case "${TERM_PROGRAM}" in
+        "ghostty")
+            GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
+            GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
+            GHOSTTY_BASH_ENV="${GHOSTTY_BASH_ENV:-}"
+            GHOSTTY_BASH_RCFILE="${GHOSTTY_BASH_RCFILE:-$HOME/.bashrc}"
+            GHOSTTY_SHELL_INTEGRATION_NO_SUDO="${GHOSTTY_SHELL_INTEGRATION_NO_SUDO:-0}"
+            GHOSTTY_SHELL_INTEGRATION_NO_CURSOR="${GHOSTTY_SHELL_INTEGRATION_NO_CURSOR:-0}"
+            GHOSTTY_SHELL_INTEGRATION_NO_TITLE="${GHOSTTY_SHELL_INTEGRATION_NO_TITLE:-0}"
+            _ghostty_executing="${_ghostty_executing:-}"
+            _ghostty_last_reported_cwd="${_ghostty_last_reported_cwd:-}"
+            ;;
+        "Apple_Terminal")
+            ;;
+        "iTerm.app")
+            export USE_TMUX=false
+            ;;
+        "gnome-terminal")
+            ;;
+        "konsole")
+            ;;
+        "xfce4-terminal")
+            ;;
+        "alacritty")
+            ;;
+        "kitty")
+            ;;
+        "tilix")
+            ;;
+        "hyper")
+            ;;
+        "WarpTerminal")
+            ;;
+        "wezterm")
+            ;;
+        "xterm")
+            ;;
+        "screen")
+            ;;
+        "tmux")
+            ;;
+        *)
+            [[ -n "${DEBUG_BASHRC}" ]] && echo "Unknown terminal: ${TERM_PROGRAM}"
+            ;;
+    esac
+fi
 
 # Set VIMRUNTIME and TERM variables
-export TERM=xterm-256color
+if [[ "$TERM" == "screen" || "$TERM" == "screen-256color" ]]; then
+    export TERM=screen-256color
+else
+    export TERM=xterm-256color
+fi
 
 # Silence bash deprecation warning
 export BASH_SILENCE_DEPRECATION_WARNING=1
