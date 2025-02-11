@@ -43,9 +43,9 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
 
     # Check and set alias for bat or batcat
     if command -v bat &> /dev/null; then
-        alias cat='bat --paging=never --style=plain --theme=ansi-dark'
+        alias cat='bat --paging=never --style=plain --theme=ansi'
     elif command -v batcat &> /dev/null; then
-        alias cat='batcat --paging=never --style=plain --theme=ansi-dark'
+        alias cat='batcat --paging=never --style=plain --theme=ansi'
     else
         echo "Neither 'bat' nor 'batcat' is installed. Defauting back to the base 'cat' functionality." >&2
     fi

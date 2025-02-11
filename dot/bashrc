@@ -11,17 +11,51 @@ PS1="${PS1:-}"
 PS2="${PS2:-}"
 
 # Check if we are running inside Ghostty terminal and fixing unbound variables
-if [[ "${TERM_PROGRAM:-}" == "ghostty" ]]; then
-    GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
-    GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
-    GHOSTTY_BASH_ENV="${GHOSTTY_BASH_ENV:-}"
-    GHOSTTY_BASH_RCFILE="${GHOSTTY_BASH_RCFILE:-$HOME/.bashrc}"
-    GHOSTTY_SHELL_INTEGRATION_NO_SUDO="${GHOSTTY_SHELL_INTEGRATION_NO_SUDO:-0}"
-    GHOSTTY_SHELL_INTEGRATION_NO_CURSOR="${GHOSTTY_SHELL_INTEGRATION_NO_CURSOR:-0}"
-    GHOSTTY_SHELL_INTEGRATION_NO_TITLE="${GHOSTTY_SHELL_INTEGRATION_NO_TITLE:-0}"
-    _ghostty_executing="${_ghostty_executing:-}"
-    _ghostty_last_reported_cwd="${_ghostty_last_reported_cwd:-}"
-fi
+_term_program="${TERM_PROGRAM:-}"
+case "${_term_program}" in
+    "ghostty")
+        GHOSTTY_RESOURCES_DIR="${GHOSTTY_RESOURCES_DIR:-}"
+        GHOSTTY_BASH_INJECT="${GHOSTTY_BASH_INJECT:-}"
+        GHOSTTY_BASH_ENV="${GHOSTTY_BASH_ENV:-}"
+        GHOSTTY_BASH_RCFILE="${GHOSTTY_BASH_RCFILE:-$HOME/.bashrc}"
+        GHOSTTY_SHELL_INTEGRATION_NO_SUDO="${GHOSTTY_SHELL_INTEGRATION_NO_SUDO:-0}"
+        GHOSTTY_SHELL_INTEGRATION_NO_CURSOR="${GHOSTTY_SHELL_INTEGRATION_NO_CURSOR:-0}"
+        GHOSTTY_SHELL_INTEGRATION_NO_TITLE="${GHOSTTY_SHELL_INTEGRATION_NO_TITLE:-0}"
+        _ghostty_executing="${_ghostty_executing:-}"
+        _ghostty_last_reported_cwd="${_ghostty_last_reported_cwd:-}"
+        ;;
+    "Apple_Terminal")
+        ;;
+    "iTerm.app")
+        export USE_TMUX=false
+        ;;
+    "gnome-terminal")
+        ;;
+    "konsole")
+        ;;
+    "xfce4-terminal")
+        ;;
+    "alacritty")
+        ;;
+    "kitty")
+        ;;
+    "tilix")
+        ;;
+    "hyper")
+        ;;
+    "WarpTerminal")
+        ;;
+    "wezterm")
+        ;;
+    "xterm")
+        ;;
+    "screen")
+        ;;
+    "tmux")
+        ;;
+    *)
+        ;;
+esac
 
 # Set VIMRUNTIME and TERM variables
 export TERM=xterm-256color
