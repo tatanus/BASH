@@ -103,17 +103,23 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         PS1+="$(check_kerb_ccache 2> /dev/null)"
         # PYTHON VENV
         PS1+="$(check_venv 2> /dev/null)"
+        PS1+="\[${white}\]["
         # DATE TIME
-        PS1+="\[${white}\][\[${light_green}\]\D{%m-%d-%Y} \t\[${white}\]━"
+        PS1+="\[${light_green}\]\D{%m-%d-%Y} \t"
+        PS1+="\[${white}\]]━["
         # INTERNAL IP
-        PS1+="\[${white}\][\[${light_blue}\]${PROMPT_LOCAL_IP}\[${white}\]━"
+        PS1+="${PROMPT_LOCAL_IP}"
+        PS1+="\[${white}\]]━["
         # EXTERNAL IP
-        PS1+="\[${white}\][ext:\[${blue}\]${PROMPT_EXTERNAL_IP}\[${white}\]━"
+        PS1+="ext:\[${blue}\]${PROMPT_EXTERNAL_IP}"
+        PS1+="\[${white}\]]━["
         # USER@FQDN
-        PS1+="\[${white}\][\[${light_red}\]\u@\h\[${white}\]]\n"
+        PS1+="\[${light_red}\]\u@\h"
+        PS1+="\[${white}\]]"
+        PS1+="\n"
         # PATH
         #PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
-        PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}]\]\[${reset}\] \$ \[${reset}\]"
+        PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}\]] \$ "
 
         export PS1="${PS1}"
     }

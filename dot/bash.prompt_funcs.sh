@@ -39,7 +39,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     ###############################################################################
     function check_venv() {
         if [[ -n "${VIRTUAL_ENV}" ]]; then
-            echo "\[${white}\][\[${light_blue}\]Python VENV = \[${light_blue}\]${VIRTUAL_ENV}\[${white}\]"
+            echo "\[${white}\][\[${light_blue}\]Python VENV = \[${light_blue}\]${VIRTUAL_ENV}\[${white}\]]"
             echo -e "\[${white}\]┣━"
         fi
     }
@@ -66,7 +66,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     ###############################################################################
     function check_kerb_ccache() {
         if [[ -n "${KRB5CCNAME}" ]]; then
-            echo "\[${white}\][\[${light_red}\]KRB5CCNAME = \[${light_red}\]${KRB5CCNAME}\[${white}\]"
+            echo "\[${white}\][\[${light_red}\]KRB5CCNAME = \[${light_red}\]${KRB5CCNAME}\[${white}\]]"
             echo -e "\[${white}\]┣━"
         fi
     }
@@ -109,7 +109,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                 SESSION_STATUS+="[\[${yellow}\]SCREEN = ${SCREEN_SESSION}\[${white}\]"
             fi
 
-            SESSION_STATUS+="\n\[${white}\]┣━"
+            SESSION_STATUS+="\n\[${white}\]]┣━"
         fi
 
         echo -e "${SESSION_STATUS}"
