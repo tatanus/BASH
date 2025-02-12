@@ -23,7 +23,33 @@ startup_command mkdir -p "${HOME}"/DATA/LOGS
 # ------------------------------------------------------------------------------
 # Fix known xterm compatibility issues with screen
 # ------------------------------------------------------------------------------
-termcapinfo xterm* ti@:te@
+# Ensure Screen handles mouse events correctly in common terminals
+termcapinfo xterm*|rxvt*|Eterm*|gnome*|konsole*|alacritty*|kitty*|screen* 'ti@:te@'
+# ------------------------------------------------------------------------------
+# Enable mouse scrolling and support for insert mode with software flow control
+# ------------------------------------------------------------------------------
+# Enable mouse support in GNU Screen
+mousetrack on
+
+# Ensure text selection works with a double left-click (for copy-paste)
+termcapinfo xterm*|rxvt*|Eterm*|gnome*|konsole*|alacritty*|kitty*|screen* 'cut=E3'
+
+# Disable mouse interaction inside Screen to allow terminal's native selection
+termcapinfo xterm*|rxvt*|Eterm*|gnome*|konsole*|alacritty*|kitty*|screen* '*:smcup@:rmcup@'
+
+# Prevent screen from interfering with double-click selection
+#markkeys "^[OA=copy" "^[OB=paste"
+
+# Ensure that mouse works with both selection and scrolling
+termcapinfo xterm*|rxvt*|Eterm*|gnome*|konsole*|alacritty*|kitty*|screen* "kmous=\E[M"
+
+# Prevent screen from interfering with terminal scrolling but allow proper refresh
+#termcapinfo xterm*|rxvt*|Eterm*|gnome*|konsole*|alacritty*|kitty*|screen* 'rmcup@'
+
+# Enable text selection using Shift + Mouse (for copy-paste)
+defbce on
+
+#markkeys "^[[1;2A=copy" "^[[1;2B=paste"
 
 # ------------------------------------------------------------------------------
 # Automatically detach screen sessions when the connection is lost
@@ -68,19 +94,13 @@ defutf8 on
 # Set backspace key behavior for various terminal types to send the delete signal
 # Ensures compatibility across different terminal emulators
 # ------------------------------------------------------------------------------
-termcapinfo xterm* | rxvt* | kterm* | Eterm* 'kb=^H:im=\E[4h:ei=\E[4l'
+#termcapinfo xterm* | rxvt* | kterm* | Eterm* 'kb=^H:im=\E[4h:ei=\E[4l'
 
 # ------------------------------------------------------------------------------
 # Change the escape sequence to `Ctrl-a a` instead of `Ctrl-a`
 # This prevents conflicts with applications that use `Ctrl-a`
 # ------------------------------------------------------------------------------
 escape ^Aa
-
-# ------------------------------------------------------------------------------
-# Enable mouse scrolling and support for insert mode with software flow control
-# ------------------------------------------------------------------------------
-termcapinfo xterm* | rxvt* | Eterm* 'XT:AF=\E[3%dm:AB=\E[4%dm:AX'
-terminfo rxvt* | Eterm* 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
 
 # ------------------------------------------------------------------------------
 # Bind `Ctrl-a |` to split the screen vertically

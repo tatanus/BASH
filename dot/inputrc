@@ -10,7 +10,7 @@ set colored-completion-prefix on
 set colored-stats on
 
 # Use vi mode for command-line editing if Vim is your preferred editor
-set editing-mode vi
+#set editing-mode vi
 
 # Enable history search with Up/Down arrow keys (matches start of input)
 "\e[A": "\C-p"
@@ -28,6 +28,8 @@ set enable-keypad on
 # Make Ctrl+Left/Right jump by word
 "\e[1;5D": backward-word
 "\e[1;5C": forward-word
+"\e\e[D": backward-word
+"\e\e[C": forward-word
 
 # Improve command history navigation and prevent duplicates
 $if Bash
