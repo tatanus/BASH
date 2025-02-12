@@ -39,8 +39,8 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     ###############################################################################
     function check_venv() {
         if [[ -n "${VIRTUAL_ENV}" ]]; then
-            echo "${white}[${light_blue}Python VENV = ${light_blue}${VIRTUAL_ENV}${white}]"
-            echo -e "${white}┣━"
+            echo "\[${white}\][\[${light_blue}\]Python VENV = \[${light_blue}\]${VIRTUAL_ENV}\[${white}\]"
+            echo -e "\[${white}\]┣━"
         fi
     }
 
@@ -66,8 +66,8 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     ###############################################################################
     function check_kerb_ccache() {
         if [[ -n "${KRB5CCNAME}" ]]; then
-            echo "${white}[${light_red}KRB5CCNAME = ${light_red}${KRB5CCNAME}${white}]"
-            echo -e "${white}┣━"
+            echo "\[${white}\][\[${light_red}\]KRB5CCNAME = \[${light_red}\]${KRB5CCNAME}\[${white}\]"
+            echo -e "\[${white}\]┣━"
         fi
     }
 
@@ -93,23 +93,23 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     #   - Prints an empty string if no sessions are active.
     ###############################################################################
     function check_session() {
-        SESSION_STATUS="${white}┏━"
+        SESSION_STATUS="\[${white}\]┏━"
 
         # Check if we are in either a TMUX or SCREEN session
         if [[ -n "${TMUX:-}" ]] || [[ -n "${STY:-}" ]]; then
             # Check if we are in a tmux session
             if [[ -n "${TMUX:-}" ]]; then
                 TMUX_SESSION=$(tmux display-message -p '#S')
-                SESSION_STATUS+="[${yellow}TMUX = ${TMUX_SESSION}${white}]"
+                SESSION_STATUS+="[\[${yellow}\]TMUX = ${TMUX_SESSION}\[${white}\]"
             fi
 
             # Check if we are in a screen session
             if [[ -n "${STY:-}" ]]; then
                 SCREEN_SESSION=$(echo "${STY:-}" | awk -F '.' '{print $2}')
-                SESSION_STATUS+="[${yellow}SCREEN = ${SCREEN_SESSION}${white}]"
+                SESSION_STATUS+="[\[${yellow}\]SCREEN = ${SCREEN_SESSION}\[${white}\]"
             fi
 
-            SESSION_STATUS+="\n${white}┣━"
+            SESSION_STATUS+="\n\[${white}\]┣━"
         fi
 
         echo -e "${SESSION_STATUS}"
@@ -327,7 +327,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             fi
 
             # Append result (color variables should be defined elsewhere in the script)
-            result+="${light_blue}${iface}${yellow}(${dhcp})${white}:${blue}${ip}${white}, "
+            result+="\[${light_blue}\]${iface}\[${yellow}\](${dhcp})\[${white}\]:\[${blue}\]${ip}\[${white}\], "
         done <<< "${interfaces}"
 
         # Remove trailing comma and space

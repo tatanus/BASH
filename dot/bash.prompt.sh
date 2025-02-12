@@ -28,7 +28,7 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     blue=$(tput setaf 4)
     light_red=$(tput setaf 1)
     yellow=$(tput setaf 3)
-    orange=$(tput setaf 214 2> /dev/null || tput setaf 3) # Fallback to yellow if 214 isn't supported
+    orange=$(tput setaf 214 2> /dev/null || tput setaf 3)  # Fallback to yellow if 214 isn't supported
     white=$(tput setaf 7)
     reset=$(tput sgr0)
 
@@ -104,15 +104,16 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         # PYTHON VENV
         PS1+="$(check_venv 2> /dev/null)"
         # DATE TIME
-        PS1+="${white}[${light_green}\D{%m-%d-%Y} \t${white}]━"
+        PS1+="\[${white}\][\[${light_green}\]\D{%m-%d-%Y} \t\[${white}\]━"
         # INTERNAL IP
-        PS1+="${white}[${light_blue}${PROMPT_LOCAL_IP}${white}]━"
+        PS1+="\[${white}\][\[${light_blue}\]${PROMPT_LOCAL_IP}\[${white}\]━"
         # EXTERNAL IP
-        PS1+="${white}[ext:${blue}${PROMPT_EXTERNAL_IP}${white}]━"
+        PS1+="\[${white}\][ext:\[${blue}\]${PROMPT_EXTERNAL_IP}\[${white}\]━"
         # USER@FQDN
-        PS1+="${white}[${light_red}\u@\h${white}]\n"
+        PS1+="\[${white}\][\[${light_red}\]\u@\h\[${white}\]]\n"
         # PATH
-        PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
+        #PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
+        PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}]\]\[${reset}\] \$ \[${reset}\]"
 
         export PS1="${PS1}"
     }
