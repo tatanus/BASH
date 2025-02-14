@@ -119,7 +119,7 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         PS1+="\n"
         # PATH
         #PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
-        PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}\]] \$ "
+        PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}\]] \$ \[${reset}\]"
 
         export PS1="${PS1}"
     }
