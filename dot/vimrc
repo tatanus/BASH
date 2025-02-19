@@ -1,15 +1,15 @@
 " Enable syntax highlighting
 syntax on
 
-" Always enable paste mode
-set paste
-
 " Set indentation rules
 set tabstop=4        " Number of spaces for a tab
 set shiftwidth=4     " Auto-indent size
 set expandtab        " Convert tabs to spaces
 set autoindent
 set smartindent
+
+" Always enable paste mode
+set paste
 
 " Line numbering
 set number
