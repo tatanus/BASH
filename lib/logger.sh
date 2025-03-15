@@ -55,15 +55,37 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     log_to_file_default="true"
 
     # =============================================================================
-    # Valid logging levels
+    # CUSTOM LOG LEVEL CONSTANTS
+    #
+    # Here, we map each log level to a numeric "priority":
+    #   verbosedebug -> 10
+    #   debug        -> 20
+    #   info         -> 30
+    #   pass         -> 40
+    #   warn         -> 50
+    #   fail         -> 60
+    #
+    # Higher numbers mean "more severe/important," which can matter when filtering.
+    # Adjust these to your liking, but keep them consistent with each other.
     # =============================================================================
-    # Define log levels and their priorities
     declare -gA log_level_priorities
-    log_level_priorities[debug]=1
-    log_level_priorities[info]=2
-    log_level_priorities[warn]=3
-    log_level_priorities[pass]=4
-    log_level_priorities[fail]=5
+    log_level_priorities[verbosedebug]=10
+    log_level_priorities[debug]=20
+    log_level_priorities[info]=30
+    log_level_priorities[pass]=40
+    log_level_priorities[warn]=50
+    log_level_priorities[fail]=60
+
+    # # =============================================================================
+    # # Valid logging levels
+    # # =============================================================================
+    # # Define log levels and their priorities
+    # declare -gA log_level_priorities
+    # log_level_priorities[debug]=1
+    # log_level_priorities[info]=2
+    # log_level_priorities[warn]=3
+    # log_level_priorities[pass]=4
+    # log_level_priorities[fail]=5
 
     # =============================================================================
     # Validates an instance name to ensure it's a valid Bash variable name.
@@ -146,6 +168,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         _Logger_set_property "${instance_name}" "log_to_file" "${log_to_file}"
         # Dynamically define methods for this instance
         eval "
+            ${instance_name}.verbosedebug() { Logger_log '${instance_name}' 'verbosedebug' \"\${1:-}\"; }
             ${instance_name}.info() { Logger_log '${instance_name}' 'info' \"\${1:-}\"; }
             ${instance_name}.warn() { Logger_log '${instance_name}' 'warn' \"\${1:-}\"; }
             ${instance_name}.pass() { Logger_log '${instance_name}' 'pass' \"\${1:-}\"; }
@@ -181,7 +204,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             # Validate the log level
         if ! _validate_log_level "${level}"; then
             # Print error and propagate failure
-            printf "Error: Invalid log level '%s'\n" "${level}"
+            printf "Error: Invalid log level '%s'\n" "${level}" >&2
             return 1
         fi
 
@@ -228,18 +251,31 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             local line_number function_name file_name
             read -r line_number function_name file_name <<< "$(echo "${caller_info}" | awk '{print $1, $2, $3}')"
             debug_info="CALLER: ${file_name}:${line_number} (${function_name})"
+
+        elif [[ "${level}" == "verbosedebug" ]]; then
+            # Show up to 3 lines of caller info to simulate a small "stack trace"
+            debug_info="Stack Trace (last 3 calls):"
+            for i in {1..3}; do
+                local call_line
+                call_line=$(caller $i || true)
+                [[ -z "${call_line}" ]] && break
+                debug_info+="\n${call_line}"
+            done
+
         fi
 
         # Define log levels and their prefixes
         local timestamp prefix formatted_message
-        timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+        # timestamp=$(date +"[%Y-%m-%d %H:%M:%S]")
+        timestamp=$(_Logger_timestamp)
         case "${level}" in
-            debug) prefix="[# DEBUG ]" ;;
-            info)  prefix="[* INFO  ]" ;;
-            warn)  prefix="[! WARN  ]" ;;
-            pass)  prefix="[+ PASS  ]" ;;
-            fail)  prefix="[- FAIL  ]" ;;
-            *)     prefix="[UNKNOWN ]" ;;  # Fallback for unexpected log levels
+            verbosedebug) prefix="[# V-DBG ]" ;;
+            debug)        prefix="[# DEBUG ]" ;;
+            info)         prefix="[* INFO  ]" ;;
+            warn)         prefix="[! WARN  ]" ;;
+            pass)         prefix="[+ PASS  ]" ;;
+            fail)         prefix="[- FAIL  ]" ;;
+            *)            prefix="[UNKNOWN ]" ;;  # Fallback for unexpected log levels
         esac
 
         # Format the log message, including debug info if applicable
@@ -249,13 +285,12 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             formatted_message="${message}"
         fi
 
-        local error=false
-
-        # Log to file if enabled
+        # Attempt file logging (if enabled)
+        local error_occurred=false
         if [[ "${log_to_file}" == "true" ]]; then
-            if ! printf "%s\n" "${timestamp} ${prefix} ${formatted_message}" >> "${log_file}"; then
+            if ! printf "%s %s %s\n" "${timestamp}" "${prefix}" "${formatted_message}" >> "${log_file}"; then
                 printf "Error: Failed to write to log file: %s\n" "${log_file}" >&2
-                error=true
+                error_occurred=true
             fi
         fi
 
@@ -263,18 +298,19 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
         if [[ "${log_to_screen}" == "true" ]]; then
             local color
             case "${level}" in
-                debug) color="${orange}" ;;
-                info)  color="${blue}" ;;
-                warn)  color="${yellow}" ;;
-                pass)  color="${light_green}" ;;
-                fail)  color="${light_red}" ;;
-                *)     color="${white}" ;;
+                verbosedebug) color="${orange}" ;;
+                debug)        color="${orange}" ;;
+                info)         color="${blue}" ;;
+                warn)         color="${yellow}" ;;
+                pass)         color="${light_green}" ;;
+                fail)         color="${light_red}" ;;
+                *)            color="${white}" ;;
             esac
             printf "%s %b%s%b %s\n" "${timestamp}" "${color}" "${prefix}" "${reset}" "${formatted_message}"
         fi
 
-        # Return status based on the error state
-        if [[ "${error}" == "true" ]]; then
+        # Return code based on whether file-logging failed
+        if [[ "${error_occurred}" == "true" ]]; then
             return 1
         else
             return 0

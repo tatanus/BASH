@@ -247,6 +247,21 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         # Ensure all of the aliases are loaded
         source "${PENTEST_ALIAS_FILE}"
 
+        # build APP_TESTS list
+        MODULES_DIR="tools/modules"
+
+        # Dynamically source all scripts in the modules directory
+        if [[ -d "${MODULES_DIR}" ]]; then
+            for module in "${MODULES_DIR}"/*.sh; do
+                if [[ -f "${module}" ]]; then
+                    # Source the script
+                    source "${module}"
+                fi
+            done
+        else
+            warn "Directory not found: ${MODULES_DIR}"
+        fi
+
         # Initialize counters
         local total_tests=0
         local failed_tests=0
