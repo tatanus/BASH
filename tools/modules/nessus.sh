@@ -58,6 +58,8 @@ EOF
         ${PROXY} /opt/nessus/sbin/nessuscli fetch --register-only  "${NESSUS_LICENSE}"
         # Install Nessus Plugins from the web
         ${PROXY} /opt/nessus/sbin/nessuscli update --plugins-only
+        # Rebuiild all the plugins (can take about an hour)
+        # /opt/nessus/sbin/nessusd -R
         # Restart the daemon
         systemctl start nessusd.service
     fi

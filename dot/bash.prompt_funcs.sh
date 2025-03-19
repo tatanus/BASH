@@ -109,7 +109,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                 SESSION_STATUS+="[\[${yellow}\]SCREEN = ${SCREEN_SESSION}\[${white}\]"
             fi
 
-            SESSION_STATUS+="\n\[${white}\]]┣━"
+            SESSION_STATUS+="\[${white}\]]\n┣━"
         fi
 
         echo -e "${SESSION_STATUS}"
