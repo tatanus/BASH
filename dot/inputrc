@@ -28,44 +28,80 @@ set editing-mode emacs
 # -----------------------------------------------------------------------------
 # Fix Home/End keys behavior for better compatibility
 # -----------------------------------------------------------------------------
-"\e[1~": beginning-of-line    # Home key "Fn + Left Arrow (macOS)"
-"\e[4~": end-of-line          # End key "Fn + Right Arrow (macOS)"
-"\eOH": beginning-of-line     # Home key (alternative)
-"\eOF": end-of-line           # End key (alternative)
+# Home key "Fn + Left Arrow (macOS)"
+"\e[1~": beginning-of-line
+
+# End key "Fn + Right Arrow (macOS)"
+"\e[4~": end-of-line
+
+# Home key (alternative)
+"\eOH": beginning-of-line
+
+# End key (alternative)
+"\eOF": end-of-line
 
 # -----------------------------------------------------------------------------
 # PageUp/PageDown (If not working, some terminals use different escape codes)
 # -----------------------------------------------------------------------------
-"\e[5~": history-search-backward  # PageUp "Fn + Up Arrow (macOS)"
-"\e[6~": history-search-forward   # PageDown "Fn + Down Arrow (macOS)"
+# PageUp "Fn + Up Arrow (macOS)"
+"\e[5~": history-search-backward
+
+# PageDown "Fn + Down Arrow (macOS)"
+"\e[6~": history-search-forward
 
 # -----------------------------------------------------------------------------
 # Enable Ctrl + Left/Right for word navigation
 # -----------------------------------------------------------------------------
-"\e[1;5D": backward-word   # Ctrl + Left Arrow
-"\e[1;5C": forward-word    # Ctrl + Right Arrow
-"\e\e[D": backward-word    # Option + Left Arrow (macOS)
-"\e\e[C": forward-word     # Option + Right Arrow (macOS)
+# Ctrl + Left Arrow
+"\e[1;5D": backward-word
+
+# Ctrl + Right Arrow
+"\e[1;5C": forward-word
+
+# Option + Left Arrow (macOS)
+"\e\e[D": backward-word
+
+# Option + Right Arrow (macOS)
+"\e\e[C": forward-word
 
 # -----------------------------------------------------------------------------
 # Enable Shift + Arrow Keys for selection (used in some terminals)
 # -----------------------------------------------------------------------------
-"\e[1;2D": backward-char     # Shift + Left Arrow
-"\e[1;2C": forward-char      # Shift + Right Arrow
-"\e[1;2A": previous-history  # Shift + Up Arrow
-"\e[1;2B": next-history      # Shift + Down Arrow
+# Shift + Left Arrow
+"\e[1;2D": backward-char
+
+# Shift + Right Arrow
+"\e[1;2C": forward-char
+
+# Shift + Up Arrow
+"\e[1;2A": previous-history
+
+# Shift + Down Arrow
+"\e[1;2B": next-history
 
 # -----------------------------------------------------------------------------
 # Improve Delete/Backspace behavior across terminals
 # -----------------------------------------------------------------------------
-"\e[3~": delete-char       # Delete key
-"\e[H": beginning-of-line  # Alternative Home key
-"\e[F": end-of-line        # Alternative End key
+# Delete key
+"\e[3~": delete-char
+
+# Alternative Home key
+"\e[H": beginning-of-line
+
+# Alternative End key
+"\e[F": end-of-line
 
 # -----------------------------------------------------------------------------
 # Improve Command Line Behavior
 # -----------------------------------------------------------------------------
-set enable-keypad on           # Ensure keypad is enabled
-set bell-style none            # Disable annoying terminal bell
-set history-preserve-point on  # Keep cursor position in history
-set show-mode-in-prompt off    # Show (vi/emacs) mode in prompt
+# Ensure keypad is enabled
+set enable-keypad on
+
+# Disable annoying terminal bell
+set bell-style none
+
+# Keep cursor position in history
+set history-preserve-point on
+
+# Show (vi/emacs) mode in prompt
+set show-mode-in-prompt off

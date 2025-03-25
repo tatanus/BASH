@@ -235,7 +235,7 @@ if [[ -z "${SCREEN_ALIAS_AH_LOADED:-}" ]]; then
             # Extract the session name (before the dot) and attach to it
             local selected_session_name
             selected_session_name=$(echo "${selected_session}" | cut -d '.' -f 1)
-            screen -r "${selected_session_name}"
+            screen -x "${selected_session_name}"
         else
             echo "No session selected. Exiting."
         fi

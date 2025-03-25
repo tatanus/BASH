@@ -18,6 +18,71 @@ if [[ -z "${BASH_FUNCS_SH_LOADED:-}" ]]; then
     declare -g BASH_FUNCS_SH_LOADED=true
 
     ###############################################################################
+    # history_search
+    #==============================
+    # Searches ~/.config/bash/log/bash_history.log for entries within ±N minutes
+    # of a given timestamp.
+    #————————————————————
+    # Usage:
+    # search_history_by_time "YYYY-MM-DD HH:MM:SS" [range_in_minutes]
+    #
+    # Example:
+    #   search_history_by_time "2025-03-19 16:31:00"
+    #   search_history_by_time "2025-03-19 16:31:00" 15
+    #
+    # Return Values:
+    # Prints matching log lines to stdout.
+    ###############################################################################
+    function history_search() {
+        local input_time="${1:-}"
+        local range_minutes="${2:-10}"
+
+        # Log file location
+        if [[ -z "${BASH_LOG_DIR:-}" ]]; then
+            log_file="${HOME}/.combined_history.log"
+        else
+            log_file="${BASH_LOG_DIR}/bash_history.log"
+        fi
+
+        # Validate required input
+        if [[ -z "${input_time}" ]]; then
+            echo "Usage: history_search \"YYYY-MM-DD HH:MM:SS\" [range_minutes]" >&2
+            return 1
+        fi
+
+        # Validate log file exists
+        if [[ ! -f "${log_file}" ]]; then
+            echo "Error: Log file not found at ${log_file}" >&2
+            return 1
+        fi
+
+        # Validate date format
+        local target_epoch
+        if ! target_epoch=$(date -d "${input_time}" +%s 2> /dev/null); then
+            echo "Error: Invalid timestamp format. Use: YYYY-MM-DD HH:MM:SS" >&2
+            return 1
+        fi
+
+        # Calculate time window
+        local range_seconds=$((range_minutes * 60))
+        local start_epoch=$((target_epoch - range_seconds))
+        local end_epoch=$((target_epoch + range_seconds))
+
+        # Search and print lines within time window
+        awk -v start="${start_epoch}" -v end="${end_epoch}" '
+        {
+            match($0, /\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\]/, ts)
+            if (ts[0] != "") {
+                gsub(/\[|\]/, "", ts[0])
+                log_epoch = mktime(gensub(/[-:]/, " ", "g", ts[0]))
+                if (log_epoch >= start && log_epoch <= end) {
+                    print $0
+                }
+            }
+        }' "${log_file}"
+    }
+
+    ###############################################################################
     # _get_os
     # Detects the current operating system.
     #

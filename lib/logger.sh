@@ -257,7 +257,7 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
             debug_info="Stack Trace (last 3 calls):"
             for i in {1..3}; do
                 local call_line
-                call_line=$(caller $i || true)
+                call_line=$(caller "${i}" || true)
                 [[ -z "${call_line}" ]] && break
                 debug_info+="\n${call_line}"
             done

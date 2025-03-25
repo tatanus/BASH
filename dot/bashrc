@@ -129,3 +129,10 @@ secondary_bash_files=(
 for file in "${secondary_bash_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done
+
+# Append history sync commands without overwriting existing PROMPT_COMMAND
+history_sync="history -a; history -n; history -w"
+
+if [[ "$PROMPT_COMMAND" != *"$history_sync"* ]]; then
+    PROMPT_COMMAND="${PROMPT_COMMAND}; ${history_sync}"
+fi

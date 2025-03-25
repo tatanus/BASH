@@ -114,11 +114,6 @@ if [[ -z "${BASH_HISTORY_SH_LOADED:-}" ]]; then
         LAST_LOGGED_COMMAND="${command}"
 
         # Write the log entry
-        (   
-            date_time=$(date +"%Y-%m-%d %H:%M:%S")
-            flock -n 200 || exit 1
-            echo "[${date_time}] ${session_info} # ${command}" >> "${HISTORY_FILE}"
-        ) 200> "${HISTORY_FILE}.lock"
         date_time=$(date +"%Y-%m-%d %H:%M:%S")
         if command -v flock &> /dev/null; then
             (   
