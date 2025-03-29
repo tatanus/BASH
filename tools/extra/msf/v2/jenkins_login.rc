@@ -1,0 +1,63 @@
+# Include common helper functions and globals
+resource /root/MSF/scripts/common_helpers.rc
+
+<ruby>
+# === CONFIGURATION
+module_path = "auxiliary/scanner/http/jenkins_login"
+target_filter = {
+  proto: "tcp",
+  ports: [80, 443, 8080, 8443],
+  services: ["http", "https", "jenkins"]
+}
+
+module_name = module_path.split("/").last
+tee_dir = "/root/DATA/OUTPUT/TEE"
+tee_log_path = "#{tee_dir}/MSF_#{module_name}.tee"
+success_log_path = "#{tee_dir}/MSF_SUCCESS.tee"
+
+# === Ensure directories
+ensure_tee_dir(tee_dir)
+
+# === Initialize module
+print_status("Using module: #{module_path}")
+self.run_single("use #{module_path}")
+self.run_single("set THREADS #{thread_count}")
+self.run_single("spool #{tee_log_path}")
+
+# === Target Loop
+framework.db.hosts.each do |host|
+  begin
+    host.services.each do |service|
+      next unless service.proto == target_filter[:proto] && service.state == "open"
+
+      if target_filter[:services].include?(service.name) || target_filter[:ports].include?(service.port)
+        print_status("Targeting #{host.address}:#{service.port} (#{service.name})")
+
+        self.run_single("set RHOSTS #{host.address}")
+        self.run_single("set RPORT #{service.port}")
+
+        # Capture module output
+        result = Rex::Ui::Text::Output::Buffer.new
+        original_output = self.driver.output
+        self.driver.output = result
+        self.run_single("run")
+        self.driver.output = original_output
+
+        # Check for success indicators
+        if $success_keywords.any? { |kw| result.output.downcase.include?(kw) }
+          print_good("Success detected on #{host.address}:#{service.port}")
+          log_success(success_log_path, "[#{module_path}] #{host.address}:#{service.port} (#{service.name})")
+        end
+      end
+    end
+  rescue => e
+    print_error("Error processing host #{host.address}: #{e.message}")
+  end
+end
+
+# === Cleanup
+self.run_single("spool off")
+self.run_single("back")
+</ruby>
+
+exit
