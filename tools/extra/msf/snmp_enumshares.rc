@@ -1,7 +1,0 @@
-use auxiliary/scanner/snmp/snmp_enumshares
-set RHOSTS file:/root/DATA/NMAP/161.txt
-spool /root/DATA/TEE/MSF_snmp_enumshares.tee
-set threads 10
-run
-spool off
-exit

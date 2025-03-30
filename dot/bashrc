@@ -83,7 +83,22 @@ if [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]]; then
 fi
 
 # History settings
-HISTFILE=~/.bash_history
+# HISTFILE=~/.bash_history
+# Unique HISTFILE per screen or tmux session
+# Detect and name the session
+if [ -n "$TMUX" ]; then
+    # Inside a tmux session
+    SESSION_NAME=$(tmux display-message -p '#S' 2>/dev/null || echo "tmux_$$")
+    export HISTFILE="$HOME/.bash_history_tmux_${SESSION_NAME}"
+elif [ -n "$STY" ]; then
+    # Inside a GNU screen session
+    SESSION_NAME=$(echo "$STY" | cut -d. -f2)
+    export HISTFILE="$HOME/.bash_history_screen_${SESSION_NAME:-$$}"
+else
+    # Normal shell session
+    export HISTFILE="$HOME/.bash_history"
+fi
+
 HISTCONTROL=
 HISTIGNORE=
 HISTSIZE=100000

@@ -1,7 +1,0 @@
-use auxiliary/scanner/misc/java_rmi_server
-set RHOSTS file:/root/DATA/NMAP/1099.txt
-spool /root/DATA/TEE/MSF_java_rmi_server.tee
-set threads 10
-run
-spool off
-exit

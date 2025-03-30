@@ -83,16 +83,171 @@ if [[ -z "${SSH_FUNCS_LOADED:-}" ]]; then
         fi
     }
 
+    # function _Process_SSH_Hosts_Menu() {
+    #     local choice="$1"
+
+    #     # Check if a function name was provided
+    #     if [[ -z "${choice}" ]]; then
+    #         warn "Usage: _Process_SSH_Hosts_Menu '<host>'"
+    #         return "${_FAIL}"
+    #     fi
+
+    #     echo "SSHing to [${choice}]"
+    #     ssh -tt "${choice}"
+    # }
     function _Process_SSH_Hosts_Menu() {
         local choice="$1"
 
-        # Check if a function name was provided
         if [[ -z "${choice}" ]]; then
-            warn "Usage: _Process_SSH_Hosts_Menu '<host>'"
-            return "${_FAIL}"
+            echo "[ERROR] Usage: _Process_SSH_Hosts_Menu '<host>'"
+            return 1
         fi
 
-        echo "SSHing to [${choice}]"
+        echo "[INFO] Attempting SSH to [${choice}]..."
+
+        # Retrieve SSH config details
+        local CONFIG_BLOCK HOSTNAME PORT PROXYJUMP
+        CONFIG_BLOCK=$(awk "/^Host ${choice}\$/,/^Host /" ~/.ssh/config)
+
+        if [[ -z "${CONFIG_BLOCK}" ]]; then
+            echo "[ERROR] Host '${choice}' not found in ~/.ssh/config."
+            return 1
+        fi
+
+        HOSTNAME=$(echo "${CONFIG_BLOCK}" | awk '/^[[:space:]]*Hostname/{print $2; exit}')
+        PORT=$(echo "${CONFIG_BLOCK}" | awk '/^[[:space:]]*Port/{print $2; exit}')
+        PROXYJUMP=$(echo "${CONFIG_BLOCK}" | awk '/^[[:space:]]*ProxyJump/{print $2; exit}')
+
+        HOSTNAME=${HOSTNAME:-localhost}
+        PORT=${PORT:-22}
+
+        # Connectivity check function with verbose error capturing
+        function _ssh_test() {
+            local host_alias="$1"
+            local output
+            output=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -vvv "${host_alias}" exit 2>&1)
+            local status=$?
+
+            if [[ ${status} -ne 0 ]]; then
+                echo "[ERROR] SSH test failed for [${host_alias}]:"
+                if echo "${output}" | grep -q "Connection refused"; then
+                    echo "    - Connection refused: Verify SSH is running and accessible."
+                elif echo "${output}" | grep -q "Permission denied"; then
+                    echo "    - Permission denied: SSH key missing or invalid credentials."
+                elif echo "${output}" | grep -q "Could not resolve hostname"; then
+                    echo "    - DNS resolution failed: Check host entry or network connectivity."
+                elif echo "${output}" | grep -q "No route to host"; then
+                    echo "    - No route to host: Network issue or firewall blocking."
+                elif echo "${output}" | grep -q "Connection timed out"; then
+                    echo "    - Connection timed out: Host unreachable or firewall issue."
+                elif echo "${output}" | grep -q "Stdio forwarding request failed"; then
+                    echo "    - Stdio forwarding request failed: SSH forwarding or ProxyJump misconfiguration."
+                else
+                    echo "    - Unrecognized error:"
+                    echo "---------------- DEBUG OUTPUT ----------------"
+                    echo "${output}" | tail -n 20
+                    echo "----------------------------------------------"
+                fi
+            fi
+
+            return "${status}"
+        }
+
+        # Check ProxyJump host first, if applicable
+        if [[ -n "${PROXYJUMP}" ]]; then
+            echo "[INFO] Checking ProxyJump host [${PROXYJUMP}]..."
+            if ! _ssh_test "${PROXYJUMP}"; then
+                echo "[FAIL] ProxyJump host check failed. Aborting connection."
+                return 1
+            fi
+            echo "[PASS] ProxyJump host [${PROXYJUMP}] reachable."
+        fi
+
+        # Check final target host
+        echo "[INFO] Checking final target host [${choice}] with current SSH key..."
+        ssh_output=$(ssh -o BatchMode=yes -o ConnectTimeout=5 -vvv "${choice}" exit 2>&1)
+        ssh_status=$?
+
+        if [[ ${ssh_status} -ne 0 ]]; then
+            echo "[ERROR] SSH test failed for [${choice}]:"
+            if echo "${ssh_output}" | grep -q "Permission denied"; then
+                echo "  - Authentication failed (Permission denied):"
+                echo "    The SSH key is missing, not authorized, or invalid credentials were provided."
+                echo "[ACTION] Attempting to upload your SSH public key."
+
+                # Attempt key upload
+                ssh_copy_output=$(ssh-copy-id -i ~/.ssh/id_rsa.pub "${choice}" 2>&1)
+                ssh_copy_status=$?
+
+                if [[ ${ssh_copy_status} -ne 0 ]]; then
+                    echo "[ERROR] ssh-copy-id failed to upload key to [${choice}]:"
+                    echo "${ssh_copy_output}" | tail -n 10
+                    echo "[ACTION] Verify remote credentials or SSH configuration."
+                    return 1
+                fi
+
+                # Retest SSH connection after key upload
+                if ! ssh -o BatchMode=yes -o ConnectTimeout=5 "${choice}" exit &> /dev/null; then
+                    echo "[ERROR] SSH still failing after key upload. Possible remote config issue."
+                    return 1
+                fi
+
+                echo "[PASS] SSH key successfully uploaded. Connection verified."
+
+            elif echo "${ssh_output}" | grep -q "Stdio forwarding request failed"; then
+                echo "  - ProxyJump failed (stdio forwarding request rejected):"
+                echo "    The jump host (${PROXYJUMP:-unspecified}) is refusing to forward SSH traffic."
+                echo "[ACTION] Verify the ProxyJump host configuration and ensure port forwarding (AllowTcpForwarding) is enabled on the jump host."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "Connection refused"; then
+                echo "  - Connection refused by remote host:"
+                echo "    SSH service may be stopped, blocked by a firewall, or running on a different port."
+                echo "[ACTION] Verify the remote SSH service is active and reachable, and confirm the SSH port number."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "No route to host"; then
+                echo "  - Network unreachable (No route to host):"
+                echo "    Your local system or network can't reach the target host due to routing issues or firewalls."
+                echo "[ACTION] Check network connectivity, firewall settings, and routing."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "Could not resolve hostname"; then
+                echo "  - Hostname resolution failed:"
+                echo "    The specified hostname '${HOSTNAME}' can't be resolved to an IP address."
+                echo "[ACTION] Check the hostname in your SSH configuration or DNS settings."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "Connection timed out"; then
+                echo "  - Connection attempt timed out:"
+                echo "    The remote system may be offline, firewalled, or experiencing network issues."
+                echo "[ACTION] Verify network connectivity and confirm the host is online and reachable."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "Connection reset by peer"; then
+                echo "  - Connection reset by remote host:"
+                echo "    The SSH connection was unexpectedly closed, possibly due to remote SSH misconfiguration or security restrictions."
+                echo "[ACTION] Review SSH logs on the remote host or check security/firewall policies."
+                return 1
+
+            elif echo "${ssh_output}" | grep -q "Host key verification failed"; then
+                echo "  - Host key mismatch detected:"
+                echo "    The remote host key has changed or does not match what's in your known_hosts file."
+                echo "[ACTION] Verify that the remote system hasn't been replaced or compromised. Consider updating your known_hosts file."
+                return 1
+
+            else
+                echo "  - Unidentified SSH error encountered:"
+                echo "${ssh_output}" | tail -n 15
+                echo "[ACTION] Review the detailed SSH debug output above to identify and resolve the issue."
+                return 1
+
+            fi
+        else
+            echo "[PASS] SSH connection verified with existing key."
+        fi
+
+        # Proceed with SSH
         ssh -tt "${choice}"
     }
 

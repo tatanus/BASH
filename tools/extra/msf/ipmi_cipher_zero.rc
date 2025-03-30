@@ -1,7 +1,0 @@
-use auxiliary/scanner/ipmi/ipmi_cipher_zero
-set RHOSTS file:/root/DATA/NMAP/623.txt
-spool /root/DATA/TEE/MSF_ipmi_cipher_zero.tee
-set threads 10
-run
-spool off
-exit

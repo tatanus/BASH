@@ -76,17 +76,6 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
     log_level_priorities[warn]=50
     log_level_priorities[fail]=60
 
-    # # =============================================================================
-    # # Valid logging levels
-    # # =============================================================================
-    # # Define log levels and their priorities
-    # declare -gA log_level_priorities
-    # log_level_priorities[debug]=1
-    # log_level_priorities[info]=2
-    # log_level_priorities[warn]=3
-    # log_level_priorities[pass]=4
-    # log_level_priorities[fail]=5
-
     # =============================================================================
     # Validates an instance name to ensure it's a valid Bash variable name.
     # =============================================================================
@@ -261,7 +250,6 @@ if [[ -z "${LOGGER_SH_LOADED:-}" ]]; then
                 [[ -z "${call_line}" ]] && break
                 debug_info+="\n${call_line}"
             done
-
         fi
 
         # Define log levels and their prefixes

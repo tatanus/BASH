@@ -1,7 +1,0 @@
-use auxiliary/scanner/rdp/rdp_scanner
-set RHOSTS file:/root/DATA/NMAP/3389.txt
-spool /root/DATA/TEE/MSF_rdp_scanner.tee
-set threads 10
-run
-spool off
-exit

@@ -1,7 +1,0 @@
-use auxiliary/scanner/ftp/anonymous
-set RHOSTS file:/root/DATA/NMAP/21.txt
-spool /root/DATA/TEE/MSF_ftp_anonymous.tee
-set threads 10
-run
-spool off
-exit

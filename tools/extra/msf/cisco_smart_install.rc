@@ -1,7 +1,0 @@
-use auxiliary/scanner/misc/cisco_smart_install
-set RHOSTS file:/root/DATA/NMAP/4786.txt
-spool /root/DATA/TEE/MSF_cisco_smart_install.tee
-set threads 10
-run
-spool off
-exit

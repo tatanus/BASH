@@ -1,7 +1,0 @@
-use auxiliary/scanner/http/jenkins_command
-set RHOSTS file:/root/DATA/NMAP/8080.txt
-spool /root/DATA/TEE/MSF_jenkins_command.tee
-set threads 10
-run
-spool off
-exit

@@ -1,7 +1,0 @@
-use auxiliary/scanner/smb/smb_ms17_010
-set RHOSTS file:/root/DATA/NMAP/445.txt
-spool /root/DATA/TEE/MSF_smb_ms17_010.tee
-set threads 10
-run
-spool off
-exit

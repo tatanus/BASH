@@ -1,7 +1,0 @@
-use auxiliary/scanner/http/jboss_vulnscan
-set RHOSTS file:/root/DATA/NMAP/8080.txt
-spool /root/DATA/TEE/MSF_jboss_vulnscan.tee
-set threads 10
-run
-spool off
-exit
