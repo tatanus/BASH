@@ -1,0 +1,21 @@
+# Purpose: Import Nmap and Masscan-processed XML scan files into Metasploit and exit
+
+<ruby>
+# Define paths
+nmap_paths = [
+  "/root/DATA/OUTPUT/PORTSCAN/NMAP",
+  "/root/DATA/OUTPUT/PORTSCAN/SPOONMAP/masscan_results",
+  "/root/DATA/OUTPUT/PORTSCAN/SPOONMAP/nmap_results"
+]
+
+rc_script_path = "/root/MSF/scripts/rc_modules"
+
+# Import all Nmap XML files
+nmap_paths.each do |path|
+  Dir["#{path}/*.xml"].each do |xml_file|
+    print_status("Importing Nmap file: #{xml_file}")
+    self.run_single("db_import #{xml_file}")
+  end
+end
+
+exit
