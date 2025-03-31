@@ -71,5 +71,9 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
     alias listen="netstat -tupan | grep LISTEN"
 
     # List Largest files on filesystem
-    alias file_hogs="for i in G M K; do du -ah | grep [0-9]$i | sort -nr -k 1; done | head -n 11"
+    function file_hogs() {
+        for i in G M K; do
+            du -ah | grep "[0-9]$i" | sort -nr -k 1
+        done | head -n 11
+    }
 fi

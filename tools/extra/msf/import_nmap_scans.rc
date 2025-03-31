@@ -8,8 +8,6 @@ nmap_paths = [
   "/root/DATA/OUTPUT/PORTSCAN/SPOONMAP/nmap_results"
 ]
 
-rc_script_path = "/root/MSF/scripts/rc_modules"
-
 # Import all Nmap XML files
 nmap_paths.each do |path|
   Dir["#{path}/*.xml"].each do |xml_file|

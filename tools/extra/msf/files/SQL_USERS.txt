@@ -1,0 +1,11 @@
+admin
+administrator
+root
+test
+temp
+demo
+backup
+sqldba
+sysadm
+sysadmin
+sa

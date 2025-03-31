@@ -2,23 +2,63 @@
 resource /root/DATA/TOOLS/SCRIPTS/MSF/common_helpers.rc
 
 <ruby>
-# === CONFIGURATION
+# Set the module to run.
 module_path = "auxiliary/scanner/jenkins/jenkins_udp_broadcast_enum"
 
+# Define target filtering criteria.
+target_filter = {
+  proto: "tcp",
+  ports: [],
+  services: [],
+  info: []
+}
+
+# Define threads
+thread_count = "10"
+
+# Define credential files.
+# user_file = ""
+# pass_file = ""
+
+# username not set
+# password not set
+# === Initialization ===
+
+# Abort if module_path is not defined
+unless defined?(module_path)
+  print_error("module_path is not defined. Please load your configuration file first.")
+  exit
+end
+
+# Setup output paths
 module_name = module_path.split("/").last
 tee_dir = "/root/DATA/OUTPUT/TEE"
 tee_log_path = "#{tee_dir}/MSF_#{module_name}.tee"
-success_log_path = "#{tee_dir}/MSF_SUCCESS.tee"
 
-# === Ensure directories
+# Create tee directory if missing
+def ensure_tee_dir(path)
+  unless File.directory?(path)
+    print_status("Creating tee directory: #{path}")
+    begin
+      Dir.mkdir(path)
+    rescue
+      print_error("Failed to create directory #{path}")
+    end
+  end
+end
+
 ensure_tee_dir(tee_dir)
 
-# === Initialize module
+# === Module Setup ===
+
 print_status("Using module: #{module_path}")
 self.run_single("use #{module_path}")
 self.run_single("set THREADS #{thread_count}")
 self.run_single("spool #{tee_log_path}")
+
 self.run_single("run")
+
+
 self.run_single("spool off")
 self.run_single("back")
 </ruby>
