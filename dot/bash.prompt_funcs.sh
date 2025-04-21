@@ -72,6 +72,73 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
+    # check_git
+    #==============================
+    # Display current Git branch and dirty status for PS1 prompt.
+    # Returns a formatted string if in a Git repo, else returns nothing.
+    ###############################################################################
+    function check_git() {
+        # Ensure we're in a Git working tree
+        if ! git rev-parse --is-inside-work-tree &> /dev/null; then
+            return 0  # Not a Git repo, exit silently
+        fi
+
+        # Get branch name
+        branch=$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null)
+        [[ -z "$branch" ]] && branch="unknown"
+
+        # Extract remote origin info
+        origin_url=$(git config --get remote.origin.url 2> /dev/null)
+        if [[ "$origin_url" =~ ^git@([^:]+):([^/]+/[^/]+)(\.git)?$ ]]; then
+            # SSH style: git@host:org/repo.git
+            host="${BASH_REMATCH[1]}"
+            path="${BASH_REMATCH[2]}"
+        elif [[ "$origin_url" =~ ^https?://([^/]+)/([^/]+/[^/.]+)(\.git)?$ ]]; then
+            # HTTPS style: https://host/org/repo.git
+            host="${BASH_REMATCH[1]}"
+            path="${BASH_REMATCH[2]}"
+        else
+            host="unknown"
+            path="local"
+        fi
+
+        # Combine to host/org/repo
+        origin="${host}/${path}"
+
+        # Attempt to get the current branch or tag
+        branch=$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null)
+        if [[ -z "$branch" ]]; then
+            branch="unknown"
+        fi
+
+        # Check if there are uncommitted changes
+        if git_status=$(git status --porcelain 2> /dev/null); then
+            if [[ -n "$git_status" ]]; then
+                # Dirty: Count types of changes
+                modified_count=$(echo "$git_status" | grep -cE '^[ MARC][MD]')
+                added_count=$(echo "$git_status" | grep -cE '^[ MARC]A')
+                deleted_count=$(echo "$git_status" | grep -cE '^[ MARC]D')
+
+                # Format status string
+                dirty_summary=""
+                [[ $modified_count -gt 0 ]] && dirty_summary+=" M${modified_count}"
+                [[ $added_count -gt 0 ]] && dirty_summary+=" A${added_count}"
+                [[ $deleted_count -gt 0 ]] && dirty_summary+=" D${deleted_count}"
+
+                echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${light_red}\]✗${dirty_summary}\[${white}\]]"
+            else
+                # Repo is clean
+                echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${light_green}\]✔\[${white}\]]"
+            fi
+        else
+            echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${orange}\]?\[${white}\]]"
+        fi
+
+        # Visual indicator for continuation line
+        echo -e "\[${white}\]┣━"
+    }
+
+    ###############################################################################
     # check_session
     # Checks for active TMUX or SCREEN sessions and formats their names for the prompt.
     #
@@ -93,7 +160,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     #   - Prints an empty string if no sessions are active.
     ###############################################################################
     function check_session() {
-        SESSION_STATUS="\[${white}\]┏━"
+        SESSION_STATUS=""
 
         # Check if we are in either a TMUX or SCREEN session
         if [[ -n "${TMUX:-}" ]] || [[ -n "${STY:-}" ]]; then

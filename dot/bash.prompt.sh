@@ -96,7 +96,9 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         session_name=$(get_session_name 2> /dev/null)
 
         # Construct the prompt
-        PS1="\n"
+        PS1="\n\[${white}\]┏━"
+        # GIT STATUS
+        PS1+="$(check_git 2> /dev/null)"
         # SCREEN SESSION STATUS
         PS1+="$(check_session 2> /dev/null)"
         # KERBEROS CREDENTIAL CACHE
