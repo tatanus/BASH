@@ -1,28 +1,9 @@
-# Include common helper functions and globals
-resource /root/DATA/TOOLS/SCRIPTS/MSF/common_helpers.rc
-
 <ruby>
 # Set the module to run.
 module_path = "auxiliary/scanner/jenkins/jenkins_udp_broadcast_enum"
 
-# Define target filtering criteria.
-target_filter = {
-  proto: "tcp",
-  ports: [],
-  services: [],
-  info: []
-}
-
 # Define threads
 thread_count = "10"
-
-# Define credential files.
-# user_file = ""
-# pass_file = ""
-
-# username not set
-# password not set
-# === Initialization ===
 
 # Abort if module_path is not defined
 unless defined?(module_path)
@@ -57,7 +38,6 @@ self.run_single("set THREADS #{thread_count}")
 self.run_single("spool #{tee_log_path}")
 
 self.run_single("run")
-
 
 self.run_single("spool off")
 self.run_single("back")

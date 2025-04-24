@@ -12,6 +12,7 @@ set -uo pipefail
 # DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
 # ---------------------|--------------|----------------------------------------
 # 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# 2025-04-24           | Adam Compton | Unified all comment blocks.
 # =============================================================================
 
 # Guard to prevent multiple sourcing
@@ -38,59 +39,90 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
     LAST_LOCAL_IP_CHECK=0
     LAST_EXT_IP_CHECK=0
 
-    # =============================================================================
-    # Functions
-    # =============================================================================
-
     ###############################################################################
-    # Source Required Function Scripts
+    # Name: validate_bash_dir
+    # Short Description: Ensure BASH_DIR is set, default to HOME if unset.
     #
-    # Description:
-    #   Sources additional function scripts if they exist. These scripts provide
-    #   auxiliary functionalities required by the prompt.
+    # Long Description:
+    #   Checks whether the BASH_DIR variable is defined and non-empty. If it is
+    #   unset or empty, emits a warning and assigns BASH_DIR to the user's home
+    #   directory.
     #
-    #   - bash.prompt_funcs.sh: Contains helper functions for prompt customization.
+    # Parameters:
+    #   None
     #
-    #   If the scripts are not found, warnings are emitted to stderr.
+    # Requirements:
+    #   None
     #
     # Usage:
-    #   Automatically sourced during script initialization.
+    #   validate_bash_dir  # runs automatically at script start
+    #
+    # Returns:
+    #   - Exports a non-empty BASH_DIR variable.
     ###############################################################################
+    if [[ -z "${BASH_DIR:-}" ]]; then
+        echo "Warning: BASH_DIR is not set; defaulting to ~/ (${HOME})" >&2
+        BASH_DIR="${HOME}"
+    fi
+
+    # =============================================================================
+    # Name: source_prompt_funcs
+    # Short Description: Sources additional prompt function scripts.
+    #
+    # Long Description:
+    #   Sources bash.prompt_funcs.sh from the BASH_DIR directory to load helper
+    #   functions for prompt customization. Emits a warning if the file is missing.
+    #
+    # Parameters:
+    #   None
+    #
+    # Requirements:
+    #   - BASH_DIR variable must be defined.
+    #   - bash.prompt_funcs.sh must exist in BASH_DIR.
+    #
+    # Usage:
+    #   Automatically invoked during script initialization.
+    #
+    # Returns:
+    #   - None (sources file or prints warning).
+    # =============================================================================
     if [[ -f "${BASH_DIR}"/bash.prompt_funcs.sh ]]; then
         source "${BASH_DIR}"/bash.prompt_funcs.sh
     else
         echo "Warning: ${BASH_DIR}/bash.prompt_funcs.sh not found. Some prompt features may be unavailable." >&2
     fi
 
-    ###############################################################################
-    # gen_prompt
-    # Generates and sets the dynamic Bash prompt (PS1) with various system and
-    # environment information.
+    # =============================================================================
+    # Name: gen_prompt
+    # Short Description: Generates and sets the dynamic Bash prompt (PS1).
     #
-    # Description:
+    # Long Description:
     #   Constructs the PS1 variable to include:
-    #     - Active session names (TMUX or SCREEN)
+    #     - Git status (branch, dirty/clean)
+    #     - Active TMUX/SCREEN sessions
     #     - Kerberos credential cache status
     #     - Python virtual environment status
     #     - Current date and time
     #     - Internal and external IP addresses
     #     - User and host information
     #     - Current working directory
+    #   All segments are color-coded for readability.
     #
-    #   The prompt is color-coded for better readability.
+    # Parameters:
+    #   None
+    #
+    # Requirements:
+    #   - Functions: check_git, check_session, check_kerb_ccache, check_venv,
+    #     get_local_ip, get_external_ip must be defined.
+    #   - Color variables and PROMPT_LOCAL_IP, PROMPT_EXTERNAL_IP,
+    #     LAST_LOCAL_IP_CHECK, LAST_EXT_IP_CHECK must exist.
     #
     # Usage:
     #   Automatically invoked via PROMPT_COMMAND.
     #
-    # Requirements:
-    #   - Functions `get_session_name`, `check_session`, `check_kerb_ccache`,
-    #     and `check_venv` must be defined and sourced appropriately.
-    #
-    # Environment Variables:
-    #   PROMPT_LOCAL_IP - Stores the internal IP address.
-    #   PROMPT_EXTERNAL_IP - Stores the external IP address.
-    #   LAST_IP_CHECK - Timestamp of the last IP address check.
-    ###############################################################################
+    # Returns:
+    #   - None (sets PS1 global variable).
+    # =============================================================================
     function gen_prompt() {
         # Get the active session name
         session_name=$(get_session_name 2> /dev/null)
@@ -120,7 +152,6 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         PS1+="\[${white}\]]"
         PS1+="\n"
         # PATH
-        #PS1+="${white}┗━> [${yellow}\w${white}]${reset} \$ \[$(tput sgr0)\]"
         PS1+="\[${white}\]┗━> [\[${yellow}\]\w\[${white}\]] \$ \[${reset}\]"
 
         export PS1="${PS1}"
@@ -148,7 +179,27 @@ if [[ -z "${BASH_PROMPT_SH_LOADED:-}" ]]; then
         echo "Warning: ${BASH_DIR}/bash-preexec.sh not found. Preexec functionality may be unavailable." >&2
     fi
 
-    preexec() {
+    # =============================================================================
+    # Name: preexec
+    # Short Description: Logs each command before execution with timestamp.
+    #
+    # Long Description:
+    #   A preexec hook that prints a timestamped log line for each command about
+    #   to be executed, aiding in debugging and auditing shell activity.
+    #
+    # Parameters:
+    #   $1 - The command line string to be executed.
+    #
+    # Requirements:
+    #   - The bash-preexec framework must be sourced successfully.
+    #
+    # Usage:
+    #   Automatically invoked before each command when bash-preexec is active.
+    #
+    # Returns:
+    #   - None (outputs timestamped command log to stdout).
+    # =============================================================================
+    function preexec() {
         local date_time_stamp
         date_time_stamp=$(date +"[%D %T]")
         echo

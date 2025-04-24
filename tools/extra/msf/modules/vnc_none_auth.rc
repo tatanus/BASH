@@ -1,96 +1,23 @@
 <ruby>
-# Set the module to run.
-module_path = "auxiliary/scanner/vnc/vnc_none_auth"
+  opts = {
+    module_path: "auxiliary/scanner/vnc/vnc_none_auth",
+    target_filter: {
+      proto: "tcp",
+      ports: [5900, 5901, 5902, 5903, 5904, 5905],
+      services: ["vnc"],
+      info: []
+    },
+    thread_count: "10",
+    # Uncomment/set below if you need creds:
+    # user_file:    "/root/DATA/TOOLS/SCRIPTS/MSF/files/users.txt",
+    # pass_file:    "/root/DATA/TOOLS/SCRIPTS/MSF/files/passwords.txt",
+    # username:     "username",
+    # password:     "password"
+  }
 
-# Define target filtering criteria.
-target_filter = {
-  proto: "tcp",
-  ports: [5900, 5901, 5902, 5903, 5904, 5905],
-  services: ["vnc"],
-  info: []
-}
+  load '/root/DATA/TOOLS/SCRIPTS/MSF/msf_common_runner.rb'
 
-# Define threads
-thread_count = "10"
-
-# Define credential files.
-# user_file = ""
-# pass_file = ""
-
-# username not set
-# password not set
-
-# === Initialization ===
-
-# Abort if module_path is not defined
-unless defined?(module_path)
-  print_error("module_path is not defined. Please load your configuration file first.")
-  exit
-end
-
-# Setup output paths
-module_name = module_path.split("/").last
-tee_dir = "/root/DATA/OUTPUT/TEE"
-tee_log_path = "#{tee_dir}/MSF_#{module_name}.tee"
-
-# Create tee directory if missing
-def ensure_tee_dir(path)
-  unless File.directory?(path)
-    print_status("Creating tee directory: #{path}")
-    begin
-      Dir.mkdir(path)
-    rescue
-      print_error("Failed to create directory #{path}")
-    end
-  end
-end
-
-ensure_tee_dir(tee_dir)
-
-# === Module Setup ===
-
-print_status("Using module: #{module_path}")
-self.run_single("use #{module_path}")
-self.run_single("set THREADS #{thread_count}")
-self.run_single("set USERNAME #{username}") if defined?(username)
-self.run_single("set PASSWORD #{password}") if defined?(password)
-self.run_single("set USER_FILE #{user_file}") if defined?(user_file)
-self.run_single("set PASS_FILE #{pass_file}") if defined?(pass_file)
-self.run_single("spool #{tee_log_path}")
-
-# === Target Loop ===
-
-framework.db.hosts.each do |host|
-  begin
-    host.services.each do |service|
-      next unless service.proto == target_filter[:proto] && service.state == "open"
-
-      service_name_match = target_filter[:services].map(&:downcase).include?(service.name.to_s.downcase)
-      port_match = target_filter[:ports].include?(service.port)
-      next unless service_name_match || port_match
-
-      unless target_filter[:info].empty?
-        info_match = target_filter[:info].any? do |needle|
-          service.info.to_s.downcase.include?(needle.downcase)
-        end
-        next unless info_match
-      end
-
-      print_status("Targeting #{host.address}:#{service.port} (#{service.name})")
-
-      self.run_single("set RHOSTS #{host.address}")
-      self.run_single("set RPORT #{service.port}")
-      self.run_single("run")
-    end
-  rescue => e
-    print_error("Error processing host #{host.address}: #{e.message}")
-  end
-end
-
-# === Cleanup ===
-
-self.run_single("spool off")
-self.run_single("back")
+  run_module(opts)
 </ruby>
 
 exit

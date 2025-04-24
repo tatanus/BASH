@@ -11,6 +11,7 @@ set -uo pipefail
 # DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
 # ---------------------|--------------|----------------------------------------
 # 2024-12-08 19:57:22  | Adam Compton | Initial creation.
+# 2025-04-24           | Adam Compton | Unified all function comment blocks.
 # =============================================================================
 
 # Guard to prevent multiple sourcing
@@ -18,16 +19,19 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     declare -g BASH_PROMPT_FUNCS_SH_LOADED=true
 
     ###############################################################################
-    # check_venv
-    # Checks if the user is in a Python virtual environment.
+    # Name: check_venv
+    # Short Description: Checks if the user is in a Python virtual environment.
     #
-    # Description:
-    #   Determines if the `VIRTUAL_ENV` environment variable is set, indicating an
-    #   active Python virtual environment. If active, it prints the environment path
+    # Long Description:
+    #   Determines if the VIRTUAL_ENV environment variable is set, indicating an
+    #   active Python virtual environment. If active, prints the environment path
     #   formatted with color codes for inclusion in the Bash prompt.
     #
+    # Parameters:
+    #   None
+    #
     # Requirements:
-    #   - Color variables (e.g., `${white}`, `${light_blue}`) must be defined in the
+    #   - Color variables (e.g., ${white}, ${light_blue}) must be defined in the
     #     environment where this function is sourced.
     #
     # Usage:
@@ -45,16 +49,19 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
-    # check_kerb_ccache
-    # Checks if a Kerberos credential cache is set.
+    # Name: check_kerb_ccache
+    # Short Description: Checks if a Kerberos credential cache is set.
     #
-    # Description:
-    #   Determines if the `KRB5CCNAME` environment variable is set, indicating an
-    #   active Kerberos credential cache. If set, it prints the cache name formatted
+    # Long Description:
+    #   Determines if the KRB5CCNAME environment variable is set, indicating an
+    #   active Kerberos credential cache. If set, prints the cache name formatted
     #   with color codes for inclusion in the Bash prompt.
     #
+    # Parameters:
+    #   None
+    #
     # Requirements:
-    #   - Color variables (e.g., `${white}`, `${light_red}`) must be defined in the
+    #   - Color variables (e.g., ${white}, ${light_red}) must be defined in the
     #     environment where this function is sourced.
     #
     # Usage:
@@ -72,10 +79,27 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
-    # check_git
-    #==============================
-    # Display current Git branch and dirty status for PS1 prompt.
-    # Returns a formatted string if in a Git repo, else returns nothing.
+    # Name: check_git
+    # Short Description: Displays current Git branch and dirty status for PS1.
+    #
+    # Long Description:
+    #   Checks if the current directory is inside a Git working tree. If so,
+    #   retrieves the branch or tag name, parses the remote origin URL into host
+    #   and path, and summarizes uncommitted changes. Outputs a color-coded
+    #   status string for inclusion in the Bash prompt.
+    #
+    # Parameters:
+    #   None
+    #
+    # Requirements:
+    #   - git must be installed and available in PATH.
+    #
+    # Usage:
+    #   check_git
+    #
+    # Returns:
+    #   - Prints a formatted Git status line if in a repository.
+    #   - No output (exit code 0) if not in a Git repository.
     ###############################################################################
     function check_git() {
         # Ensure we're in a Git working tree
@@ -139,25 +163,26 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
-    # check_session
-    # Checks for active TMUX or SCREEN sessions and formats their names for the prompt.
+    # Name: check_session
+    # Short Description: Checks for active TMUX or SCREEN sessions.
     #
-    # Description:
-    #   Detects if the user is currently within a TMUX or SCREEN session. If active,
-    #   it retrieves the session names and formats them with color codes for inclusion
-    #   in the Bash prompt.
+    # Long Description:
+    #   Detects whether the shell is running inside a TMUX or SCREEN session.
+    #   Retrieves the session names and prints them, color-coded, for the prompt.
+    #
+    # Parameters:
+    #   None
     #
     # Requirements:
-    #   - Color variables (e.g., `${white}`, `${yellow}`) must be defined in the
-    #     environment where this function is sourced.
-    #   - Function `get_session_name` must be defined and sourced appropriately.
+    #   - Color variables (e.g., ${white}, ${yellow}) must be defined.
+    #   - A helper function get_session_name (if used) must be sourced.
     #
     # Usage:
     #   check_session
     #
     # Returns:
-    #   - Prints the session information formatted for the prompt if active.
-    #   - Prints an empty string if no sessions are active.
+    #   - Prints session information if inside TMUX or SCREEN.
+    #   - No output if not in any session.
     ###############################################################################
     function check_session() {
         SESSION_STATUS=""
@@ -183,29 +208,27 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     }
 
     ###############################################################################
-    # is_dhcp_static
-    # Determines if a network interface is configured for DHCP or Static IP.
+    # Name: is_dhcp_static
+    # Short Description: Determines if an interface is DHCP or static.
     #
-    # Description:
-    #   Analyzes the network configuration of a specified interface to determine
-    #   whether it is using DHCP or has a static IP assignment. Supports various
-    #   configurations on Linux (NetworkManager, systemd-networkd, netplan, /etc/network/interfaces)
-    #   and macOS (networksetup).
+    # Long Description:
+    #   Examines the network configuration of a given interface across Linux
+    #   (NetworkManager, systemd-networkd, /etc/network/interfaces) and macOS
+    #   (networksetup) to report whether it uses DHCP or a static IP.
     #
     # Parameters:
-    #   $1 - The name of the network interface to check (e.g., "eth0", "en0").
+    #   $1 - Interface name (e.g., "eth0", "en0")
     #
     # Requirements:
-    #   - Function `_get_os` must be defined and sourced appropriately.
-    #   - On macOS, the `networksetup` command must be available.
+    #   - Helper function _get_os must be defined.
+    #   - On macOS, the networksetup utility must be available.
     #
     # Usage:
     #   ip_type=$(is_dhcp_static "eth0")
-    #   echo "Interface eth0 is using: ${ip_type}"
     #
     # Returns:
-    #   - Prints "DHCP" or "Static" based on the interface configuration.
-    #   - Prints an error message and exits with status `1` if unable to determine.
+    #   - Prints "DHCP" or "Static" on success.
+    #   - Exits with status 1 and prints an error message on failure.
     ###############################################################################
     function is_dhcp_static() {
         # Ensure the interface is provided
@@ -338,15 +361,29 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         fi
     }
 
-    # ----------------------------------------------------------------------
-    # get_local_ip
-    # ----------------------------------------------------------------------
-    # - Retrieves local IP addresses from available interfaces, excluding
-    #   loopback and virtual interfaces (lo*, docker*, etc.).
-    # - Optionally calls is_dhcp_static to label each interface as DHCP/Static.
-    # - Exports the combined info in PROMPT_LOCAL_IP and prints it to stdout.
-    # - Returns 1 if no valid interfaces are found.
-    # ----------------------------------------------------------------------
+    ###############################################################################
+    # Name: get_local_ip
+    # Short Description: Retrieves and formats local IP addresses.
+    #
+    # Long Description:
+    #   Enumerates network interfaces (excluding lo*, docker*, etc.), fetches their
+    #   IP addresses, determines DHCP vs. static via is_dhcp_static, and builds a
+    #   color-coded string for the Bash prompt. Exports PROMPT_LOCAL_IP.
+    #
+    # Parameters:
+    #   None
+    #
+    # Requirements:
+    #   - ip or ifconfig must be available.
+    #   - is_dhcp_static must be defined and available.
+    #
+    # Usage:
+    #   get_local_ip
+    #
+    # Returns:
+    #   - Prints and exports PROMPT_LOCAL_IP on success.
+    #   - Returns 1 if no valid interfaces are found or an error occurs.
+    ###############################################################################
     function get_local_ip() {
         # Define interfaces to exclude
         local excluded_interfaces=("lo*" "docker*" "virbr*" "vnet*" "tun*" "tap*" "br-*" "ip6tnl*" "sit*")
@@ -409,15 +446,28 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
         echo "${PROMPT_LOCAL_IP}"
     }
 
-    # ----------------------------------------------------------------------
-    # get_external_ip
-    # ----------------------------------------------------------------------
-    # - Checks if a cached IP (in /tmp/external_ip.cache) is still fresh (< 10 mins).
-    # - If fresh and valid, reuses it.
-    # - Otherwise tries to fetch a new IP from ifconfig.me using curl or wget.
-    # - Exports the IP to PROMPT_EXTERNAL_IP and prints it to stdout on success.
-    # - Returns non-zero on any failure or invalid IP.
-    # ----------------------------------------------------------------------
+    ###############################################################################
+    # Name: get_external_ip
+    # Short Description: Fetches and caches the external IPv4 address.
+    #
+    # Long Description:
+    #   Checks a cache file (/tmp/external_ip.cache) for a recent IP (<10m). If
+    #   stale or missing, retrieves a fresh IP via ifconfig.me using curl or wget,
+    #   validates, caches, exports PROMPT_EXTERNAL_IP, and prints it.
+    #
+    # Parameters:
+    #   None
+    #
+    # Requirements:
+    #   - curl or wget must be installed.
+    #
+    # Usage:
+    #   get_external_ip
+    #
+    # Returns:
+    #   - Prints and exports PROMPT_EXTERNAL_IP on success.
+    #   - Returns non-zero on any failure, printing an error message.
+    ###############################################################################
     function get_external_ip() {
         local cache_file="/tmp/external_ip.cache"
         local external_ip=""

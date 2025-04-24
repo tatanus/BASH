@@ -1,11 +1,11 @@
 <ruby>
   opts = {
-    module_path: "auxiliary/scanner/ipmi/ipmi_dumphashes",
-    target_filter: {
-      proto: "udp",
-      ports: [623],
-      services: ["ipmi", "asf-rmcp"],
-      info: []
+    module_path:    "auxiliary/scanner/example",
+    target_filter:  {
+      proto:        "tcp",
+      ports:        [80, 443],
+      services:     ["http", "https"],
+      info:         []
     },
     thread_count: "10",
     # Uncomment/set below if you need creds:
