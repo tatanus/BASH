@@ -21,7 +21,7 @@ function install_bloodhound() {
     TOOL_NAME="bloodhound.py"
     GIT_URL="https://github.com/fox-it/BloodHound.py"
     REQUIREMENTS_FILE=""
-    PIP_INSTALLS=(".", "git+https://github.com/ly4k/ldap3")
+    PIP_INSTALLS=("." "git+https://github.com/ly4k/ldap3")
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
