@@ -30,6 +30,7 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
     fi
 
     # Alias for grep with color
+    # shellcheck disable=SC2262
     alias grep='grep --color=auto'
 
     # Alias for ggrep
@@ -70,10 +71,14 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
     # List Listeners
     alias listen="netstat -tupan | grep LISTEN"
 
-    # List Largest files on filesystem
+    # List largest files on filesystem
     function file_hogs() {
-        for i in G M K; do
-            du -ah | grep "[0-9]$i" | sort -nr -k 1
+        for unit in G M K; do
+            # use `command` (or a leading backslash) to bypass any same-file aliases,
+            # and wrap the loop var in braces to satisfy SC2250
+            command du -ah . \
+                | grep "[0-9]${unit}" \
+                | sort -nr -k1,1
         done | head -n 11
     }
 fi

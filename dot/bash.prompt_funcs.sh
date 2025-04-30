@@ -109,15 +109,15 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
         # Get branch name
         branch=$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null)
-        [[ -z "$branch" ]] && branch="unknown"
+        [[ -z "${branch}" ]] && branch="unknown"
 
         # Extract remote origin info
         origin_url=$(git config --get remote.origin.url 2> /dev/null)
-        if [[ "$origin_url" =~ ^git@([^:]+):([^/]+/[^/]+)(\.git)?$ ]]; then
+        if [[ "${origin_url}" =~ ^git@([^:]+):([^/]+/[^/]+)(\.git)?$ ]]; then
             # SSH style: git@host:org/repo.git
             host="${BASH_REMATCH[1]}"
             path="${BASH_REMATCH[2]}"
-        elif [[ "$origin_url" =~ ^https?://([^/]+)/([^/]+/[^/.]+)(\.git)?$ ]]; then
+        elif [[ "${origin_url}" =~ ^https?://([^/]+)/([^/]+/[^/.]+)(\.git)?$ ]]; then
             # HTTPS style: https://host/org/repo.git
             host="${BASH_REMATCH[1]}"
             path="${BASH_REMATCH[2]}"
@@ -131,23 +131,23 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
         # Attempt to get the current branch or tag
         branch=$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git describe --tags --exact-match 2> /dev/null)
-        if [[ -z "$branch" ]]; then
+        if [[ -z "${branch}" ]]; then
             branch="unknown"
         fi
 
         # Check if there are uncommitted changes
         if git_status=$(git status --porcelain 2> /dev/null); then
-            if [[ -n "$git_status" ]]; then
+            if [[ -n "${git_status}" ]]; then
                 # Dirty: Count types of changes
-                modified_count=$(echo "$git_status" | grep -cE '^[ MARC][MD]')
-                added_count=$(echo "$git_status" | grep -cE '^[ MARC]A')
-                deleted_count=$(echo "$git_status" | grep -cE '^[ MARC]D')
+                modified_count=$(echo "${git_status}" | grep -cE '^[ MARC][MD]')
+                added_count=$(echo "${git_status}" | grep -cE '^[ MARC]A')
+                deleted_count=$(echo "${git_status}" | grep -cE '^[ MARC]D')
 
                 # Format status string
                 dirty_summary=""
-                [[ $modified_count -gt 0 ]] && dirty_summary+=" M${modified_count}"
-                [[ $added_count -gt 0 ]] && dirty_summary+=" A${added_count}"
-                [[ $deleted_count -gt 0 ]] && dirty_summary+=" D${deleted_count}"
+                [[ ${modified_count} -gt 0 ]] && dirty_summary+=" M${modified_count}"
+                [[ ${added_count} -gt 0 ]] && dirty_summary+=" A${added_count}"
+                [[ ${deleted_count} -gt 0 ]] && dirty_summary+=" D${deleted_count}"
 
                 echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${light_red}\]✗${dirty_summary}\[${white}\]]"
             else
