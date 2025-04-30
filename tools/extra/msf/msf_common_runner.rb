@@ -76,11 +76,15 @@ def run_module(opts = {})
       if mod.options.key?("RPORT")
         run_single("set RPORT #{port}")
       else
-        print_status("Skipping RPORT — #{module_path} doesn’t support it")
-	  end
+        print_status("Skipping RPORT — #{module_path} doesn’t support it.")
+	    end
 
+      #run_single("run -j")
       run_single("run")
     end
+
+    # Optionally wait for all jobs to finish before cleanup:
+    # sleep 1 while framework.jobs.list.any? { |j| j['name'] =~ /#{module_name}/ }
   rescue => e
     print_error("Error during run: #{e}")
   end
