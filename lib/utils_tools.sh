@@ -171,6 +171,18 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
             fi
         fi
 
+        # Auto-detect and run setup.py install
+        if [[ -f "setup.py" ]]; then
+            if ! ${PYTHON} setup.py install; then
+                fail "setup.py install failed."
+                deactivate
+                _Popd
+                return "${_FAIL}"
+            else
+                pass "setup.py install completed"
+            fi
+        fi
+
         # Install additional pip packages if provided
         if [[ ${#PIP_INSTALLS[@]} -gt 0 ]]; then
             for PACKAGE in "${PIP_INSTALLS[@]}"; do
@@ -326,5 +338,41 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
                 return "${_FAIL}"
                 ;;
         esac
+    }
+
+    ###############################################################################
+    # Apply_Tool_Fixes
+    #==============================
+    # Loop through the TOOL_FIXES array and apply post-install fixes
+    # only for tools that are detected as installed via the APP_TESTS mapping.
+    ###############################################################################
+    function Apply_Tool_Fixes() {
+        local overall_status=0
+
+        for tool in "${!TOOL_FIXES[@]}"; do
+            local test_cmd="${APP_TESTS[$tool]}"
+            local fix_cmd="${TOOL_FIXES[$tool]}"
+
+            if [[ -z "$test_cmd" ]]; then
+                warn "No APP_TESTS entry found for [${tool}]; skipping test."
+                continue
+            fi
+
+            info "Checking if [${tool}] is installed..."
+
+            if AppTest "${tool}" "${test_cmd}"; then
+                info "Applying fix for [${tool}]: ${fix_cmd}"
+                if eval "${fix_cmd}"; then
+                    pass "Fix applied successfully for [${tool}]."
+                else
+                    fail "Fix FAILED for [${tool}]."
+                    overall_status=1
+                fi
+            else
+                warn "Tool [${tool}] not installed or failed test; skipping fix."
+            fi
+        done
+
+        return "${overall_status}"
     }
 fi

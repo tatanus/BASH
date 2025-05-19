@@ -279,6 +279,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "git+https://github.com/dirkjanm/adidnsdump#egg=adidnsdump"  # Dumps DNS entries from Active Directory (error prone)
         "git+https://github.com/zer1t0/certi"                        # ADCS attack tool (error prone)
         "git+https://github.com/ly4k/Certipy"                        # Active Directory Certificate Services exploitation (error prone)
+        #pipx inject --force certipy-ad git+https://github.com/ly4k/ldap3
         "coercer"                                                    # Coerces authentication via SMB/RPC
         "lsassy"                                                     # Dumps LSASS remotely using various methods
         "git+https://github.com/blacklanternsecurity/MANSPIDER"      # Finds sensitive data in SMB shares (error prone)
@@ -304,6 +305,10 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "nori -v 2.6.0"       # XML parsing gem with version pinned (needed for compatibility)
         "evil-winrm"          # WinRM shell for red teaming
     )
+
+    ## FIXES TO TOOLS POST INSTALL
+    declare -A TOOL_FIXES
+    TOOL_FIXES["certipy"]="${PROXY} pipx inject --force certipy-ad git+https://github.com/ly4k/ldap3" # Fix LDAP3 library for certipy-ad
 
     # =============================================================================
     # TOOL APP TEST MAPPINGS
@@ -405,6 +410,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "Setup PENTEST Environment"
         "Install Tools"
         #"Install Tools Categories"
+        "Apply Post Install Tool Fixes"
         "Test Tool Installs"
         "Pentest Menu"
     )

@@ -4,7 +4,7 @@
     "banner_scan" : "True",
     "target_scan" : "Internal",
     "max_rate" : "2000",
-    "target_file" : "/targets.txt",
-    "exclusions_file" : "--DATA_DIR--/excludes.txt",
-    "output_path" : "--DATA_DIR--/RECON/SPOONMAP/"
+    "target_file" : "~/DATA/targets.txt",
+    "exclusions_file" : "~/DATA/excludes.txt",
+    "output_path" : "~/DATA/OUTPUT/PORTSCAN/SPOONMAP/"
 }

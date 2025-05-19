@@ -147,7 +147,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                 dirty_summary=""
                 [[ ${modified_count} -gt 0 ]] && dirty_summary+=" M${modified_count}"
                 [[ ${added_count} -gt 0 ]] && dirty_summary+=" A${added_count}"
-                [[ ${deleted_count} -gt 0 ]] && dirty_summary+=" D${deleted_count}"
+                [[ $deleted_count -gt 0 ]] && dirty_summary+=" D${deleted_count}"
 
                 echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${light_red}\]✗${dirty_summary}\[${white}\]]"
             else
@@ -187,21 +187,26 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
     function check_session() {
         SESSION_STATUS=""
 
-        # Check if we are in either a TMUX or SCREEN session
-        if [[ -n "${TMUX:-}" ]] || [[ -n "${STY:-}" ]]; then
-            # Check if we are in a tmux session
-            if [[ -n "${TMUX:-}" ]]; then
-                TMUX_SESSION=$(tmux display-message -p '#S')
-                SESSION_STATUS+="[\[${yellow}\]TMUX = ${TMUX_SESSION}\[${white}\]"
-            fi
+        # TMUX: session name and current window:index
+        if [[ -n "${TMUX:-}" ]]; then
+            local tmux_name tmux_win
+            tmux_name=$(tmux display-message -p '#S')
+            tmux_win=$(tmux display-message -p '#I:#W')
+            SESSION_STATUS+="[\[${yellow}\]TMUX=${tmux_name}:${tmux_win}\[${white}\]]"
+        fi
 
-            # Check if we are in a screen session
-            if [[ -n "${STY:-}" ]]; then
-                SCREEN_SESSION=$(echo "${STY:-}" | awk -F '.' '{print $2}')
-                SESSION_STATUS+="[\[${yellow}\]SCREEN = ${SCREEN_SESSION}\[${white}\]"
-            fi
+        # SCREEN: session name (after the first dot in STY) and window number from $WINDOW
+        if [[ -n "${STY:-}" ]]; then
+            local full_sty="$STY"
+            # session name is everything after the first dot in STY
+            local screen_name="${full_sty#*.}"
+            # window number as set by GNU Screen
+            local screen_win="${WINDOW:-?}"
+            SESSION_STATUS+="[\[${yellow}\]SCREEN=${screen_name}:${screen_win}\[${white}\]]"
+        fi
 
-            SESSION_STATUS+="\[${white}\]]\n┣━"
+        if [[ -n "$SESSION_STATUS" ]]; then
+            SESSION_STATUS+="\[${white}\]\n┣━"
         fi
 
         echo -e "${SESSION_STATUS}"

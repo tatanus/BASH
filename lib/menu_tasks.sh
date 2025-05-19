@@ -235,6 +235,8 @@ if [[ -z "${MENU_TASKS_SH_LOADED:-}" ]]; then
         #     fi
 
         #     _Display_Menu "CHOOSE A TOOL CATEGORY" "_Process_Tools_Categories_Install_Menu" false "${TOOL_CATEGORY_MAP[@]}"
+        elif [[ "${choice}" == "Apply Post Install Tool Fixes" ]]; then
+            Apply_Tool_Fixes
         elif [[ "${choice}" == "Test Tool Installs" ]]; then
             _Test_Tool_Installs
         elif [[ "${choice}" == "Pentest Menu" ]]; then
