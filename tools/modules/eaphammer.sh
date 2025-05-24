@@ -20,8 +20,9 @@ function install_eaphammer() {
     # Define the arguments
     TOOL_NAME="eaphammer"
     GIT_URL="https://github.com/s0lst1c3/eaphammer.git"
-    REQUIREMENTS_FILE="pip.req"
-    PIP_INSTALLS=()
+    #REQUIREMENTS_FILE="pip.req"
+    REQUIREMENTS_FILE="kali-dependencies.txt"
+    PIP_INSTALLS=("service-identity")
 
     # Call the function
     _Install_Git_Python_Tool "${TOOL_NAME}" "${GIT_URL}" false "${REQUIREMENTS_FILE}" "${PIP_INSTALLS[@]}"
@@ -41,7 +42,8 @@ function install_eaphammer() {
     _Pushd "${TOOLS_DIR}/${DIRECTORY_NAME}"
     source ./venv/bin/activate
     sed -i 's/\._core\././' cert_wizard/cert_utils.py
-    echo 'y' | ./kali-setup
+    chmod +x ubuntu-unattended-setup
+    ./ubuntu-unattended-setup
     deactivate
     _Popd
 }

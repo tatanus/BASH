@@ -29,8 +29,8 @@ NC='\033[0m'
 function log()    { printf "[%bINFO%b] %s\n" "${BLUE}" "${NC}" "$*"; }
 function warn()   { printf "[%bWARN%b] %s\n" "${YELLOW}" "${NC}" "$*"; }
 function fail()   {
-           printf "[%bFAIL%b] %s\n" "${RED}" "${NC}" "$*" >&2
-                                                           exit 1
+    printf "[%bFAIL%b] %s\n" "${RED}" "${NC}" "$*" >&2
+    exit 1
 }
 
 #--------------------------------------
@@ -124,15 +124,24 @@ function install_dependencies() {
     orig_dir="$(pwd)"
 
     # 1) Batch‐install any missing APT packages
-    declare -A apt_pkgs=(
-         [iw]=iw [fzf]=fzf [ip]=iproute2 [ifconfig]=net-tools [iwconfig]=wireless-tools
-         [airodump - ng]=aircrack-ng [airmon - ng]=aircrack-ng [nmap]=nmap [tshark]=tshark
-         [aircrack - ng]=aircrack-ng [cowpatty]=cowpatty [hashcat]=hashcat
-    )
+    #    Build a map of command→package
+    declare -A apt_pkgs
+    apt_pkgs["iw"]=iw
+    apt_pkgs["fzf"]=fzf
+    apt_pkgs["ip"]=iproute2
+    apt_pkgs["ifconfig"]=net-tools
+    apt_pkgs["iwconfig"]=wireless-tools
+    apt_pkgs["airodump-ng"]=aircrack-ng
+    apt_pkgs["airmon-ng"]=aircrack-ng
+    apt_pkgs["nmap"]=nmap
+    apt_pkgs["tshark"]=tshark
+    apt_pkgs["cowpatty"]=cowpatty
+    apt_pkgs["hashcat"]=hashcat
+
     local to_install=()
     for cmd in "${!apt_pkgs[@]}"; do
-        if ! is_installed "$cmd"; then
-            to_install+=("${apt_pkgs[$cmd]}")
+        if ! is_installed "${cmd}"; then
+            to_install+=("${apt_pkgs[${cmd}]}")
         fi
     done
 
@@ -157,15 +166,16 @@ function install_dependencies() {
         log "EAPHammer already in PATH; skipping."
     else
         log "Cloning EAPHammer into ${INSTALL_DIR}/eaphammer…"
+         cd "${INSTALL_DIR}" || fail "Could not [cd] to the tools directory."
         ${PROXY} git clone https://github.com/s0lst1c3/eaphammer.git \
             "${INSTALL_DIR}/eaphammer" \
             || fail "git clone eaphammer failed"
-        cd "${INSTALL_DIR}/eaphammer"
+        cd "${INSTALL_DIR}/eaphammer" || fail "Could not [cd] into the [eaphammer] directory"
         chmod +x ubuntu-unattended-setup
         log "Running EAPHammer unattended setup…"
         ${PROXY} ./ubuntu-unattended-setup \
             || fail "EAPHammer setup failed"
-        cd "${orig_dir}"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
     # Obtain and import a Let's Encrypt cert via DNS challenge ---
     # Prompt the user for domain and company
@@ -194,13 +204,14 @@ function install_dependencies() {
         log "reaver already installed; skipping."
     else
         log "Cloning & building reaver…"
-        cd "${INSTALL_DIR}"
+        cd "${INSTALL_DIR}" || fail "Could not [cd] to the tools directory."
         git clone https://github.com/t6x/reaver-wps-fork-t6x.git \
             || fail "git clone reaver failed"
-        cd reaver-wps-fork-t6x/src
-        ./configure --enable-libnl3 && make && make install \
-            || fail "reaver build/install failed"
-        cd "${orig_dir}"
+        cd reaver-wps-fork-t6x/src || fail "Could not [cd] into the [reaver-wps-fork-t6x/src] directory"
+        ./configure --enable-libnl3 || fail "reaver configure failed"
+        make || fail "reaver build failed"
+        make install || fail "reaver install failed"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
 
     # 5) Pixiewps
@@ -208,12 +219,13 @@ function install_dependencies() {
         log "pixiewps already installed; skipping."
     else
         log "Cloning & building pixiewps…"
-        cd "${INSTALL_DIR}"
+        cd "${INSTALL_DIR}" || fail "Could not [cd] to the tools directory."
         git clone https://github.com/wiire-a/pixiewps.git \
             || fail "git clone pixiewps failed"
-        cd pixiewps && make && sudo make install \
-            || fail "pixiewps build/install failed"
-        cd "${orig_dir}"
+        cd pixiewps || fail "Could not [cd] into the [pixiewps] directory"
+        make || fail "pixiewps build failed"
+        make install || fail "pixiewps install failed"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
 
     # 6) Bully
@@ -225,13 +237,14 @@ function install_dependencies() {
             || fail "Failed to install bully apt deps"
 
         log "Cloning Bully into ${INSTALL_DIR}/bully…"
+        cd "${INSTALL_DIR}" || fail "Could not [cd] to the tools directory."
         ${PROXY} git clone https://github.com/aanarchyy/bully.git \
             "${INSTALL_DIR}/bully" \
             || fail "git clone bully failed"
-        cd "${INSTALL_DIR}/bully/src"
+        cd "${INSTALL_DIR}/bully/src"  || fail "Could not [cd] into the [bully/src] directory"
         make || fail "bully make failed"
         ${PROXY} make install || fail "bully make install failed"
-        cd "${orig_dir}"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
 
     # 7) Pyrit
@@ -246,12 +259,12 @@ function install_dependencies() {
         log "Fetching latest Pyrit tarball URL…"
         TARBALL_URL=$(${PROXY} curl -s https://api.github.com/repos/JPaulMora/Pyrit/releases/latest \
             | grep '"tarball_url":' | head -1 | cut -d '"' -f4)
-        [ -n "$TARBALL_URL" ] || fail "Could not determine Pyrit tarball URL"
+        [[ -n "${TARBALL_URL}" ]] || fail "Could not determine Pyrit tarball URL"
 
         # 7.2. Download it (follows any redirects) and save as “pyrit-latest.tar.gz”
         log "Downloading Pyrit into ${INSTALL_DIR}…"
-        cd "${INSTALL_DIR}"
-        ${PROXY} wget -c "$TARBALL_URL" -O pyrit-latest.tar.gz \
+        cd "${INSTALL_DIR}" || fail "Could not [cd] to the tools directory."
+        ${PROXY} wget -c "${TARBALL_URL}" -O pyrit-latest.tar.gz \
             || fail "Failed to download Pyrit"
 
         # 8.3. Extract and enter directory
@@ -260,8 +273,8 @@ function install_dependencies() {
         # 7.4 Find the extracted dir (Pyrit-*)
         local pyrit_dir
         pyrit_dir=$(find . -maxdepth 1 -type d -name "Pyrit-*" | head -1)
-        [ -n "$pyrit_dir" ] || fail "Pyrit directory not found after extract"
-        cd "$pyrit_dir"
+        [[ -n "${pyrit_dir}" ]] || fail "Pyrit directory not found after extract"
+        cd "${pyrit_dir}" || fail "Could not [cd] into the original directory"
 
         # 7.5 Apply edits, Install Deps, and build/install
         sed -i 's/COMPILE_AESNI/COMPILE_AESNIX/' cpyrit/_cpyrit_cpu.c
@@ -271,7 +284,7 @@ function install_dependencies() {
         ${PROXY} python2.7 setup.py build || fail "Pyrit setup.py build failed"
         ${PROXY} python2.7 setup.py install || fail "Pyrit setup.py install failed"
 
-        cd "${orig_dir}"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
 
     # 8) Wifite2
@@ -287,10 +300,10 @@ function install_dependencies() {
         ${PROXY} git clone https://github.com/kimocoder/wifite2.git \
             "${INSTALL_DIR}/wifite2" \
             || fail "git clone wifite2 failed"
-        cd "${INSTALL_DIR}/wifite2"
+        cd "${INSTALL_DIR}/wifite2" || fail "Could not [cd] into the [wifite2] directory"
         ${PROXY} python3 setup.py install \
             || fail "Wifite2 install failed"
-        cd "${orig_dir}"
+        cd "${orig_dir}" || fail "Could not [cd] into the original directory"
     fi
 
     log "All dependencies are installed or already present."
@@ -324,7 +337,7 @@ function enable_monitor() {
 
     local current_mode
     current_mode=$(get_interface_mode)
-    if [[ "$current_mode" == "monitor" ]]; then
+    if [[ "${current_mode}" == "monitor" ]]; then
         warn "Interface '${INTERFACE}' is already in monitor mode."
         return 0
     fi
@@ -563,7 +576,7 @@ function list_ssids() {
 # select_ssid
 #--------------------------------------
 function select_ssid() {
-    [[ ! -s "$NMCLI_LOG" ]] && fail "No scan data available. Run discovery first."
+    [[ ! -s "${NMCLI_LOG}" ]] && fail "No scan data available. Run discovery first."
     local chosen_line bssid ssid chan sec
 
     chosen_line=$(list_ssids | tail -n +3 | fzf --prompt="Select SSID: ") || fail "No SSID selected."
@@ -573,11 +586,11 @@ function select_ssid() {
     [[ -z "${bssid}" ]] && fail "Failed to parse BSSID."
 
     # Extract SSID (text before BSSID)
-    ssid=$(echo "${chosen_line}" | sed -E "s/\s*$bssid.*//" | xargs)
+    ssid=$(echo "${chosen_line}" | sed -E "s/\s*${bssid}.*//" | xargs)
     # Extract channel (number following BSSID)
-    chan=$(echo "${chosen_line}" | sed -E "s/.*$bssid\s+([0-9]+).*/\1/")
+    chan=$(echo "${chosen_line}" | sed -E "s/.*${bssid}\s+([0-9]+).*/\1/")
     # Extract security (text after channel)
-    sec=$(echo "${chosen_line}" | sed -E "s/.*$bssid\s+$chan\s+(.*)$/\1/")
+    sec=$(echo "${chosen_line}" | sed -E "s/.*${bssid}\s+${chan}\s+(.*)$/\1/")
 
     SSID_SELECTION="${ssid}|${bssid}|${chan}|${sec}"
     log "Selected SSID: ${ssid} (BSSID: ${bssid}, CHAN: ${chan}, SEC: ${sec})"
@@ -602,19 +615,17 @@ function connect_to_network() {
     [[ -z "${SSID_SELECTION}" ]] && select_ssid
 
     IFS='|' read -r ssid bssid chan sec <<< "${SSID_SELECTION}"
-    log "Connecting to SSID: $ssid"
+    log "Connecting to SSID: ${ssid}"
 
-    if echo "$sec" | grep -qiE 'WPA|PSK'; then
-        read -rsp "Enter passphrase for '$ssid': " pass
+    if echo "${sec}" | grep -qiE 'WPA|PSK'; then
+        read -rsp "Enter passphrase for '${ssid}': " pass
         echo
-        nmcli dev wifi connect "$ssid" password "$pass" ifname "${INTERFACE}" name "${ssid// /_}" \
-                                                                                                || fail "Failed to connect to protected network $ssid"
+        nmcli dev wifi connect "${ssid}" password "${pass}" ifname "${INTERFACE}" name "${ssid// /_}" || fail "Failed to connect to protected network ${ssid}"
     else
-        nmcli dev wifi connect "$ssid" ifname "${INTERFACE}" name "${ssid// /_}" \
-                                                                               || fail "Failed to connect to open network $ssid"
+        nmcli dev wifi connect "${ssid}" ifname "${INTERFACE}" name "${ssid// /_}" || fail "Failed to connect to open network ${ssid}"
     fi
 
-    log "Connected to $ssid"
+    log "Connected to ${ssid}"
     device_settings
 }
 
@@ -635,12 +646,12 @@ function ensure_connected() {
     [[ -z "${INTERFACE}" ]] && choose_interface
     local mode
     mode=$(get_interface_mode)
-    if [[ "$mode" == "monitor" ]]; then
+    if [[ "${mode}" == "monitor" ]]; then
         fail "Interface '${INTERFACE}' is in monitor mode. Please switch to managed mode and connect."
     fi
     local ipinfo
     ipinfo=$(ip -o -f inet addr show dev "${INTERFACE}" | awk '{print $4}')
-    [[ -z "$ipinfo" ]] && fail "Interface '${INTERFACE}' has no IP. Ensure it's connected to a network."
+    [[ -z "${ipinfo}" ]] && fail "Interface '${INTERFACE}' has no IP. Ensure it's connected to a network."
 }
 
 #--------------------------------------
@@ -663,7 +674,7 @@ function test_isolation() {
 
     prefix="${LOG_DIR}/ISOLATION_${INTERFACE}_${safe_ssid}"
     log "Testing client isolation on ${cidr} via ${INTERFACE}"
-    nmap --open -e "${INTERFACE}" -oA "${prefix}" "$cidr"
+    nmap --open -e "${INTERFACE}" -oA "${prefix}" "${cidr}"
     log "Isolation results in ${prefix}.*"
 }
 
@@ -720,7 +731,7 @@ function run_eaphammer_attack() {
 # main_menu
 #--------------------------------------
 function main_menu() {
-    mkdir -p "$LOG_DIR"
+    mkdir -p "${LOG_DIR}"
 
     while true; do
         echo

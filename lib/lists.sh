@@ -308,7 +308,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
 
     ## FIXES TO TOOLS POST INSTALL
     declare -A TOOL_FIXES
-    TOOL_FIXES["certipy"]="${PROXY} pipx inject --force certipy-ad git+https://github.com/ly4k/ldap3" # Fix LDAP3 library for certipy-ad
+    TOOL_FIXES["certipy"]="pipx inject --force certipy-ad git+https://github.com/ly4k/ldap3" # Fix LDAP3 library for certipy-ad
 
     # =============================================================================
     # TOOL APP TEST MAPPINGS

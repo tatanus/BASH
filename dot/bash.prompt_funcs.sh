@@ -147,7 +147,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
                 dirty_summary=""
                 [[ ${modified_count} -gt 0 ]] && dirty_summary+=" M${modified_count}"
                 [[ ${added_count} -gt 0 ]] && dirty_summary+=" A${added_count}"
-                [[ $deleted_count -gt 0 ]] && dirty_summary+=" D${deleted_count}"
+                [[ ${deleted_count} -gt 0 ]] && dirty_summary+=" D${deleted_count}"
 
                 echo "\[${white}\][\[${light_blue}\]GIT ${origin}:${branch} \[${light_red}\]✗${dirty_summary}\[${white}\]]"
             else
@@ -197,7 +197,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
 
         # SCREEN: session name (after the first dot in STY) and window number from $WINDOW
         if [[ -n "${STY:-}" ]]; then
-            local full_sty="$STY"
+            local full_sty="${STY}"
             # session name is everything after the first dot in STY
             local screen_name="${full_sty#*.}"
             # window number as set by GNU Screen
@@ -205,7 +205,7 @@ if [[ -z "${BASH_PROMPT_FUNCS_SH_LOADED:-}" ]]; then
             SESSION_STATUS+="[\[${yellow}\]SCREEN=${screen_name}:${screen_win}\[${white}\]]"
         fi
 
-        if [[ -n "$SESSION_STATUS" ]]; then
+        if [[ -n "${SESSION_STATUS}" ]]; then
             SESSION_STATUS+="\[${white}\]\n┣━"
         fi
 

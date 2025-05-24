@@ -350,10 +350,10 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
         local overall_status=0
 
         for tool in "${!TOOL_FIXES[@]}"; do
-            local test_cmd="${APP_TESTS[$tool]}"
-            local fix_cmd="${TOOL_FIXES[$tool]}"
+            local test_cmd="${APP_TESTS[${tool}]}"
+            local fix_cmd="${TOOL_FIXES[${tool}]}"
 
-            if [[ -z "$test_cmd" ]]; then
+            if [[ -z "${test_cmd}" ]]; then
                 warn "No APP_TESTS entry found for [${tool}]; skipping test."
                 continue
             fi
@@ -362,7 +362,7 @@ if [[ -z "${UTILS_TOOLS_SH_LOADED:-}" ]]; then
 
             if AppTest "${tool}" "${test_cmd}"; then
                 info "Applying fix for [${tool}]: ${fix_cmd}"
-                if eval "${fix_cmd}"; then
+                if eval "${PROXY} ${fix_cmd}"; then
                     pass "Fix applied successfully for [${tool}]."
                 else
                     fail "Fix FAILED for [${tool}]."
