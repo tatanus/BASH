@@ -65,33 +65,6 @@ function is_installed() {
     command -v "$1" > /dev/null 2>&1
 }
 
-function verify_required_commands() {
-    missing=false
-    is_installed iw || {
-        warn "'iw' is required for interface selection."
-        missing=true
-    }
-    is_installed fzf || {
-        warn "'fzf' is required for interface selection."
-        missing=true
-    }
-    is_installed ip || {
-        warn "'ip' is required."
-        missing=true
-    }
-    is_installed iw || {
-        warn "'iw' is required."
-        missing=true
-    }
-    is_installed nmap || {
-        warn "nmap required"
-        missing=true
-    }
-    if "${missing}"; then
-        fail "Install the missing rewuired programs/applications."
-    fi
-}
-
 function show_help() {
     cat << EOF
 Usage: ${0##*/} [LOG_DIR]
@@ -121,21 +94,56 @@ EOF
 #--------------------------------------
 # install_dependencies
 #--------------------------------------
+function verify_required_commands() {
+    local missing=false
+    for cmd in \
+        iw fzf ip ifconfig iwconfig \
+        airodump-ng airmon-ng nmap \
+        tshark aircrack-ng eaphammer \
+        wifite bully reaver pixiewps pyrit; do
+
+        if ! is_installed "${cmd}"; then
+            warn "'${cmd}' is required but not installed."
+            missing=true
+        fi
+    done
+
+    if [[ "${missing}" == true ]]; then
+        warn "Please install the missing required programs/applications."
+        warn "    Otherwise, most/all of the commands will fail to"
+        warn "    function properly."
+    fi
+}
+
 function install_dependencies() {
     log "Installing required packages and tools…"
 
     # Ensure INSTALL_DIR exists
-    mkdir -p "${INSTALL_DIR}" \
-        || fail "Cannot create INSTALL_DIR at ${INSTALL_DIR}"
-
-    # Save current dir so we can return later
+    mkdir -p "${INSTALL_DIR}" || fail "Cannot create INSTALL_DIR at ${INSTALL_DIR}"
     local orig_dir
     orig_dir="$(pwd)"
 
-    # 1) Refresh APT
-    ${PROXY} apt update -y || fail "APT update failed"
+    # 1) Batch‐install any missing APT packages
+    declare -A apt_pkgs=(
+         [iw]=iw [fzf]=fzf [ip]=iproute2 [ifconfig]=net-tools [iwconfig]=wireless-tools
+         [airodump - ng]=aircrack-ng [airmon - ng]=aircrack-ng [nmap]=nmap [tshark]=tshark
+         [aircrack - ng]=aircrack-ng [cowpatty]=cowpatty [hashcat]=hashcat
+    )
+    local to_install=()
+    for cmd in "${!apt_pkgs[@]}"; do
+        if ! is_installed "$cmd"; then
+            to_install+=("${apt_pkgs[$cmd]}")
+        fi
+    done
 
-    # 2) service_identity
+    if ((${#to_install[@]})); then
+        ${PROXY} apt update -y || fail "APT update failed"
+        ${PROXY} apt install -y "${to_install[@]}" || fail "APT install failed"
+    else
+        log "All APT‐installable tools are already present."
+    fi
+
+    # 2) Python service_identity for EAPHammer
     if python3.10 -c "import service_identity" 2> /dev/null; then
         log "service_identity present; skipping."
     else
@@ -165,7 +173,6 @@ function install_dependencies() {
     log "  so that we can generate usable certificates."
     read -rp "Enter the DNS domain to use for the Wi-Fi certificate (e.g. example.com): " WIFI_DNS_DOMAIN
     read -rp "Enter your COMPANY name for the certificate (e.g. corp): " COMPANY
-
     # Get a cert with certbot (manual DNS challenge)
     ${PROXY} certbot certonly \
         --manual \
@@ -176,42 +183,45 @@ function install_dependencies() {
         -d "${COMPANY}.${WIFI_DNS_DOMAIN}" \
         --server https://acme-v02.api.letsencrypt.org/directory \
         || fail "Certbot DNS challenge failed"
-
     # Import the cert into EAPHammer
     eaphammer --cert-wizard import \
         --server-cert "/etc/letsencrypt/live/${COMPANY}.${WIFI_DNS_DOMAIN}/fullchain.pem" \
         --private-key "/etc/letsencrypt/live/${COMPANY}.${WIFI_DNS_DOMAIN}/privkey.pem" \
         || fail "EAPHammer cert import failed"
 
-    # 4) Wifite2
-    if is_installed wifite; then
-        log "wifite already installed; skipping."
+    # 4) Reaver-WPS-Fork-t6x
+    if is_installed reaver; then
+        log "reaver already installed; skipping."
     else
-        log "Installing Wifite2 dependencies…"
-        ${PROXY} apt install -y \
-            git python3 python3-venv python3-pip \
-            wireless-tools net-tools \
-            aircrack-ng reaver bully cowpatty \
-            hashcat hcxdumptool hcxtools \
-            tshark python3-chardet python3-scapy \
-            || fail "Failed to install wifite2 apt deps"
-
-        log "Cloning Wifite2 into ${INSTALL_DIR}/wifite2…"
-        ${PROXY} git clone https://github.com/kimocoder/wifite2.git \
-            "${INSTALL_DIR}/wifite2" \
-            || fail "git clone wifite2 failed"
-        cd "${INSTALL_DIR}/wifite2"
-        ${PROXY} python3 setup.py install \
-            || fail "Wifite2 install failed"
+        log "Cloning & building reaver…"
+        cd "${INSTALL_DIR}"
+        git clone https://github.com/t6x/reaver-wps-fork-t6x.git \
+            || fail "git clone reaver failed"
+        cd reaver-wps-fork-t6x/src
+        ./configure --enable-libnl3 && make && make install \
+            || fail "reaver build/install failed"
         cd "${orig_dir}"
     fi
 
-    # 5) Bully
+    # 5) Pixiewps
+    if is_installed pixiewps; then
+        log "pixiewps already installed; skipping."
+    else
+        log "Cloning & building pixiewps…"
+        cd "${INSTALL_DIR}"
+        git clone https://github.com/wiire-a/pixiewps.git \
+            || fail "git clone pixiewps failed"
+        cd pixiewps && make && sudo make install \
+            || fail "pixiewps build/install failed"
+        cd "${orig_dir}"
+    fi
+
+    # 6) Bully
     if is_installed bully; then
         log "bully already installed; skipping."
     else
         log "Installing Bully build deps…"
-        ${PROXY} apt install -y build-essential libpcap-dev aircrack-ng pixiewps \
+        ${PROXY} apt install -y build-essential libpcap-dev \
             || fail "Failed to install bully apt deps"
 
         log "Cloning Bully into ${INSTALL_DIR}/bully…"
@@ -224,7 +234,7 @@ function install_dependencies() {
         cd "${orig_dir}"
     fi
 
-    # 6) Pyrit
+    # 7) Pyrit
     if is_installed pyrit; then
         log "pyrit already installed; skipping."
     else
@@ -232,28 +242,28 @@ function install_dependencies() {
         ${PROXY} apt install -y python2.7 python2.7-dev libssl-dev zlib1g-dev libpcap0.8-dev python2-pip \
             || fail "Failed to install pyrit apt deps"
 
-        # 6.1. Query GitHub’s API for the *tarball* URL of the latest release
+        # 7.1. Query GitHub’s API for the *tarball* URL of the latest release
         log "Fetching latest Pyrit tarball URL…"
         TARBALL_URL=$(${PROXY} curl -s https://api.github.com/repos/JPaulMora/Pyrit/releases/latest \
             | grep '"tarball_url":' | head -1 | cut -d '"' -f4)
         [ -n "$TARBALL_URL" ] || fail "Could not determine Pyrit tarball URL"
 
-        # 6.2. Download it (follows any redirects) and save as “pyrit-latest.tar.gz”
+        # 7.2. Download it (follows any redirects) and save as “pyrit-latest.tar.gz”
         log "Downloading Pyrit into ${INSTALL_DIR}…"
         cd "${INSTALL_DIR}"
         ${PROXY} wget -c "$TARBALL_URL" -O pyrit-latest.tar.gz \
             || fail "Failed to download Pyrit"
 
-        # 6.3. Extract and enter directory
+        # 8.3. Extract and enter directory
         tar xzf pyrit-latest.tar.gz || fail "Failed to extract Pyrit"
 
-        # 6.4 Find the extracted dir (Pyrit-*)
+        # 7.4 Find the extracted dir (Pyrit-*)
         local pyrit_dir
         pyrit_dir=$(find . -maxdepth 1 -type d -name "Pyrit-*" | head -1)
         [ -n "$pyrit_dir" ] || fail "Pyrit directory not found after extract"
         cd "$pyrit_dir"
 
-        # 6.5 Apply edits, Install Deps, and build/install
+        # 7.5 Apply edits, Install Deps, and build/install
         sed -i 's/COMPILE_AESNI/COMPILE_AESNIX/' cpyrit/_cpyrit_cpu.c
         ${PROXY} python2.7 -m pip install psycopg2-binary scapy \
             || fail "Failed to install Pyrit Python deps"
@@ -264,71 +274,26 @@ function install_dependencies() {
         cd "${orig_dir}"
     fi
 
-    log "All dependencies are installed or already present."
-}
+    # 8) Wifite2
+    if is_installed wifite; then
+        log "wifite already installed; skipping."
+    else
+        log "Installing Wifite2 dependencies…"
+        ${PROXY} apt install -y \
+            hcxdumptool hcxtools python3-chardet python3-scapy \
+            || fail "Failed to install wifite2 apt deps"
 
-install_dependencies() {
-    log "Installing required packages and tools..."
-    if ! ${PROXY} apt update; then
-        fail "APT update failed"
+        log "Cloning Wifite2 into ${INSTALL_DIR}/wifite2…"
+        ${PROXY} git clone https://github.com/kimocoder/wifite2.git \
+            "${INSTALL_DIR}/wifite2" \
+            || fail "git clone wifite2 failed"
+        cd "${INSTALL_DIR}/wifite2"
+        ${PROXY} python3 setup.py install \
+            || fail "Wifite2 install failed"
+        cd "${orig_dir}"
     fi
 
-    # Install eaphammer
-    git clone https://github.com/s0lst1c3/eaphammer.git
-    cd eaphammer
-    python3.10 pip3 install --user service-identity
-    chmod +x ubuntu-unattended-setup
-    ./ubuntu-unattended-setup
-
-    # Install wifite2
-    apt update
-    apt install -y \
-        git python3 python3-venv python3-pip \
-        wireless-tools net-tools         \  # for iwconfig, ifconfig
-      aircrack-ng                        \  # core packet-capture/crack tools
-      reaver bully cowpatty             \  # WPS-attack tools
-      hashcat hcxdumptool hcxtools      \  # PMKID capture & conversion
-      tshark                             \  # WPS detection & inspection
-      python3-chardet python3-scapy     # Python libs Wifite uses
-    git clone https://github.com/kimocoder/wifite2.git
-    cd wifite2
-    python3 setup.py install
-
-    # Prompt for the ${WIFI_DNS_DOMAIN} to use for the certificate
-    # Prompt for the Customer's ${COMPANY} name to use for the certificate
-    certbot certonly --manual -d "${COMPANY}"."${WIFI_DNS_DOMAIN}" --agree-tos --manual-public-ip-logging-ok --preferred-challenges dns-01 --server https://acme-v02.api.letsencrypt.org/directory --register-unsafely-without-email
-    # Make necessary TXT record(s) with DNS provider
-    eaphammer --cert-wizard import --server-cert /etc/letsencrypt/live/"${COMPANY}"."${WIFI_DNS_DOMAIN}"/fullchain.pem --private-key /etc/letsencrypt/live/"${COMPANY}"."${WIFI_DNS_DOMAIN}"/privkey.pem
-
-    # Install bully
-    apt update
-    apt install -y build-essential libpcap-dev aircrack-ng pixiewps
-    git clone https://github.com/aanarchyy/bully.git
-    cd bully/src
-    make
-    make install
-
-    # Install pyrite
-    apt update
-    apt install -y python2.7 libssl-dev zlib1g-dev libpcap0.8-dev python2.7-dev
-    # 1. Query GitHub’s API for the *tarball* URL of the latest release
-    TARBALL_URL=$(curl -s https://api.github.com/repos/JPaulMora/Pyrit/releases/latest \
-        | grep '"tarball_url":' \
-        | head -1 \
-        | cut -d '"' -f 4)
-    # 2. Download it (follows any redirects) and save as “pyrit-latest.tar.gz”
-    wget -c "$TARBALL_URL" -O pyrit-latest.tar.gz
-    # 3. Extract and enter directory
-    tar xzf pyrit-latest.tar.gz
-    cd Pyrit-*
-    sed -i 's/COMPILE_AESNI/COMPILE_AESNIX/' cpyrit/_cpyrit_cpu.c
-    python2.7 -m pip install psycopg2-binary
-    python2.7 -m pip install scapy
-    python2.7 setup.py clean
-    python2.7 setup.py build
-    python2.7 setup.py install
-
-    log "Dependency installation complete."
+    log "All dependencies are installed or already present."
 }
 
 #--------------------------------------
@@ -744,9 +709,10 @@ function run_eaphammer_attack() {
     [[ -z "${INTERFACE}" ]] && choose_interface
     [[ -z "${SSID_SELECTION}" ]] && select_ssid
 
-    local ssid="${SSID_SELECTION%%|*}"
+    IFS='|' read -r ssid bssid chan sec <<< "${SSID_SELECTION}"
+
     enable_monitor
-    eaphammer --interface "${INTERFACE}" --essid "${ssid}" --target "${ssid}" --captiveportal
+    eaphammer -i "${INTERFACE}" --channel "${chan}" --essid "${ssid}" --auth wpa-eap --cred
     disable_monitor
 }
 
@@ -795,7 +761,7 @@ function main_menu() {
         echo "9) Network Segmentation Test"
         echo "------------------------"
         echo "10) Run Wifite2 Attack"
-        echo "11) (*NOT WORKING*) Run Eaphammer Attack"
+        echo "11) Run Eaphammer Attack"
         echo "------------------------"
         echo "0) Exit"
         echo
