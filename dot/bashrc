@@ -1,16 +1,43 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# If not running interactively, don't do anything
+# =============================================================================
+# NAME        : interactive_bashrc.sh
+# DESCRIPTION : Custom interactive shell config for secure, terminal-aware sessions
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2025-06-09 08:34:00
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2025-06-09 08:34:00  | Adam Compton | Initial creation.
+# =============================================================================
+
+###############################################################################
+# SAFETY SETTINGS
+###############################################################################
+set -uo pipefail
+
+trap 'echo "[$(date +"%F %T")] EXITING shell"; exit' EXIT
+trap 'echo "[$(date +"%F %T")] INTERRUPTED"; exit 130' INT
+#trap 'echo "[$(date +"%F %T")] ERROR on line $LINENO"; exit 1' ERR
+
+###############################################################################
+# INTERACTIVITY CHECK
+###############################################################################
 if [[ -z "${PS1:-}" ]]; then
     return
 fi
 
+###############################################################################
+# SETTING ANY REQUIRED ENV
+###############################################################################
 PWD="${PWD:-}"
 HOSTNAME="${HOSTNAME:-localhost}"
 PS0="${PS0:-}"
 PS1="${PS1:-}"
 PS2="${PS2:-}"
 
-# Check if we are running inside Ghostty terminal and fixing unbound variables
+###############################################################################
+# TERMINAL AWARENESS SETUP
+###############################################################################
 if [[ -n "${TERM_PROGRAM:-}" ]]; then
     case "${TERM_PROGRAM}" in
         "ghostty")
@@ -59,11 +86,13 @@ if [[ -n "${TERM_PROGRAM:-}" ]]; then
     esac
 fi
 
-# Set VIMRUNTIME and TERM variables
-if [[ "$TERM" == "screen" || "$TERM" == "screen-256color" ]]; then
-    export TERM=screen-256color
+###############################################################################
+# TERM AND DISPLAY SETTINGS
+###############################################################################
+if [[ "$TERM" =~ ^screen ]]; then
+    export TERM="screen-256color"
 else
-    export TERM=xterm-256color
+    export TERM="xterm-256color"
 fi
 
 # Silence bash deprecation warning
@@ -73,45 +102,51 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 shopt -s checkwinsize
 
 # Make less more friendly for non-text input files
-if [[ -x /usr/bin/lesspipe ]]; then
+if command -v lesspipe &>/dev/null; then
     eval "$(SHELL=/bin/sh lesspipe)"
 fi
 
+###############################################################################
+# CHROOT AWARENESS
+###############################################################################
 # Set variable identifying the chroot you work in (used in the prompt below)
 if [[ -z "${debian_chroot:-}" ]] && [[ -r /etc/debian_chroot ]]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# History settings
-# HISTFILE=~/.bash_history
+###############################################################################
+# HISTORY SETUP
+###############################################################################
+timestamp=$(date +"%Y%m%d_%H%M%S")
+window="${WINDOW:-win}"
+session_tag=""
+
 # Unique HISTFILE per screen or tmux session
-# Detect and name the session
-if [ -n "$TMUX" ]; then
-    # Inside a tmux session
-    SESSION_NAME=$(tmux display-message -p '#S' 2>/dev/null || echo "tmux_$$")
-    export HISTFILE="$HOME/.bash_history_tmux_${SESSION_NAME}"
-elif [ -n "$STY" ]; then
-    # Inside a GNU screen session
-    SESSION_NAME=$(echo "$STY" | cut -d. -f2)
-    export HISTFILE="$HOME/.bash_history_screen_${SESSION_NAME:-$$}"
+if [[ -n "${TMUX:-}" ]]; then
+    session_name=$(tmux display-message -p '#S' 2>/dev/null || echo "tmux_${timestamp}")
+    session_tag="tmux_${session_name}_${window}"
+elif [[ -n "${STY:-}" ]]; then
+    session_name=$(echo "$STY" | cut -d. -f2)
+    session_tag="screen_${session_name:-$$}_${window}"
 else
-    # Normal shell session
-    export HISTFILE="$HOME/.bash_history"
+    session_tag="bash"
 fi
 
-HISTCONTROL=
-HISTIGNORE=
-HISTSIZE=100000
-HISTFILESIZE=100000
-HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
+export HISTFILE="$HOME/.bash_history_${session_tag}"
+export HISTCONTROL=
+export HISTIGNORE=
+export HISTSIZE=100000
+export HISTFILESIZE=100000
+export HISTTIMEFORMAT="[%m/%d/%y %H:%M:%S] "
 shopt -s histappend
 
-# Check if the history file exists, if not, create it
-if [[ ! -f ${HISTFILE} ]]; then
-    touch "${HISTFILE}"
-    chmod 600 "${HISTFILE}"
+if [[ ! -f "${HISTFILE}" ]]; then
+    touch "${HISTFILE}" && chmod 600 "${HISTFILE}"
 fi
 
+###############################################################################
+# LOAD PRIMARY BASH CONFIG FILES
+###############################################################################
 primary_bash_files=(
     "${HOME}/.config/bash/bash.path.sh"
     "${HOME}/.config/bash/bash.env.sh"
@@ -123,6 +158,9 @@ for file in "${primary_bash_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done
 
+###############################################################################
+# LOAD SECONDARY BASH CONFIG FILES
+###############################################################################
 secondary_bash_files=(
     # Now that variables are set, load bash_path
     "${BASH_DIR}/bash.aliases.sh"
@@ -145,6 +183,9 @@ for file in "${secondary_bash_files[@]}"; do
     [[ -f "${file}" ]] && source "${file}"
 done
 
+###############################################################################
+# PROMPT_COMMAND AUGMENTATION FOR HISTORY SYNC
+###############################################################################
 # Append history sync commands without overwriting existing PROMPT_COMMAND
 history_sync="history -a; history -n; history -w"
 

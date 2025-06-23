@@ -137,6 +137,7 @@ function install_dependencies() {
     apt_pkgs["tshark"]=tshark
     apt_pkgs["cowpatty"]=cowpatty
     apt_pkgs["hashcat"]=hashcat
+    apt_pkgs["libssl-dev"]=libssl-dev
 
     local to_install=()
     for cmd in "${!apt_pkgs[@]}"; do
@@ -674,7 +675,7 @@ function test_isolation() {
 
     prefix="${LOG_DIR}/ISOLATION_${INTERFACE}_${safe_ssid}"
     log "Testing client isolation on ${cidr} via ${INTERFACE}"
-    nmap --open -e "${INTERFACE}" -oA "${prefix}" "${cidr}"
+    nmap -F --open -e "${INTERFACE}" -oA "${prefix}" "${cidr}"
     log "Isolation results in ${prefix}.*"
 }
 
@@ -696,7 +697,7 @@ function test_segmentation() {
 
     prefix="${LOG_DIR}/SEGMENTATION_${INTERFACE}_${safe_ssid}"
     log "Testing segmentation on targets from ${targets_file} via ${INTERFACE}"
-    nmap --open -e "${INTERFACE}" -iL "${targets_file}" -oA "${prefix}"
+    nmap -F --open -e "${INTERFACE}" -iL "${targets_file}" -oA "${prefix}"
     log "Segmentation results in ${prefix}.*"
 }
 

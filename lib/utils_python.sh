@@ -81,7 +81,7 @@ if [[ -z "${UTILS_PYTHON_SH_LOADED:-}" ]]; then
         if ! { [[ "${COMPILE_PYTHON}" = false ]] && [[ "${INSTALL_PYTHON}" = false ]]; } && [[ "${COMPILE_PYTHON}" = "${INSTALL_PYTHON}" ]]; then
             warn "As both COMPILE_PYTHON and INSTALL_PYTHON are 'true',"
             warn "     I will try to install then if that fails, I will"
-            warn "     compile python${PYTON_VERSION}"
+            warn "     compile python${PYTHON_VERSION}"
         fi
 
          # Ensure version variable is set

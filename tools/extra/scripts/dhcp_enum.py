@@ -1,92 +1,138 @@
 #!/usr/bin/env python3
-"""
-Name: dhcp_enum.py
-Description: Enumerate DHCPv4 (discover, bogus-request probe, inform) and DHCPv6 (solicit) servers on the LAN.
-Author: ChatGPT (adapted for Adam Compton)
-Date Created: 2025-04-30
+# =============================================================================
+# NAME        : dhcp_enum.py
+# DESCRIPTION : Enumerate DHCPv4 and DHCPv6 servers on the LAN via
+#               DISCOVER, INFORM, bogus REQUEST, and SOLICIT messages.
+# AUTHOR      : Adam Compton
+# DATE CREATED: 2025-04-30 12:00:00
+# =============================================================================
+# EDIT HISTORY:
+# DATE                 | EDITED BY    | DESCRIPTION OF CHANGE
+# ---------------------|--------------|----------------------------------------
+# 2025-04-30 12:00:00  | Adam Compton | Initial creation.
+# =============================================================================
 
-Requirements:
-  - Python 3.6+
-  - scapy (`pip install scapy`)
-  - Run as root (CAP_NET_RAW + pcap)
+import argparse
+import json
+import logging
+import sys
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
-Usage:
-  sudo ./dhcp_enum.py -i enp89s0 -t 5        # just print to console
-  sudo ./dhcp_enum.py -i enp89s0 -t 5 -j out.json
-"""
-
-import argparse, json, sys
 from scapy.all import (
-    Ether, IP, IPv6, UDP,
-    BOOTP, DHCP,
-    sniff, sendp, conf,
-    get_if_hwaddr, get_if_addr
-)
-from scapy.layers.dhcp6 import (
-    DHCP6_Solicit, DHCP6_Advertise,
-    DHCP6OptClientId, DHCP6OptServerId,
-    DHCP6OptIA_NA, DHCP6OptIAAddress,
-    DHCP6OptDNSServers
+    BOOTP,
+    DHCP,
+    DHCP6_Advertise,
+    DHCP6OptClientId,
+    DHCP6OptDNSServers,
+    DHCP6OptIAAddress,
+    DHCP6OptIA_NA,
+    DHCP6OptServerId,
+    DHCP6_Solicit,
+    Ether,
+    IP,
+    IPv6,
+    UDP,
+    conf,
+    get_if_addr,
+    get_if_hwaddr,
+    sendp,
+    sniff,
 )
 
-def dhcp_option(opts, key):
-    """Helper to pull DHCPv4 option `key` from options list."""
+# Configure logging
+logging.basicConfig(
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    level=logging.INFO
+)
+log = logging.getLogger(__name__)
+
+
+def dhcp_option(opts: list, key: str) -> Optional[Any]:
+    """Extract a DHCPv4 option from a list of options.
+
+    Args:
+        opts: List of DHCP options.
+        key: Option name to extract.
+
+    Returns:
+        The value of the matching option, or None.
+    """
     for opt in opts:
-        if isinstance(opt, tuple) and opt[0] == key:
+        if isinstance(opt, tuple) and len(opt) == 2 and opt[0] == key:
             return opt[1]
     return None
 
-def send_discover_and_sniff(iface, timeout):
-    """Broadcast DHCPDISCOVER, sniff for DHCPOFFERs for `timeout` seconds."""
+def send_discover_and_sniff(iface: str, timeout: int) -> List[Dict[str, Any]]:
+    """Send DHCPDISCOVER and sniff for DHCPOFFER responses.
+
+    Args:
+        iface: Network interface name.
+        timeout: Duration to sniff for responses.
+
+    Returns:
+        List of dictionaries containing DHCPOFFER data.
+    """
     mac = get_if_hwaddr(iface)
     pkt = (
         Ether(dst="ff:ff:ff:ff:ff:ff", src=mac) /
-        IP(src="0.0.0.0",       dst="255.255.255.255") /
+        IP(src="0.0.0.0", dst="255.255.255.255") /
         UDP(sport=68, dport=67) /
         BOOTP(chaddr=bytes.fromhex(mac.replace(":", ""))) /
         DHCP(options=[
-            ("message-type","discover"),
-            ("param_req_list",[1,3,6,15,42,51,54]),
+            ("message-type", "discover"),
+            ("param_req_list", [1, 3, 6, 15, 42, 51, 54]),
             "end"
         ])
     )
     sendp(pkt, iface=iface, verbose=False)
+
     replies = sniff(
         iface=iface,
         filter="udp and src port 67 and dst port 68",
         timeout=timeout
     )
+
     offers = []
     for p in replies:
-        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options,"message-type")==2:
+        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options, "message-type") == 2:
             opts = p[DHCP].options
-            o = {
-                "server_id":   dhcp_option(opts,"server_id"),
-                "your_ip":     p[BOOTP].yiaddr,
-                "lease_time":  dhcp_option(opts,"lease_time"),
+            offer = {
+                "server_id": dhcp_option(opts, "server_id"),
+                "your_ip": p[BOOTP].yiaddr,
+                "lease_time": dhcp_option(opts, "lease_time")
             }
-            for f in ("subnet_mask","router","name_server","name_servers","domain","ntp_server","ntp_servers"):
-                v = dhcp_option(opts,f)
-                if v:
-                    if not isinstance(v, list):
-                        v = [v]
-                    o[f] = v
-            offers.append(o)
+            for field in ("subnet_mask", "router", "name_server", "name_servers", "domain", "ntp_server", "ntp_servers"):
+                val = dhcp_option(opts, field)
+                if val:
+                    offer[field] = val if isinstance(val, list) else [val]
+            offers.append(offer)
     return offers
 
-def send_request_probe_and_sniff(iface, timeout, server_id, bogus="1.2.3.4"):
-    """Send bogus DHCPREQUEST → sniff for NAKs (msg-type 6)."""
+
+def send_request_probe_and_sniff(iface: str, timeout: int, server_id: str, bogus: str = "1.2.3.4") -> List[Dict[str, str]]:
+    """Send DHCPREQUEST with bogus IP and sniff for NAKs.
+
+    Args:
+        iface: Interface to send packet from.
+        timeout: Sniff timeout.
+        server_id: Server identifier to target.
+        bogus: Bogus IP address to request.
+
+    Returns:
+        List of servers that responded with NAK.
+    """
     mac = get_if_hwaddr(iface)
     pkt = (
         Ether(dst="ff:ff:ff:ff:ff:ff", src=mac) /
-        IP(src="0.0.0.0",       dst="255.255.255.255") /
+        IP(src="0.0.0.0", dst="255.255.255.255") /
         UDP(sport=68, dport=67) /
         BOOTP(chaddr=bytes.fromhex(mac.replace(":", ""))) /
         DHCP(options=[
-            ("message-type","request"),
+            ("message-type", "request"),
             ("server_id", server_id),
             ("requested_addr", bogus),
-            ("param_req_list",[1,3,6,15,42,51,54]),
+            ("param_req_list", [1, 3, 6, 15, 42, 51, 54]),
             "end"
         ])
     )
@@ -96,27 +142,37 @@ def send_request_probe_and_sniff(iface, timeout, server_id, bogus="1.2.3.4"):
         filter="udp and src port 67 and dst port 68",
         timeout=timeout
     )
-    naks = []
-    for p in replies:
-        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options,"message-type")==6:
-            n = {"server_id": dhcp_option(p[DHCP].options,"server_id")}
-            naks.append(n)
-    return naks
 
-def send_inform_and_sniff(iface, timeout):
-    """Send DHCPINFORM → sniff for ACKs (msg-type 5)."""
+    return [
+        {"server_id": dhcp_option(p[DHCP].options, "server_id")}
+        for p in replies
+        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options, "message-type") == 6
+    ]
+
+
+def send_inform_and_sniff(iface: str, timeout: int) -> List[Dict[str, Any]]:
+    """Send DHCPINFORM and sniff for DHCPACKs.
+
+    Args:
+        iface: Interface to use.
+        timeout: Sniff timeout.
+
+    Returns:
+        List of ACK response data dictionaries.
+    """
     client_ip = get_if_addr(iface)
     if client_ip == "0.0.0.0":
         return []
+
     mac = get_if_hwaddr(iface)
     pkt = (
         Ether(dst="ff:ff:ff:ff:ff:ff", src=mac) /
-        IP(src=client_ip,      dst="255.255.255.255") /
+        IP(src=client_ip, dst="255.255.255.255") /
         UDP(sport=68, dport=67) /
         BOOTP(ciaddr=client_ip, chaddr=bytes.fromhex(mac.replace(":", ""))) /
         DHCP(options=[
-            ("message-type","inform"),
-            ("param_req_list",[1,3,6,15,42,51,54]),
+            ("message-type", "inform"),
+            ("param_req_list", [1, 3, 6, 15, 42, 51, 54]),
             "end"
         ])
     )
@@ -126,23 +182,30 @@ def send_inform_and_sniff(iface, timeout):
         filter="udp and src port 67 and dst port 68",
         timeout=timeout
     )
+
     acks = []
     for p in replies:
-        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options,"message-type")==5:
-            info = {"server_id": dhcp_option(p[DHCP].options,"server_id")}
-
+        if p.haslayer(DHCP) and dhcp_option(p[DHCP].options, "message-type") == 5:
             opts = p[DHCP].options
-            for f in ("subnet_mask","router","name_server","name_servers","domain","ntp_server","ntp_servers"):
-                v = dhcp_option(opts,f)
-                if v:
-                    if not isinstance(v, list):
-                        v = [v]
-                    info[f] = v
-            acks.append(info)
+            ack = {"server_id": dhcp_option(opts, "server_id")}
+            for field in ("subnet_mask", "router", "name_server", "name_servers", "domain", "ntp_server", "ntp_servers"):
+                val = dhcp_option(opts, field)
+                if val:
+                    ack[field] = val if isinstance(val, list) else [val]
+            acks.append(ack)
     return acks
 
-def send_solicit_and_sniff_v6(iface, timeout):
-    """Send DHCPv6 Solicit, sniff for Advertisements."""
+
+def send_solicit_and_sniff_v6(iface: str, timeout: int) -> List[Dict[str, Any]]:
+    """Send DHCPv6 Solicit message and sniff for Advertisements.
+
+    Args:
+        iface: Interface to use.
+        timeout: Sniff timeout.
+
+    Returns:
+        List of dictionaries with advertisement data.
+    """
     pkt = (
         Ether(dst="33:33:00:01:00:02") /
         IPv6(dst="ff02::1:2") /
@@ -157,106 +220,92 @@ def send_solicit_and_sniff_v6(iface, timeout):
         filter="udp and src port 547 and dst port 546",
         timeout=timeout
     )
-    ads = []
+
+    advertisements = []
     for p in replies:
         if p.haslayer(DHCP6_Advertise):
-            info = {}
+            advert: Dict[str, Any] = {}
             if p.haslayer(DHCP6OptServerId):
-                info["server_duid"] = p[DHCP6OptServerId].duid
+                advert["server_duid"] = p[DHCP6OptServerId].duid
             if p.haslayer(DHCP6OptClientId):
-                info["client_duid"] = p[DHCP6OptClientId].duid
+                advert["client_duid"] = p[DHCP6OptClientId].duid
             if p.haslayer(DHCP6OptIA_NA):
-                na = p[DHCP6OptIA_NA]
-                info["iana_id"] = na.iaid
-                addrs = []
-                for opt in na.ianaopts:
-                    if isinstance(opt, DHCP6OptIAAddress):
-                        addrs.append({
-                            "address":        opt.addr,
-                            "pref_lifetime":  opt.preflft,
-                            "valid_lifetime": opt.validlft
-                        })
-                if addrs:
-                    info["addresses"] = addrs
+                iana = p[DHCP6OptIA_NA]
+                advert["iana_id"] = iana.iaid
+                advert["addresses"] = [
+                    {
+                        "address": opt.addr,
+                        "pref_lifetime": opt.preflft,
+                        "valid_lifetime": opt.validlft
+                    }
+                    for opt in iana.ianaopts if isinstance(opt, DHCP6OptIAAddress)
+                ]
             if p.haslayer(DHCP6OptDNSServers):
-                info["dns_servers"] = p[DHCP6OptDNSServers].dnsservers
-            ads.append(info)
-    return ads
+                advert["dns_servers"] = p[DHCP6OptDNSServers].dnsservers
+            advertisements.append(advert)
+    return advertisements
 
-def print_summary(off, naks, acks, v6):
-    print("\n=== DHCPv4 Offers ===")
-    if not off:        print("  (none)")
-    for i,o in enumerate(off,1):
-        print(f"\n  Offer #{i}:")
-        for k,v in o.items():
-            print(f"    {k:12s}: {v}")
 
-    print("\n=== DHCPv4 NAKs (bogus-request probe) ===")
-    if not naks:       print("  (none)")
-    for i,n in enumerate(naks,1):
-        print(f"  NAK #{i}: server_id={n['server_id']}")
+def print_summary(offers: list, naks: list, acks: list, v6: list) -> None:
+    """Display collected DHCPv4 and DHCPv6 data in readable format."""
+    sections = [
+        ("DHCPv4 Offers", offers),
+        ("DHCPv4 NAKs (bogus-request probe)", naks),
+        ("DHCPv4 INFORM ACKs", acks),
+        ("DHCPv6 Advertisements", v6),
+    ]
+    for title, items in sections:
+        print(f"\n=== {title} ===")
+        if not items:
+            print("  (none)")
+        for i, item in enumerate(items, 1):
+            print(f"\n  Entry #{i}:")
+            for k, v in item.items():
+                print(f"    {k:12s}: {v}")
 
-    print("\n=== DHCPv4 INFORM ACKs ===")
-    if not acks:       print("  (none)")
-    for i,a in enumerate(acks,1):
-        print(f"\n  ACK #{i}:")
-        for k,v in a.items():
-            print(f"    {k:12s}: {v}")
 
-    print("\n=== DHCPv6 Advertisements ===")
-    if not v6:         print("  (none)")
-    for i,a in enumerate(v6,1):
-        print(f"\n  Advert #{i}:")
-        for k,v in a.items():
-            print(f"    {k:12s}: {v}")
-
-def main():
-    p = argparse.ArgumentParser()
-    p.add_argument("-i","--interface", help="Interface to use")
-    p.add_argument("-t","--timeout", type=int, default=5, help="Seconds to sniff")
-    p.add_argument("-j","--json-output", help="Write results to JSON file")
-    args = p.parse_args()
+def main() -> None:
+    """Main entry point for DHCP enumeration script."""
+    parser = argparse.ArgumentParser(
+        description="Enumerate DHCPv4/DHCPv6 servers on the LAN."
+    )
+    parser.add_argument("-i", "--interface", help="Interface to use (e.g., eth0)", required=False)
+    parser.add_argument("-t", "--timeout", type=int, default=5, help="Sniffing timeout in seconds")
+    parser.add_argument("-j", "--json-output", help="Path to save JSON output")
+    args = parser.parse_args()
 
     iface = args.interface or conf.iface
     if not iface:
-        print("ERROR: specify -i", file=sys.stderr)
+        log.error("No interface specified or detected. Use -i to specify one.")
         sys.exit(1)
 
-    print(f"[*] Using interface: {iface}")
+    log.info(f"Using interface: {iface}")
+
     offers = send_discover_and_sniff(iface, args.timeout)
-
-    # probe with bogus REQUEST → NAK
-    naks = []
-    for o in offers:
-        sid = o.get("server_id")
-        if sid:
-            naks += send_request_probe_and_sniff(iface, args.timeout, sid)
-
-    # DHCPINFORM → ACK (if client already has an IP)
+    naks = [nak for o in offers if (sid := o.get("server_id")) for nak in send_request_probe_and_sniff(iface, args.timeout, sid)]
     acks = send_inform_and_sniff(iface, args.timeout)
-
-    # DHCPv6 Solicit → Advertisements
     v6_ads = send_solicit_and_sniff_v6(iface, args.timeout)
 
     print_summary(offers, naks, acks, v6_ads)
 
     if args.json_output:
-        out = {
+        out_path = Path(args.json_output)
+        result = {
             "dhcp4_offers": offers,
-            "dhcp4_naks":   naks,
-            "dhcp4_acks":   acks,
-            "dhcp6_ads":    v6_ads
+            "dhcp4_naks": naks,
+            "dhcp4_acks": acks,
+            "dhcp6_ads": v6_ads
         }
-        with open(args.json-output, "w") as f:
-            json.dump(out, f, indent=2)
-        print(f"\n[+] JSON written to {args.json_output}")
+        out_path.write_text(json.dumps(result, indent=2))
+        log.info(f"JSON results saved to {out_path}")
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     try:
         main()
     except PermissionError:
-        print("ERROR: must run as root.", file=sys.stderr)
+        log.error("Must be run with root privileges.")
         sys.exit(1)
     except KeyboardInterrupt:
-        print("\nInterrupted; exiting.", file=sys.stderr)
+        log.warning("Interrupted by user.")
         sys.exit(0)

@@ -51,6 +51,11 @@ if [[ -z "${BASH_ALIAS_SH_LOADED:-}" ]]; then
         echo "Neither 'bat' nor 'batcat' is installed. Defauting back to the base 'cat' functionality." >&2
     fi
 
+    # If there's no realpath command, but readlink supports -f, alias realpath → readlink -f
+    if ! command -v realpath &> /dev/null && command -v readlink &> /dev/null; then
+        alias realpath='readlink -f'
+    fi
+
     # Alias to shorten proxychains4
     check_command "proxychains4" && alias PROXY="proxychains4 -q"
 

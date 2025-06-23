@@ -235,32 +235,84 @@ if [[ -z "${INIT_TASKS_SH_LOADED:-}" ]]; then
         fi
     }
 
+    # Block Rapid7 NBT-NS Broadcast
+    function Block_Rapid7_Broadcasts() {
+        # Ensure iptables is available
+        if ! command -v iptables &> /dev/null; then
+            fail "iptables command not found. Ensure it is installed and accessible."
+            return "${_FAIL}"
+        fi
+
+        # Allow Docker images to work on the system
+        if iptables -A INPUT -p udp --dport 137 -m state --state NEW ! --sport 137 -j DROP; then
+            pass "Updated iptables policy to block Rapid7 NBT-NS broadcasts."
+            return "${_PASS}"
+        else
+            fail "Failed to update iptables policy."
+            return "${_FAIL}"
+        fi
+    }
+
     # Function to copy MSF RC files
     # This function checks for the existence of the source directory and the target directory,
     # creates the target directory if necessary, and copies all .rc files to it.
     function Setup_Msf_Scripts() {
-        # Ensure the source directory exists
         local src_dir="${SCRIPT_DIR}/tools/extra/msf"
+        local dst_dir="${TOOLS_DIR}/SCRIPTS/MSF"
+        local subdirs=("files" "modules")
+        local all_ok=true
+
+        # Check if source exists
         if [[ ! -d "${src_dir}" ]]; then
-            fail "Directory [${src_dir}] does not exist."
+            fail "Source directory [${src_dir}] does not exist."
             return "${_FAIL}"
         fi
 
-        # Ensure the target directory exists
-        if [[ ! -d "${TOOLS_DIR}/SCRIPTS/MSF" ]]; then
-            mkdir -p "${TOOLS_DIR}/SCRIPTS/MSF" || {
-                fail "Failed to create target directory ${TOOLS_DIR}/SCRIPTS/MSF."
+        # Create main target directory if missing
+        if [[ ! -d "${dst_dir}" ]]; then
+            mkdir -p "${dst_dir}" || {
+                fail "Failed to create main target directory [${dst_dir}]."
                 return "${_FAIL}"
             }
-            pass "Created target directory ${TOOLS_DIR}/SCRIPTS/MSF."
+            pass "Created main target directory [${dst_dir}]."
         fi
 
-        # Copy MSF RC files
-        if cp tools/extra/msf/*.rc "${TOOLS_DIR}/SCRIPTS/MSF/"; then
-            pass "Copied MSF RC files to ${TOOLS_DIR}/SCRIPTS/MSF/"
+        # Copy top-level MSF files (e.g., *.rc)
+        if cp "${src_dir}"/* "${dst_dir}/" 2> /dev/null; then
+            pass "Copied top-level MSF files to [${dst_dir}]"
+        else
+            fail "Failed to copy top-level files to [${dst_dir}]"
+            all_ok=false
+        fi
+
+        # Loop through subdirectories (files and modules)
+        for sub in "${subdirs[@]}"; do
+            local src_sub="${src_dir}/${sub}"
+            local dst_sub="${dst_dir^^}/${sub^^}"  # uppercase destination subdir
+
+            dst_sub="${dst_dir}/$(echo "${sub}" | tr '[:lower:]' '[:upper:]')"
+
+            if [[ -d "${src_sub}" ]]; then
+                mkdir -p "${dst_sub}" || {
+                    fail "Failed to create subdirectory [${dst_sub}]"
+                    all_ok=false
+                    continue
+                }
+                if cp -r "${src_sub}/"* "${dst_sub}/" 2> /dev/null; then
+                    pass "Copied ${sub} files to [${dst_sub}]"
+                else
+                    fail "Failed to copy ${sub} files to [${dst_sub}]"
+                    all_ok=false
+                fi
+            else
+                fail "Source subdirectory [${src_sub}] not found."
+                all_ok=false
+            fi
+        done
+
+        if [[ "${all_ok}" == true ]]; then
             return "${_PASS}"
         else
-            fail "Failed to copy MSF RC files to ${TOOLS_DIR}/SCRIPTS/MSF/"
             return "${_FAIL}"
         fi
     }

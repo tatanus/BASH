@@ -236,6 +236,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "python3-venv"              # Python virtual environment support
         "readline-common"           # Common files for readline
         "redis"                     # In-memory key-value store
+        "realpath"                  # Resolves and prints the absolute, canonical path
         "ruby-full"                 # Ruby language environment
         "rustc"                     # Rust compiler
         "samba"                     # SMB file sharing service
@@ -391,6 +392,7 @@ if [[ -z "${LISTS_SH_LOADED:-}" ]]; then
         "Setup_Cron_Jobs"
 
         "Setup_Docker"
+        "Block_Rapid7_Broadcasts"
         "Setup_Msf_Scripts"
         "Setup_Support_Scripts"
         "Fix_Dns"
